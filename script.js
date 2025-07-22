@@ -40,6 +40,7 @@ let aiScore = 0;
 const minimumWinningScore = 3;
 const scoreDifferenceToWin = 2;
 
+let waitingForContinue = false; // Flag to track if waiting for continue button
 let gamePaused = true;
 let animationFrameId = null;
 let countdownActive = false;
@@ -55,6 +56,7 @@ const welcomeScreen = document.getElementById('welcomeScreen');
 const startGameButton = document.getElementById('startGameButton');
 const playerNameInput = document.getElementById('playerNameInput');
 const pauseButton = document.getElementById('pauseButton');
+const continueButton = document.getElementById('continueButton'); // Added continue button for resuming after a score
 const difficultySelect = document.getElementById('difficulty');
 const playerScoreDisplay = document.getElementById('playerScore');
 const aiScoreDisplay = document.getElementById('aiScore');
@@ -148,8 +150,12 @@ function moveEverything() {
             }, 500);
         } else {
             gamePaused = true;
+            pauseButton.style.display = 'none'; // Hide pause button
+            waitingForContinue = true; // Set flag to true
+            // Show continue button
+            continueButton.style.display = 'block';
             resetBall();
-            startCountdown();
+            
         }
     }
 
@@ -167,8 +173,12 @@ function moveEverything() {
             }, 500);
         } else {
             gamePaused = true;
+            pauseButton.style.display = 'none';
+            waitingForContinue = true; // Set flag to true
+            // Show continue button
+            continueButton.style.display = 'block';
             resetBall();
-            startCountdown();
+           
         }
     }
 
@@ -240,6 +250,8 @@ function resetGame() {
 
     gamePaused = true;
     pauseButton.textContent = "Resume";
+    waitingForContinue = false; // Reset flag
+    continueButton.style.display = 'none'; // Hide continue button
 
     if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
@@ -474,5 +486,16 @@ canvas.addEventListener('mousemove', (evt) => {
 
         if (playerPaddleY < 0) playerPaddleY = 0;
         if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
+    }
+});
+// Event listener for continue button to resume the game
+continueButton.addEventListener('click', () => {
+    if(waitingForContinue) {
+        waitingForContinue = false; // Reset flag
+        continueButton.style.display = 'none'; // Hide continue button
+        gamePaused = false; // Resume the game
+        pauseButton.textContent = "Pause"; // Update pause button text
+        pauseButton.style.display = 'block'; // Show pause button again
+
     }
 });
