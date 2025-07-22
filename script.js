@@ -103,7 +103,7 @@ function drawEverything() {
 
     ctx.beginPath();
     ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2, false);
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = 'blue';
     ctx.fill();
 
     // Draw countdown number ONLY if active
