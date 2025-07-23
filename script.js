@@ -96,26 +96,75 @@ function resetBall() {
     ballSpeedY = (Math.random() * 2 - 1) * currentSettings.ballInitialSpeed;
 }
 
+// Helper function for rounded rectangles (fallback for older browsers)
+function drawRoundedRect(ctx, x, y, width, height, radius) {
+    if (typeof ctx.roundRect === 'function') {
+        ctx.roundRect(x, y, width, height, radius);
+    } else {
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+    }
+}
+
 function drawEverything() {
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // Clear the canvas - let CSS gradient show through
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, playerPaddleY, paddleWidth, paddleHeight);
-    ctx.fillRect(canvas.width - paddleWidth, aiPaddleY, paddleWidth, paddleHeight);
+    // Draw paddles with enhanced styling and rounded corners
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+    ctx.shadowBlur = 10;
+    
+    // Draw player paddle with rounded corners
+    ctx.beginPath();
+    drawRoundedRect(ctx, 0, playerPaddleY, paddleWidth, paddleHeight, 5);
+    ctx.fill();
+    
+    // Draw AI paddle with rounded corners
+    ctx.beginPath();
+    drawRoundedRect(ctx, canvas.width - paddleWidth, aiPaddleY, paddleWidth, paddleHeight, 5);
+    ctx.fill();
 
+    // Draw ball with glow effect
+    ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+    ctx.shadowBlur = 15;
     ctx.beginPath();
     ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2, false);
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
     ctx.fill();
+    
+    // Reset shadow for text
+    ctx.shadowBlur = 0;
+
+    // Draw center line with modern styling
+    ctx.setLineDash([5, 10]);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(canvas.width / 2, 0);
+    ctx.lineTo(canvas.width / 2, canvas.height);
+    ctx.stroke();
+    ctx.setLineDash([]); // Reset line dash
 
     // Draw countdown number ONLY if active
     if (countdownActive) {
-        ctx.fillStyle = 'white';
-        ctx.font = '80px Arial';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.font = '80px Segoe UI';
         ctx.textAlign = 'center';
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+        ctx.shadowBlur = 10;
         // Display countdownValue, which will update from 3 down to 0 visually
         ctx.fillText(countdownValue === 0 ? "GO!" : countdownValue, canvas.width / 2, canvas.height / 2 + 30);
+        ctx.shadowBlur = 0;
     }
 
     // Update score display with player name
@@ -213,6 +262,9 @@ function moveEverything() {
     // Keep AI paddle within canvas bounds
     if (aiPaddleY < 0) aiPaddleY = 0;
     if (aiPaddleY + paddleHeight > canvas.height) aiPaddleY = canvas.height - paddleHeight;
+
+    keyboardPaddleControl();
+
 }
 
 function gameLoop() {
@@ -489,6 +541,7 @@ canvas.addEventListener('mousemove', (evt) => {
         if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
     }
 });
+
 // Event listener for continue button to resume the game
 continueButton.addEventListener('click', () => {
     if(waitingForContinue) {
@@ -500,3 +553,30 @@ continueButton.addEventListener('click', () => {
         playSound(continueSound); // Play continue sound
     }
 });
+
+
+// --- Keyboard Paddle Controls for Up/Down Arrow Keys (add at end of script.js) ---
+let upArrowPressed = false;
+let downArrowPressed = false;
+const paddleMoveSpeed = 8; // we can change this number for faster/slower paddle movement
+
+document.addEventListener('keydown', function(e) {
+    if (typeof gameState !== "undefined" && gameState === "PLAYING" && !countdownActive) {
+        if (e.key === "ArrowUp") upArrowPressed = true;
+        if (e.key === "ArrowDown") downArrowPressed = true;
+    }
+});
+document.addEventListener('keyup', function(e) {
+    if (e.key === "ArrowUp") upArrowPressed = false;
+    if (e.key === "ArrowDown") downArrowPressed = false;
+});
+
+// This function will move the paddle when up/down keys are pressed
+function keyboardPaddleControl() {
+    if (upArrowPressed) playerPaddleY -= paddleMoveSpeed;
+    if (downArrowPressed) playerPaddleY += paddleMoveSpeed;
+    // Do not let paddle go outside the screen:
+    if (playerPaddleY < 0) playerPaddleY = 0;
+    if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
+}
+
