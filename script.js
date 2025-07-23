@@ -9,6 +9,7 @@ import {
     gameOverSound,
     playerWinSound,
     countdownBeepSound,
+    continueSound,
     backgroundMusicTracks
 } from './audio.js';
 
@@ -496,6 +497,6 @@ continueButton.addEventListener('click', () => {
         gamePaused = false; // Resume the game
         pauseButton.textContent = "Pause"; // Update pause button text
         pauseButton.style.display = 'block'; // Show pause button again
-
+        playSound(continueSound); // Play continue sound
     }
 });
