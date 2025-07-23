@@ -27,9 +27,10 @@
             <option value="medium" selected>Medium</option>
             <option value="hard">Hard</option>
         </select>
-        <div class="score">
+        <div class="score" style="display: flex; justify-content: flex-column; align-items: center;">
             <span id="playerScore">Player: 0</span> | <span id="aiScore">AI: 0</span>
-        </div>
+            <div>Highest Score <span id="highestScore">0</span></div>
+        </div> 
     </div>
     <canvas id="gameCanvas" width="600" height="400"></canvas>
 
