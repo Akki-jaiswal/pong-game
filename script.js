@@ -261,6 +261,9 @@ function moveEverything() {
     // Keep AI paddle within canvas bounds
     if (aiPaddleY < 0) aiPaddleY = 0;
     if (aiPaddleY + paddleHeight > canvas.height) aiPaddleY = canvas.height - paddleHeight;
+
+    keyboardPaddleControl();
+
 }
 
 function gameLoop() {
@@ -537,6 +540,7 @@ canvas.addEventListener('mousemove', (evt) => {
         if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
     }
 });
+
 // Event listener for continue button to resume the game
 continueButton.addEventListener('click', () => {
     if(waitingForContinue) {
@@ -548,3 +552,30 @@ continueButton.addEventListener('click', () => {
 
     }
 });
+
+
+// --- Keyboard Paddle Controls for Up/Down Arrow Keys (add at end of script.js) ---
+let upArrowPressed = false;
+let downArrowPressed = false;
+const paddleMoveSpeed = 8; // we can change this number for faster/slower paddle movement
+
+document.addEventListener('keydown', function(e) {
+    if (typeof gameState !== "undefined" && gameState === "PLAYING" && !countdownActive) {
+        if (e.key === "ArrowUp") upArrowPressed = true;
+        if (e.key === "ArrowDown") downArrowPressed = true;
+    }
+});
+document.addEventListener('keyup', function(e) {
+    if (e.key === "ArrowUp") upArrowPressed = false;
+    if (e.key === "ArrowDown") downArrowPressed = false;
+});
+
+// This function will move the paddle when up/down keys are pressed
+function keyboardPaddleControl() {
+    if (upArrowPressed) playerPaddleY -= paddleMoveSpeed;
+    if (downArrowPressed) playerPaddleY += paddleMoveSpeed;
+    // Do not let paddle go outside the screen:
+    if (playerPaddleY < 0) playerPaddleY = 0;
+    if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
+}
+
