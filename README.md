@@ -63,6 +63,14 @@ To run this project on your local machine:
         ```
     * Then open your browser to `http://localhost:8080` (or the address provided by `http-server`).
 
+## 🤝 How to Contribute (GSSoC'25 Participants & Others!)
+
+We welcome contributions from everyone! If you're participating in **GSSoC'25** or just want to help improve the game, here's how to get started:
+
+* **Read our Contribution Guidelines:** For detailed steps on setting up, finding issues, and submitting Pull Requests, please see our [`CONTRIBUTING.md`](CONTRIBUTING.md) file.
+* **Join our Community:** If you have questions, need help, or want to discuss ideas, join our Discord channel:
+    ➡️ **[Join our Discord Server!](https://discord.gg/4m6JuQ8S)**
+
 ## 📜 License
 
 This project is open-source and available under the MIT License. See the `LICENSE` file for more details.
