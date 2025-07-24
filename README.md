@@ -30,6 +30,20 @@ Relive the nostalgia of a retro classic! This project is a straightforward yet e
 5.  **Play Again:**
     * After a game concludes, click "Play Again" on the game over screen to start a new match.
 
+## Tech Stack
+    **HTML5** for structure
+    **CSS3** for styling
+    **JavaScript** for game logic and interactivity
+
+## Future Enhancements
+    - Add single-player mode with AI difficulty scaling.
+    - Add customizable paddle and ball colors.
+    - Include sound effects for ball collisions and scoring.
+    - Implement a tournament mode for multiple rounds.   
+
+## Game Preview        
+ ! [Pong Game Screenshot](<Screenshot (2)-1.png>)
+
 ## 🚀 Live Demo
 
 Ready to play? Click the link below to launch the game directly in your browser:
@@ -79,3 +93,6 @@ This project is open-source and available under the MIT License. See the `LICENS
 
 * Inspired by the original Pong game for endless classic fun.
 * Sound effects sourced from FreeSound.org, mixit.com.
+
+## Contributors
+- Archi Bindal
