@@ -16,7 +16,7 @@ Relive the nostalgia of a retro classic! This project is a straightforward yet e
 * **Browser-Based:** No downloads needed – play directly in your web browser.
 
 ## 🕹️ How to Play
-
+![alt text](image.png)
 1.  **Start Your Game:**
     * (Optional) Enter your name on the welcome screen.
     * Click the "Play Game" button to begin your match.
