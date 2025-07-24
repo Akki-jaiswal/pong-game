@@ -64,6 +64,17 @@ const gameOverScreen = document.getElementById('gameOverScreen');
 const gameOverMessage = document.getElementById('gameOverMessage');
 const playAgainButton = document.getElementById('playAgainButton');
 
+// Pause menu DOM elements
+const pauseMenu = document.getElementById('pauseMenu');
+const resumeButton = document.getElementById('resumeButton');
+const restartButton = document.getElementById('restartButton');
+const exitButton = document.getElementById('exitButton');
+
+// Show/hide pause menu helper
+function showPauseMenu(show) {
+    pauseMenu.style.display = show ? 'flex' : 'none';
+}
+
 // Difficulty level variable
 let difficultyLevel = 'medium';
 
@@ -403,26 +414,78 @@ function handleTouchMove(event) {
     }
 }
 
-// The pause button now only toggles Pause/Resume for an *already started* game
+// Update pauseButton event listener to show pause menu
 pauseButton.addEventListener('click', () => {
-    if (!countdownActive) { // Only allow pause/resume when not in active countdown
-        if (gamePaused) { // If currently paused, user wants to resume
-            startBackgroundMusicRotation();
-            gamePaused = false;
-            pauseButton.textContent = "Pause";
-            if (!animationFrameId) {
-                gameLoop();
-            }
-        } else { // If currently playing, user wants to pause
-            gamePaused = true;
-            pauseButton.textContent = "Resume";
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-                animationFrameId = null;
-            }
-            stopBackgroundMusicRotation();
+    if (!countdownActive && gameState === GAME_STATES.PLAYING) {
+        gamePaused = true;
+        gameState = GAME_STATES.PAUSED;
+        pauseButton.textContent = "Resume";
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+        stopBackgroundMusicRotation();
+        showPauseMenu(true);
+    } else if (gameState === GAME_STATES.PAUSED) {
+        // Resume from pause
+        gamePaused = false;
+        gameState = GAME_STATES.PLAYING;
+        pauseButton.textContent = "Pause";
+        startBackgroundMusicRotation();
+        showPauseMenu(false);
+        if (!countdownActive) {
+            lastFrameTime = performance.now();
+            requestAnimationFrame(gameLoop);
         }
     }
+});
+
+// Resume button
+resumeButton.addEventListener('click', () => {
+    gamePaused = false;
+    gameState = GAME_STATES.PLAYING;
+    pauseButton.textContent = "Pause";
+    startBackgroundMusicRotation();
+    showPauseMenu(false);
+    if (!countdownActive) {
+        lastFrameTime = performance.now();
+        requestAnimationFrame(gameLoop);
+    }
+});
+
+// Restart button
+restartButton.addEventListener('click', () => {
+    showPauseMenu(false);
+    resetGame();
+    gamePaused = false;
+    gameState = GAME_STATES.PLAYING;
+    pauseButton.textContent = "Pause";
+    startBackgroundMusicRotation();
+    lastFrameTime = performance.now();
+    requestAnimationFrame(gameLoop);
+});
+
+// Exit to Menu button
+exitButton.addEventListener('click', () => {
+    showPauseMenu(false);
+    gamePaused = true;
+    gameState = GAME_STATES.WELCOME;
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+    stopBackgroundMusicRotation();
+    welcomeScreen.style.display = 'flex';
+    gameOverScreen.style.display = 'none';
+    drawEverything();
+});
+
+// Hide pause menu on game start and game over
+startGameButton.addEventListener('click', () => {
+    showPauseMenu(false);
+});
+playAgainButton.addEventListener('click', () => {
+    showPauseMenu(false);
 });
 
 difficultySelect.addEventListener('change', (event) => {
