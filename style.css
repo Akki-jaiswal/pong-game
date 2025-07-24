@@ -375,3 +375,24 @@ canvas:hover {
         animation: none;
     }
 }
+/* highest score code*/
+.highScoreDisplay {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-left: 20px;
+    display: flex; 
+    gap: 15px; /* Space between player highest_score and AI score */
+    align-items: center;
+    padding: 10px 15px; 
+    /* --- Responsive CSS for highest_score Display --- */
+    flex-wrap: wrap; /* Allow scores to wrap if space is tight */
+    justify-content: center; /* Center scores */
+    margin-left: 0; /* Remove fixed left margin for better centering */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px 0 rgba(31, 38, 135, 0.3);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
