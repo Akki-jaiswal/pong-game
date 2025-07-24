@@ -21,6 +21,8 @@
 
     <h1>Pong Game</h1>
     <div class="game-controls">
+           <!-- Added for continuing the game after a score, initially hidden -->
+    <button id="continueButton" style="display: none;">Continue</button>
         <button id="pauseButton">Pause</button>
         <label for="difficulty">Difficulty:</label>
         <select id="difficulty">
@@ -31,9 +33,11 @@
         <div class="score">
             <span id="playerScore">Player: 0</span> | <span id="aiScore">AI: 0</span>
         </div>
+     
     </div>
-    <canvas id="gameCanvas" width="600" height="400"></canvas>
 
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
+    
     <script type="module" src="script.js"></script>
 </body>
 </html>

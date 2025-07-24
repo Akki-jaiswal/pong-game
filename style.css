@@ -350,7 +350,7 @@ canvas:hover {
     .score {
         font-size: 1.1em;
     }
-    canvas {
+  canvas {
         border-radius: 8px;
         max-width: 98%;
     }
@@ -359,6 +359,23 @@ canvas:hover {
         opacity: 0.5;
         animation-duration: 40s;
     }
+
+}
+
+/* Continue button styles */
+#continueButton {
+    padding: 8px 15px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: #2a804e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+#continueButton:hover {
+    background-color: #0d3910;    
 }
 
 /* High-performance mode for reduced motion preference */

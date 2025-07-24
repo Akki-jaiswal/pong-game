@@ -5,6 +5,7 @@ export const scoreSound = new Audio('sounds/score.mp3');
 export const gameOverSound = new Audio('sounds/game_over.mp3');
 export const playerWinSound = new Audio('sounds/player_win.mp3');
 export const countdownBeepSound = new Audio('sounds/countdown_beep.mp3');
+export const continueSound = new Audio('sounds/continue_beep.mp3');
 
 // Background Music Tracks - ensure paths are correct
 export const backgroundMusicTracks = [
