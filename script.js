@@ -358,13 +358,12 @@ playAgainButton.addEventListener('click', () => {
     startCountdown();
 });
 
-//--Exit Button to end the game anytime ---
-
+//ExitBtn 
 exitBtn.addEventListener('click',() => {
-   const confirmExit = confirm("ARE YOU SUREYOU WANT TO QUIT THE GAME!!");
-   if(confirmExit){
-    gameOverScreen.style.display = 'block';
-   }
+    const confirmExit = confirm("ARE YOU SURE YOU WANT TO QUIT THE GAME!!");
+    if(confirmExit){
+        gameOverScreen.style.display = 'block';
+    }
 })
 
 // --- Event Listeners for In-Game Controls ---
