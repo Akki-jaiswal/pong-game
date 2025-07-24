@@ -55,6 +55,7 @@ const welcomeScreen = document.getElementById('welcomeScreen');
 const startGameButton = document.getElementById('startGameButton');
 const playerNameInput = document.getElementById('playerNameInput');
 const pauseButton = document.getElementById('pauseButton');
+const exitBtn = document.getElementById('exitBtn');
 const difficultySelect = document.getElementById('difficulty');
 const playerScoreDisplay = document.getElementById('playerScore');
 const aiScoreDisplay = document.getElementById('aiScore');
@@ -356,6 +357,14 @@ playAgainButton.addEventListener('click', () => {
     startBackgroundMusicRotation();
     startCountdown();
 });
+
+//ExitBtn 
+exitBtn.addEventListener('click',() => {
+    const confirmExit = confirm("ARE YOU SURE YOU WANT TO QUIT THE GAME!!");
+    if(confirmExit){
+        gameOverScreen.style.display = 'block';
+    }
+})
 
 // --- Event Listeners for In-Game Controls ---
 
