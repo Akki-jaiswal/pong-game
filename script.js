@@ -64,6 +64,12 @@ const gameOverScreen = document.getElementById('gameOverScreen');
 const gameOverMessage = document.getElementById('gameOverMessage');
 const playAgainButton = document.getElementById('playAgainButton');
 
+// Get pause menu elements
+const pauseMenu = document.getElementById('pauseMenu');
+const resumeButton = document.getElementById('resumeButton');
+const restartButton = document.getElementById('restartButton');
+const exitButton = document.getElementById('exitButton');
+
 // Difficulty level variable
 let difficultyLevel = 'medium';
 
@@ -169,12 +175,14 @@ function drawEverything() {
     aiScoreDisplay.textContent = `AI: ${aiScore}`;
 }
 
-function moveEverything() {
-    // Crucial check: Stop movement if game is paused or during countdown
+let lastFrameTime = performance.now();
+
+function moveEverything(deltaTime) {
     if (gamePaused || countdownActive) return;
 
-    ballX += ballSpeedX;
-    ballY += ballSpeedY;
+    // Use deltaTime for time-based movement
+    ballX += ballSpeedX * deltaTime;
+    ballY += ballSpeedY * deltaTime;
 
     // Wall collision
     if (ballY + ballRadius > canvas.height || ballY - ballRadius < 0) {
@@ -183,12 +191,10 @@ function moveEverything() {
     }
 
     // --- Scoring Logic ---
-    // Check if ball goes off screen to the left (AI scores)
     if (ballX < 0) {
         aiScore++;
         updateScoreDisplay();
         playSound(scoreSound);
-        // Check for AI win condition
         if (aiScore >= minimumWinningScore && (aiScore - playerScore >= scoreDifferenceToWin)) {
             gamePaused = true;
             playSound(gameOverSound);
@@ -201,13 +207,10 @@ function moveEverything() {
             startCountdown();
         }
     }
-
-    // Check if ball goes off screen to the right (Player scores)
     if (ballX > canvas.width) {
         playerScore++;
         updateScoreDisplay();
         playSound(scoreSound);
-        // Check for Player win condition
         if (playerScore >= minimumWinningScore && (playerScore - aiScore >= scoreDifferenceToWin)) {
             gamePaused = true;
             playSound(playerWinSound);
@@ -221,16 +224,13 @@ function moveEverything() {
         }
     }
 
-    // --- Paddle Collision Logic ---
-    // Player paddle collision
+    // Paddle Collision Logic
     if (ballX - ballRadius < paddleWidth && ballY > playerPaddleY && ballY < playerPaddleY + paddleHeight) {
         ballSpeedX = -ballSpeedX;
         let deltaY = ballY - (playerPaddleY + paddleHeight / 2);
         ballSpeedY = deltaY * 0.35;
         playSound(paddleHitSound);
     }
-
-    // AI paddle collision
     if (ballX + ballRadius > canvas.width - paddleWidth && ballY > aiPaddleY && ballY < aiPaddleY + paddleHeight) {
         ballSpeedX = -ballSpeedX;
         let deltaY = ballY - (aiPaddleY + paddleHeight / 2);
@@ -241,23 +241,22 @@ function moveEverything() {
     // AI Paddle Movement Logic
     const aiCenter = aiPaddleY + (paddleHeight / 2);
     const aiSpeed = difficultySettings[difficultyLevel].aiPaddleSpeed;
-
     if (aiCenter < ballY - 35) {
-        aiPaddleY += aiSpeed;
+        aiPaddleY += aiSpeed * deltaTime;
     } else if (aiCenter > ballY + 35) {
-        aiPaddleY -= aiSpeed;
+        aiPaddleY -= aiSpeed * deltaTime;
     }
-
-    // Keep AI paddle within canvas bounds
     if (aiPaddleY < 0) aiPaddleY = 0;
     if (aiPaddleY + paddleHeight > canvas.height) aiPaddleY = canvas.height - paddleHeight;
 
-    keyboardPaddleControl();
-
+    keyboardPaddleControl(deltaTime);
 }
 
-function gameLoop() {
-    moveEverything();
+function gameLoop(currentTime) {
+    let deltaTime = (currentTime - lastFrameTime) / (1000 / 60); // Normalize to 60 FPS units
+    if (deltaTime > 2) deltaTime = 1; // Clamp deltaTime to avoid jumps on tab switch
+    lastFrameTime = currentTime;
+    moveEverything(deltaTime);
     drawEverything();
     animationFrameId = requestAnimationFrame(gameLoop);
 }
@@ -330,7 +329,8 @@ function startCountdown() {
         gamePaused = false;
         pauseButton.textContent = "Pause";
         if (!animationFrameId) {
-            gameLoop();
+            lastFrameTime = performance.now();
+            requestAnimationFrame(gameLoop);
         }
     }, 3000);
 }
@@ -403,33 +403,92 @@ function handleTouchMove(event) {
     }
 }
 
-// The pause button now only toggles Pause/Resume for an *already started* game
+// Show/hide pause menu helper
+function showPauseMenu(show) {
+    if (pauseMenu) pauseMenu.style.display = show ? 'flex' : 'none';
+}
+
+// Update pauseButton event listener to show/hide pause menu
 pauseButton.addEventListener('click', () => {
-    if (!countdownActive) { // Only allow pause/resume when not in active countdown
-        if (gamePaused) { // If currently paused, user wants to resume
-            startBackgroundMusicRotation();
-            gamePaused = false;
-            pauseButton.textContent = "Pause";
-            if (!animationFrameId) {
-                gameLoop();
-            }
-        } else { // If currently playing, user wants to pause
+    if (!countdownActive) {
+        if (gameState === GAME_STATES.PLAYING) {
             gamePaused = true;
+            gameState = GAME_STATES.PAUSED;
             pauseButton.textContent = "Resume";
             if (animationFrameId) {
                 cancelAnimationFrame(animationFrameId);
                 animationFrameId = null;
             }
             stopBackgroundMusicRotation();
+            showPauseMenu(true);
+        } else if (gameState === GAME_STATES.PAUSED) {
+            gamePaused = false;
+            gameState = GAME_STATES.PLAYING;
+            pauseButton.textContent = "Pause";
+            startBackgroundMusicRotation();
+            showPauseMenu(false);
+            if (!countdownActive) {
+                startCountdown();
+            } else {
+                lastFrameTime = performance.now();
+                requestAnimationFrame(gameLoop);
+            }
         }
     }
 });
+
+// Pause menu button handlers
+if (resumeButton) {
+    resumeButton.addEventListener('click', () => {
+        gamePaused = false;
+        gameState = GAME_STATES.PLAYING;
+        pauseButton.textContent = "Pause";
+        startBackgroundMusicRotation();
+        showPauseMenu(false);
+        if (!countdownActive) {
+            startCountdown();
+        } else {
+            lastFrameTime = performance.now();
+            requestAnimationFrame(gameLoop);
+        }
+    });
+}
+if (restartButton) {
+    restartButton.addEventListener('click', () => {
+        showPauseMenu(false);
+        resetGame();
+        gamePaused = false;
+        gameState = GAME_STATES.PLAYING;
+        pauseButton.textContent = "Pause";
+        startBackgroundMusicRotation();
+        lastFrameTime = performance.now();
+        requestAnimationFrame(gameLoop);
+    });
+}
+if (exitButton) {
+    exitButton.addEventListener('click', () => {
+        showPauseMenu(false);
+        gamePaused = true;
+        gameState = GAME_STATES.WELCOME;
+        stopBackgroundMusicRotation();
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+        welcomeScreen.style.display = 'flex';
+        gameOverScreen.style.display = 'none';
+        drawEverything();
+    });
+}
+// Hide pause menu on game start and game over
+startGameButton.addEventListener('click', () => { showPauseMenu(false); });
+playAgainButton.addEventListener('click', () => { showPauseMenu(false); });
 
 difficultySelect.addEventListener('change', (event) => {
     difficultyLevel = event.target.value;
     resetGame();
     // If game was paused for difficulty change, restart countdown
-    if (gameState === GAME_STATES.PLAYING || gameState === GAME_STATES.PAUSED) {
+    if (gamePaused) { // Check if game was paused
         startCountdown();
     } else {
         drawEverything();
@@ -499,7 +558,8 @@ pauseButton.addEventListener('click', () => {
             if (!countdownActive) {
                  startCountdown();
             } else {
-                 gameLoop();
+                 lastFrameTime = performance.now(); // Reset lastFrameTime for resumed game
+                 requestAnimationFrame(gameLoop);
             }
         }
     }
@@ -546,9 +606,9 @@ document.addEventListener('keyup', function(e) {
 });
 
 // This function will move the paddle when up/down keys are pressed
-function keyboardPaddleControl() {
-    if (upArrowPressed) playerPaddleY -= paddleMoveSpeed;
-    if (downArrowPressed) playerPaddleY += paddleMoveSpeed;
+function keyboardPaddleControl(deltaTime = 1) {
+    if (upArrowPressed) playerPaddleY -= paddleMoveSpeed * deltaTime;
+    if (downArrowPressed) playerPaddleY += paddleMoveSpeed * deltaTime;
     // Do not let paddle go outside the screen:
     if (playerPaddleY < 0) playerPaddleY = 0;
     if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
