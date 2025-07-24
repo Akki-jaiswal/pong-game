@@ -26,12 +26,12 @@ if (!ctx) {
 // Game state variables
 let ballX;
 let ballY;
-let ballSpeedX = 0;
-let ballSpeedY = 0;
+let ballSpeedX = 4;
+let ballSpeedY = 4;
 const ballRadius = 10;
 
 const paddleWidth = 10;
-const paddleHeight = 100;
+const paddleHeight = 80;
 let playerPaddleY;
 let aiPaddleY;
 
@@ -117,7 +117,7 @@ function drawEverything() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Draw paddles with enhanced styling and rounded corners
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillStyle = 'rgba(255, 0, 0, 0.9)';
     ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
     ctx.shadowBlur = 10;
     
@@ -136,7 +136,7 @@ function drawEverything() {
     ctx.shadowBlur = 15;
     ctx.beginPath();
     ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2, false);
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+    ctx.fillStyle = 'rgba(255, 0, 0, 0.95)';
     ctx.fill();
     
     // Reset shadow for text
