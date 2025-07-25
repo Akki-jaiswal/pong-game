@@ -10,10 +10,9 @@ body {
     animation: gradientShift 15s ease infinite;
     color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    position: relative; /* Needed for absolute positioning of welcome/game over screens */
-    overflow-x: hidden; /* Prevent horizontal scroll on smaller screens */
+    position: relative;
+    overflow-x: hidden;
 }
-
 /* Floating particles background effect */
 body::before {
     content: '';
@@ -34,12 +33,10 @@ body::before {
     pointer-events: none;
     z-index: -1;
 }
-
 @keyframes sparkle {
     from { transform: translateY(0); }
     to { transform: translateY(-100px); }
 }
-
 @keyframes gradientShift {
     0% {
         background-position: 0% 50%;
@@ -51,7 +48,6 @@ body::before {
         background-position: 0% 50%;
     }
 }
-
 @keyframes pulseGlow {
     0%, 100% {
         box-shadow: 
@@ -64,7 +60,6 @@ body::before {
             inset 0 0 60px rgba(255, 255, 255, 0.15);
     }
 }
-
 canvas {
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
     border: 2px solid rgba(255, 255, 255, 0.3);
@@ -85,7 +80,6 @@ canvas {
     /* --- Fix Touch Scrolling (added previously) --- */
     touch-action: none; 
 }
-
 h1 {
     margin-top: 0; /* Adjust as needed */
     margin-bottom: 20px;
@@ -98,7 +92,6 @@ h1 {
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
-
 .game-controls {
     margin-bottom: 20px;
     display: flex;
@@ -118,7 +111,6 @@ h1 {
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }
-
 .game-controls button,
 .game-controls select,
 .welcome-screen button, 
@@ -137,7 +129,6 @@ h1 {
     box-shadow: 0 4px 15px 0 rgba(31, 38, 135, 0.3);
     font-weight: 500;
 }
-
 .game-controls button:hover,
 .game-controls select:hover,
 .welcome-screen button:hover,
@@ -147,22 +138,18 @@ h1 {
     box-shadow: 0 6px 20px 0 rgba(31, 38, 135, 0.4);
     border-color: rgba(255, 255, 255, 0.5);
 }
-
 .game-controls select {
     background: rgba(30, 30, 30, 0.8); 
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
 }
-
 .game-controls select option {
     background: rgba(30, 30, 30, 0.95);
     color: white;
 }
-
 .game-controls label {
     font-size: 1em;
 }
-
 .score {
     font-size: 1.2em;
     font-weight: bold;
@@ -183,7 +170,6 @@ h1 {
     box-shadow: 0 4px 15px 0 rgba(31, 38, 135, 0.3);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
-
 /* Styles for the Welcome Screen */
 .welcome-screen {
     position: absolute;
@@ -204,7 +190,6 @@ h1 {
     padding: 20px;
     box-sizing: border-box; /* Include padding in element's total width */
 }
-
 .welcome-screen h2 {
     font-size: 2.5em;
     margin-bottom: 30px;
@@ -216,7 +201,6 @@ h1 {
     background-clip: text;
     text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
 }
-
 .welcome-screen input {
     margin-bottom: 20px;
     background: rgba(255, 255, 255, 0.1);
@@ -233,18 +217,15 @@ h1 {
     font-size: 1em;
     transition: all 0.3s ease;
 }
-
 .welcome-screen input:focus {
     outline: none;
     border-color: rgba(255, 255, 255, 0.6);
     background: rgba(255, 255, 255, 0.15);
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
 }
-
 .welcome-screen input::placeholder {
     color: rgba(255, 255, 255, 0.7);
 }
-
 /* Styles for the Game Over Screen */
 .game-over-screen {
     position: absolute;
@@ -265,7 +246,6 @@ h1 {
     padding: 20px;
     box-sizing: border-box;
 }
-
 .game-over-screen h2 {
     font-size: 2.5em;
     margin-bottom: 30px;
@@ -278,13 +258,11 @@ h1 {
     text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
     filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
 }
-
 /* Add enhanced styling for better game element visibility */
 canvas:hover {
     transform: scale(1.02);
     transition: transform 0.3s ease;
 }
-
 /* Enhanced button styling with hover effects */
 .game-controls button:active,
 .welcome-screen button:active,
@@ -292,7 +270,6 @@ canvas:hover {
     transform: translateY(0);
     box-shadow: 0 2px 10px 0 rgba(31, 38, 135, 0.3);
 }
-
 /* Score highlighting */
 .score span {
     padding: 5px 10px;
@@ -300,12 +277,10 @@ canvas:hover {
     background: rgba(255, 255, 255, 0.05);
     transition: all 0.3s ease;
 }
-
 .score span:hover {
     background: rgba(255, 255, 255, 0.1);
     transform: scale(1.05);
 }
-
 /* --- Media Queries for Smaller Screens (Key for Responsiveness) --- */
 @media (max-width: 768px) {
     h1 {
@@ -335,7 +310,6 @@ canvas:hover {
         animation-duration: 30s;
     }
 }
-
 @media (max-width: 480px) {
     h1 {
         font-size: 1.8em;
@@ -360,7 +334,6 @@ canvas:hover {
         animation-duration: 40s;
     }
 }
-
 /* High-performance mode for reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
     * {
@@ -373,5 +346,80 @@ canvas:hover {
     }
     canvas {
         animation: none;
+    }
+}
+/* Add this to your CSS file */
+.how-to-play-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    display: none; /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.how-to-play-content {
+    background: rgba(26, 26, 46, 0.95);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    animation: bounceIn 0.5s ease-out;
+}
+
+.how-to-play-content h3 {
+    margin-top: 0;
+    color: #4ecdc4;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 10px;
+}
+
+.how-to-play-content ul {
+    text-align: left;
+    padding-left: 20px;
+    margin-bottom: 20px;
+}
+
+.how-to-play-content li {
+    margin-bottom: 10px;
+}
+
+.close-how-to-play {
+    background: rgba(255, 107, 107, 0.3);
+    border-color: rgba(255, 107, 107, 0.5);
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close-how-to-play:hover {
+    background: rgba(255, 107, 107, 0.5);
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
     }
 }
