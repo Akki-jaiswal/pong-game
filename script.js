@@ -256,11 +256,16 @@ function moveEverything() {
 
 }
 
-function gameLoop() {
-    moveEverything();
-    drawEverything();
-    animationFrameId = requestAnimationFrame(gameLoop);
+function gameLoop() {          
+    if (gamePaused || gameState === GAME_STATES.EXIT_CONFIRMATION)
+        return;
+        moveEverything();
+        drawEverything();
+        animationFrameId = requestAnimationFrame(gameLoop);
+    
 }
+
+
 
 function updateScoreDisplay() {
     playerScoreDisplay.textContent = `${playerName}: ${playerScore}`;
@@ -357,6 +362,60 @@ playAgainButton.addEventListener('click', () => {
     startCountdown();
 });
 
+// --- Event Listener for Exit Button ---
+// Exit button opens modal and freezes the game completely
+exitButton.addEventListener('click', () => {
+    if (gameState === GAME_STATES.PLAYING || gameState === GAME_STATES.PAUSED) {
+        
+        cancelAnimationFrame(animationFrameId);
+
+        confirmExitModal.style.display = 'flex';
+
+        // Fully pause game logic and loop
+        gamePaused = true;
+        countdownActive = false;
+        gameState = GAME_STATES.EXIT_CONFIRMATION;
+
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+
+        stopBackgroundMusicRotation();
+        pauseButton.textContent = "Resume"; // Keep consistent with UI
+    }
+});
+
+// YES: Exit and reset to welcome
+confirmExitYes.addEventListener('click', () => {
+    confirmExitModal.style.display = 'none';
+    gameState = GAME_STATES.WELCOME;
+    welcomeScreen.style.display = 'flex';
+    gameOverScreen.style.display = 'none';
+
+    playerScore = 0;
+    aiScore = 0;
+    updateScoreDisplay();
+
+    playerPaddleY = (canvas.height - paddleHeight) / 2;
+    aiPaddleY = (canvas.height - paddleHeight) / 2;
+
+    drawEverything();
+});
+
+// NO: Resume game from paused state
+confirmExitNo.addEventListener('click', () => {
+    confirmExitModal.style.display = 'none';
+    gamePaused = false;
+    gameState = GAME_STATES.PLAYING;
+
+    startBackgroundMusicRotation();
+    gameLoop();
+    pauseButton.textContent = "Pause";
+});
+
+
+
 // --- Event Listeners for In-Game Controls ---
 
 // Keep existing mousemove for desktop
@@ -443,7 +502,8 @@ const GAME_STATES = {
     WELCOME: 'WELCOME',
     PLAYING: 'PLAYING',
     PAUSED: 'PAUSED',
-    GAME_OVER: 'GAME_OVER'
+    GAME_OVER: 'GAME_OVER',
+    EXIT_CONFIRMATION: 'EXIT_CONFIRMATION' //added a new game state
 };
 let gameState = GAME_STATES.WELCOME; // Initialize game state
 
