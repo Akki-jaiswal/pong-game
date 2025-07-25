@@ -65,6 +65,11 @@ body::before {
     }
 }
 
+#gameOverMessage {
+    text-align: center;
+    white-space: normal; 
+}
+
 canvas {
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
     border: 2px solid rgba(255, 255, 255, 0.3);
