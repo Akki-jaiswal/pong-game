@@ -58,6 +58,8 @@ const pauseButton = document.getElementById('pauseButton');
 const difficultySelect = document.getElementById('difficulty');
 const playerScoreDisplay = document.getElementById('playerScore');
 const aiScoreDisplay = document.getElementById('aiScore');
+const exitButton = document.getElementById('exitButton');   // NEW
+
 
 // DOM elements for Game Over Screen
 const gameOverScreen = document.getElementById('gameOverScreen');
@@ -528,6 +530,36 @@ canvas.addEventListener('mousemove', (evt) => {
         if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
     }
 });
+
+// ── Event Listeners ──────────────────────────
+exitButton.addEventListener('click', handleExitGame);       // NEW
+// Function to handle exit game logic
+// ── Exit-game logic ──────────────────────────
+function handleExitGame() {
+  const reallyQuit = window.confirm('Are you sure you want to exit the game?');
+
+  if (!reallyQuit) return;          // User clicked “Cancel” → stay in game
+
+  // 1. Stop animation loop
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
+
+  // 2. Stop background audio (if any)
+  stopBackgroundMusicRotation();
+
+  // 3. Reset internal state and scoreboard
+  resetGame();
+
+  // 4. Show the welcome screen again
+  welcomeScreen.style.display = 'flex';
+  gameState = GAME_STATES.WELCOME;
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') handleExitGame();
+});
+
 
 // --- Keyboard Paddle Controls for Up/Down Arrow Keys (add at end of script.js) ---
 let upArrowPressed = false;
