@@ -245,6 +245,14 @@ h1 {
     color: rgba(255, 255, 255, 0.7);
 }
 
+#exitButton {
+    background: rgba(255, 99, 99, 0.25);  /* soft red tint */
+}
+#exitButton:hover {
+    background: rgba(255, 99, 99, 0.35);
+}
+
+
 /* Styles for the Game Over Screen */
 .game-over-screen {
     position: absolute;
