@@ -47,6 +47,7 @@ let countdownValue = 3;
 
 // Global variable to store the countdown interval ID
 let countdownIntervalId = null;
+const countdownMessages = ["Ready", "Set", "Go!"];
 
 let playerName = "Player";
 
@@ -160,7 +161,9 @@ function drawEverything() {
         ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
         ctx.shadowBlur = 10;
         // Display countdownValue, which will update from 3 down to 0 visually
-        ctx.fillText(countdownValue === 0 ? "GO!" : countdownValue, canvas.width / 2, canvas.height / 2 + 30);
+        ctx.fillText(countdownMessages[countdownValue] || "", canvas.width / 2, canvas.height / 2 + 30);
+
+        
         ctx.shadowBlur = 0;
     }
 
@@ -309,22 +312,25 @@ function startCountdown() {
     }
 
     countdownActive = true;
-    countdownValue = 3;
-    drawEverything(); // Draw initial 3
+    countdownValue = 0;
+
+    drawEverything(); // Draw initial ready
 
     playSound(countdownBeepSound);
 
     // Assign interval ID to the global variable
     countdownIntervalId = setInterval(() => {
-        countdownValue--;
-        drawEverything(); // Draw updated number
-        if (countdownValue < 0) {
-            clearInterval(countdownIntervalId);
-            countdownIntervalId = null;
-        }
-    }, 1000);
+    countdownValue++;
+    drawEverything();
+    if (countdownValue >= countdownMessages.length) {
+        clearInterval(countdownIntervalId);
+        countdownIntervalId = null;
+    }
+}, 1000);
 
-    // This setTimeout runs after 3 seconds (for 3, 2, 1, GO! sequence)
+
+
+    // This setTimeout runs after 3 seconds (for Ready, Set, GO! sequence)
     setTimeout(() => {
         countdownActive = false;
         gamePaused = false;
@@ -332,7 +338,8 @@ function startCountdown() {
         if (!animationFrameId) {
             gameLoop();
         }
-    }, 3000);
+    }, countdownMessages.length * 1000);
+
 }
 
 // --- Initial Game Start Handler (from Welcome Screen) ---
