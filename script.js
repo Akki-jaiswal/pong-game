@@ -358,13 +358,35 @@ playAgainButton.addEventListener('click', () => {
     startCountdown();
 });
 
-//ExitBtn 
-exitBtn.addEventListener('click',() => {
-    const confirmExit = confirm("ARE YOU SURE YOU WANT TO QUIT THE GAME!!");
-    if(confirmExit){
-        gameOverScreen.style.display = 'block';
-    }
-})
+//ExitBtn variables
+
+const ExitBtn = document.getElementById('exitBtn');
+const ConfirmBox = document.getElementById('confirmBox')
+const YesBtn = document.getElementById('yesBtn');
+const NoBtn = document.getElementById('noBtn');
+
+
+
+// showing confirmation box on clicking exit
+
+ExitBtn.addEventListener('click' , () => {
+   
+    ConfirmBox.style.display = 'block';
+});
+
+//on clicking yes btn
+
+YesBtn.addEventListener("click",() => {
+  window.location.href = 'index.html';
+
+});
+
+// on clicking NoBtn
+
+NoBtn.addEventListener("click" , () => {
+    ConfirmBox.style.display='none';
+    
+});
 
 // --- Event Listeners for In-Game Controls ---
 
