@@ -65,6 +65,45 @@ body::before {
     }
 }
 
+.game-mode-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.mode-option {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid transparent;
+  border-radius: 25px;
+  padding: 12px 24px;
+  cursor: pointer;
+  font-size: 16px;
+  color: white;
+  transition: all 0.3s ease;
+  text-align: center;
+  width: 220px;
+  user-select: none;
+}
+.mode-option input[type="radio"]:checked + * {
+  border-color: #00ffd5;
+  background-color: rgba(0, 255, 213, 0.1);
+  box-shadow: 0 0 10px #00ffd5;
+}
+
+.mode-option input[type="radio"] {
+  display: none;
+}
+.mode-option small {
+  font-size: 13px;
+  color: #aaa;
+  margin-left: 6px;
+}
+.play-button-wrapper {
+  margin-top: 30px;
+}
+
 canvas {
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
     border: 2px solid rgba(255, 255, 255, 0.3);

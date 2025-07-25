@@ -11,8 +11,31 @@
     <div id="welcomeScreen" class="welcome-screen">
         <h2>Welcome to Pong!</h2>
         <input type="text" id="playerNameInput" placeholder="Enter your name (optional)" maxlength="15">
-        <button id="startGameButton">Play Game</button>
-    </div>
+ 
+    <!-- Game Mode Selector -->
+    <div class="game-mode-options">
+        <label class="mode-option">
+            <input type="radio" name="mode" value="pve_easy" checked>
+            Player vs AI <small>(Easy)</small>
+        </label>
+        <label class="mode-option">
+            <input type="radio" name="mode" value="pve_hard">
+            Player vs AI <small>(Hard)</small>
+        </label>
+        <label class="mode-option">
+            <input type="radio" name="mode" value="pvp">
+            Player vs Player
+        </label>
+        <label class="mode-option">
+            <input type="radio" name="mode" value="aivai">
+            AI vs AI <small>(Spectator)</small>
+        </label>
+     </div>
+
+       <div class="play-button-wrapper">
+              <button id="startGameButton">Play Game</button>
+             </div>
+     </div>
 
     <div id="gameOverScreen" class="game-over-screen">
         <h2 id="gameOverMessage"></h2>
