@@ -19,6 +19,22 @@
         <button id="playAgainButton">Play Again</button>
     </div>
 
+    <div id="pauseMenu" class="pause-menu" style="display:none;">
+        <h2>Paused</h2>
+        <button id="resumeButton">Resume</button>
+        <button id="restartButton">Restart</button>
+        <button id="exitButton">Exit to Menu</button>
+    </div>
+
+    <div class="audio-controls" style="margin: 20px 0; text-align: center;">
+        <label style="margin-right: 20px;">
+            Music Volume
+            <input type="range" id="musicVolume" min="0" max="1" step="0.01" value="1">
+            <button id="musicMute">Mute</button>
+        </label>
+
+    </div>
+
     <h1>Pong Game</h1>
     <div class="game-controls">
         <button id="pauseButton">Pause</button>

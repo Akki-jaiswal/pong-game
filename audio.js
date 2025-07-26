@@ -59,3 +59,14 @@ export function stopBackgroundMusicRotation() {
         // No console.log
     }
 }
+
+// --- Volume and Mute Controls ---
+export function setMusicVolume(vol) {
+    backgroundMusicTracks.forEach(track => track.volume = vol);
+}
+export function muteMusic() {
+    backgroundMusicTracks.forEach(track => track.volume = 0);
+}
+export function unmuteMusic(vol) {
+    backgroundMusicTracks.forEach(track => track.volume = vol);
+}
