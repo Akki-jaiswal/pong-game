@@ -6,8 +6,93 @@
     <title>Advanced Pong Game</title>
     <link rel="icon" href="pong.jpeg" type="image/jpeg">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .difficulty-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .difficulty-content {
+            background-color: #222;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 80%;
+        }
+        
+        .difficulty-option {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #444;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .difficulty-option:hover {
+            background-color: #555;
+            transform: scale(1.05);
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        button {
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+        }
+    </style>
 </head>
 <body>
+    <div id="difficultyModal" class="difficulty-modal">
+        <div class="difficulty-content">
+            <h2>Select Difficulty Level</h2>
+            <button class="difficulty-option" data-difficulty="easy">Easy</button>
+            <button class="difficulty-option" data-difficulty="medium">Medium</button>
+            <button class="difficulty-option" data-difficulty="hard">Hard</button>
+        </div>
+    </div>
+
     <div id="welcomeScreen" class="welcome-screen">
         <h2>Welcome to Pong!</h2>
         <input type="text" id="playerNameInput" placeholder="Enter your name (optional)" maxlength="15">
@@ -21,15 +106,17 @@
 
     <h1>Pong Game</h1>
     <div class="game-controls">
-        <button id="pauseButton">Pause</button>
+        <button id="pauseButton" class="tooltip">Pause<span class="tooltiptext">Pause/Resume Game</span></button>
         <label for="difficulty">Difficulty:</label>
-        <select id="difficulty">
+        <select id="difficulty" class="tooltip">
             <option value="easy">Easy</option>
             <option value="medium" selected>Medium</option>
             <option value="hard">Hard</option>
+            <span class="tooltiptext">Change Game Difficulty</span>
         </select>
-        <div class="score">
+        <div class="score tooltip">
             <span id="playerScore">Player: 0</span> | <span id="aiScore">AI: 0</span>
+            <span class="tooltiptext">Current Score</span>
         </div>
     </div>
     <canvas id="gameCanvas" width="600" height="400"></canvas>
