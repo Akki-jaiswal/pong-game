@@ -12,6 +12,9 @@ import {
     backgroundMusicTracks
 } from './audio.js';
 
+// Import theme management system
+import { themeManager, themes } from './themes.js';
+
 const canvas = document.getElementById('gameCanvas');
 // No console.error for missing canvas - fail silently or assume existence after DOMContentLoaded
 if (!canvas) {
@@ -50,6 +53,15 @@ let countdownIntervalId = null;
 
 let playerName = "Player";
 
+// Game states management
+const GAME_STATES = {
+    WELCOME: 'WELCOME',
+    PLAYING: 'PLAYING',
+    PAUSED: 'PAUSED',
+    GAME_OVER: 'GAME_OVER'
+};
+let gameState = GAME_STATES.WELCOME; // Initialize game state
+
 // DOM elements
 const welcomeScreen = document.getElementById('welcomeScreen');
 const startGameButton = document.getElementById('startGameButton');
@@ -63,6 +75,11 @@ const aiScoreDisplay = document.getElementById('aiScore');
 const gameOverScreen = document.getElementById('gameOverScreen');
 const gameOverMessage = document.getElementById('gameOverMessage');
 const playAgainButton = document.getElementById('playAgainButton');
+
+// Theme selector elements
+const themeSelect = document.getElementById('themeSelect');
+const gameThemeSelect = document.getElementById('gameThemeSelect');
+const gameOverThemeSelect = document.getElementById('gameOverThemeSelect');
 
 // Difficulty level variable
 let difficultyLevel = 'medium';
@@ -116,9 +133,16 @@ function drawEverything() {
     // Clear the canvas - let CSS gradient show through
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Get current theme colors for dynamic game elements
+    const currentTheme = themeManager.getCurrentTheme();
+    const rootStyles = getComputedStyle(document.documentElement);
+    const paddleColor = rootStyles.getPropertyValue('--paddle-color').trim();
+    const ballColor = rootStyles.getPropertyValue('--ball-color').trim();
+    const centerlineColor = rootStyles.getPropertyValue('--centerline-color').trim();
+
     // Draw paddles with enhanced styling and rounded corners
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+    ctx.fillStyle = paddleColor;
+    ctx.shadowColor = paddleColor;
     ctx.shadowBlur = 10;
     
     // Draw player paddle with rounded corners
@@ -132,11 +156,11 @@ function drawEverything() {
     ctx.fill();
 
     // Draw ball with glow effect
-    ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+    ctx.shadowColor = ballColor;
     ctx.shadowBlur = 15;
     ctx.beginPath();
     ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2, false);
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+    ctx.fillStyle = ballColor;
     ctx.fill();
     
     // Reset shadow for text
@@ -144,7 +168,7 @@ function drawEverything() {
 
     // Draw center line with modern styling
     ctx.setLineDash([5, 10]);
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.strokeStyle = centerlineColor;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(canvas.width / 2, 0);
@@ -154,10 +178,10 @@ function drawEverything() {
 
     // Draw countdown number ONLY if active
     if (countdownActive) {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.fillStyle = paddleColor;
         ctx.font = '80px Segoe UI';
         ctx.textAlign = 'center';
-        ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+        ctx.shadowColor = paddleColor;
         ctx.shadowBlur = 10;
         // Display countdownValue, which will update from 3 down to 0 visually
         ctx.fillText(countdownValue === 0 ? "GO!" : countdownValue, canvas.width / 2, canvas.height / 2 + 30);
@@ -436,27 +460,6 @@ difficultySelect.addEventListener('change', (event) => {
     }
 });
 
-// --- Initial Setup (Show Welcome Screen) ---
-// Define GAME_STATES enum outside, or ensure it's accessible.
-// For now, let's just make sure gameState is available.
-const GAME_STATES = {
-    WELCOME: 'WELCOME',
-    PLAYING: 'PLAYING',
-    PAUSED: 'PAUSED',
-    GAME_OVER: 'GAME_OVER'
-};
-let gameState = GAME_STATES.WELCOME; // Initialize game state
-
-document.addEventListener('DOMContentLoaded', () => {
-    welcomeScreen.style.display = 'flex'; // Show the welcome screen
-    gameOverScreen.style.display = 'none'; // Ensure game over screen is hidden initially
-
-    // Update playerPaddleY and aiPaddleY only after canvas dimensions are known
-    playerPaddleY = (canvas.height - paddleHeight) / 2;
-    aiPaddleY = (canvas.height - paddleHeight) / 2;
-    drawEverything(); // Draw initial state on canvas
-});
-
 // Minor adjustment in startGameButton to set gameState
 startGameButton.addEventListener('click', () => {
     playerName = playerNameInput.value.trim();
@@ -529,6 +532,78 @@ canvas.addEventListener('mousemove', (evt) => {
     }
 });
 
+
+// Theme management event listeners
+function initializeThemeSelectors() {
+    // Sync all theme selectors with current theme
+    const currentTheme = themeManager.getCurrentTheme().key;
+    themeSelect.value = currentTheme;
+    gameThemeSelect.value = currentTheme;
+    gameOverThemeSelect.value = currentTheme;
+    
+    // Welcome screen theme selector
+    themeSelect.addEventListener('change', (event) => {
+        const selectedTheme = event.target.value;
+        themeManager.applyTheme(selectedTheme);
+        // Sync the other selectors
+        gameThemeSelect.value = selectedTheme;
+        gameOverThemeSelect.value = selectedTheme;
+        // Redraw canvas to reflect new theme
+        if (gameState === GAME_STATES.WELCOME) {
+            drawEverything();
+        }
+    });
+    
+    // In-game theme selector
+    gameThemeSelect.addEventListener('change', (event) => {
+        const selectedTheme = event.target.value;
+        themeManager.applyTheme(selectedTheme);
+        // Sync the other selectors
+        themeSelect.value = selectedTheme;
+        gameOverThemeSelect.value = selectedTheme;
+        // Redraw canvas to reflect new theme
+        drawEverything();
+    });
+    
+    // Game over screen theme selector
+    gameOverThemeSelect.addEventListener('change', (event) => {
+        const selectedTheme = event.target.value;
+        themeManager.applyTheme(selectedTheme);
+        // Sync the other selectors
+        themeSelect.value = selectedTheme;
+        gameThemeSelect.value = selectedTheme;
+        // Redraw canvas to reflect new theme
+        drawEverything();
+    });
+}
+
+// Theme change event listener for dynamic updates
+document.addEventListener('themeChanged', (event) => {
+    const { themeKey, themeName } = event.detail;
+    console.log(`Theme changed to: ${themeName} (${themeKey})`);
+    
+    // Force canvas redraw to apply new theme colors
+    drawEverything();
+    
+    // Update any theme-specific game logic if needed
+    // For example, you could adjust particle effects based on theme
+});
+
+// Initialize theme system when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    welcomeScreen.style.display = 'flex'; // Show the welcome screen
+    gameOverScreen.style.display = 'none'; // Ensure game over screen is hidden initially
+
+    // Update playerPaddleY and aiPaddleY only after canvas dimensions are known
+    playerPaddleY = (canvas.height - paddleHeight) / 2;
+    aiPaddleY = (canvas.height - paddleHeight) / 2;
+    
+    // Initialize theme selectors
+    initializeThemeSelectors();
+    
+    drawEverything(); // Draw initial state on canvas
+});
+
 // --- Keyboard Paddle Controls for Up/Down Arrow Keys (add at end of script.js) ---
 let upArrowPressed = false;
 let downArrowPressed = false;
@@ -553,3 +628,4 @@ function keyboardPaddleControl() {
     if (playerPaddleY < 0) playerPaddleY = 0;
     if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
 }
+

@@ -11,11 +11,37 @@
     <div id="welcomeScreen" class="welcome-screen">
         <h2>Welcome to Pong!</h2>
         <input type="text" id="playerNameInput" placeholder="Enter your name (optional)" maxlength="15">
+        
+        <!-- Theme Selector -->
+        <div class="theme-selector">
+            <label for="themeSelect">Choose Theme:</label>
+            <select id="themeSelect" class="theme-dropdown">
+                <option value="default">Default Neon</option>
+                <option value="neonRetro">Neon Retro</option>
+                <option value="darkMode">Dark Mode</option>
+                <option value="minimalist">Minimalist</option>
+                <option value="oceanBlue">Ocean Blue</option>
+            </select>
+        </div>
+        
         <button id="startGameButton">Play Game</button>
     </div>
 
     <div id="gameOverScreen" class="game-over-screen">
         <h2 id="gameOverMessage"></h2>
+        
+        <!-- Theme Selector in Game Over Screen -->
+        <div class="theme-selector">
+            <label for="gameOverThemeSelect">Change Theme:</label>
+            <select id="gameOverThemeSelect" class="theme-dropdown">
+                <option value="default">Default Neon</option>
+                <option value="neonRetro">Neon Retro</option>
+                <option value="darkMode">Dark Mode</option>
+                <option value="minimalist">Minimalist</option>
+                <option value="oceanBlue">Ocean Blue</option>
+            </select>
+        </div>
+        
         <button id="playAgainButton">Play Again</button>
     </div>
 
@@ -28,6 +54,17 @@
             <option value="medium" selected>Medium</option>
             <option value="hard">Hard</option>
         </select>
+        
+        <!-- In-game theme selector -->
+        <label for="gameThemeSelect">Theme:</label>
+        <select id="gameThemeSelect" class="theme-dropdown">
+            <option value="default">Default Neon</option>
+            <option value="neonRetro">Neon Retro</option>
+            <option value="darkMode">Dark Mode</option>
+            <option value="minimalist">Minimalist</option>
+            <option value="oceanBlue">Ocean Blue</option>
+        </select>
+        
         <div class="score">
             <span id="playerScore">Player: 0</span> | <span id="aiScore">AI: 0</span>
         </div>
