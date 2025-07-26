@@ -5,16 +5,77 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    background-color: #222;
+    background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #533483);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
     color: white;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     position: relative; /* Needed for absolute positioning of welcome/game over screens */
     overflow-x: hidden; /* Prevent horizontal scroll on smaller screens */
 }
 
+/* Floating particles background effect */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.1), transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.1), transparent),
+        radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.1), transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.1), transparent),
+        radial-gradient(2px 2px at 160px 30px, rgba(255,255,255,0.1), transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: sparkle 20s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes sparkle {
+    from { transform: translateY(0); }
+    to { transform: translateY(-100px); }
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 
+            0 8px 32px 0 rgba(31, 38, 135, 0.37),
+            inset 0 0 50px rgba(255, 255, 255, 0.1);
+    }
+    50% {
+        box-shadow: 
+            0 12px 40px 0 rgba(31, 38, 135, 0.5),
+            inset 0 0 60px rgba(255, 255, 255, 0.15);
+    }
+}
+
 canvas {
-    background-color: #000;
-    border: 2px solid white;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    box-shadow: 
+        0 8px 32px 0 rgba(31, 38, 135, 0.37),
+        inset 0 0 50px rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: pulseGlow 4s ease-in-out infinite;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     /* --- Responsive CSS for Canvas --- */
     display: block; /* Remove extra space below inline elements */
     max-width: 95%; /* Make it take up almost full width on small screens */
@@ -29,6 +90,13 @@ h1 {
     margin-top: 0; /* Adjust as needed */
     margin-bottom: 20px;
     font-size: 2.5em; /* Default font size for desktop */
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .game-controls {
@@ -42,7 +110,13 @@ h1 {
     box-sizing: border-box; /* Include padding/border in element's total width */
     justify-content: center; /* Center controls */
     flex-wrap: wrap; /* Allow items to wrap to next line on small screens */
-    padding: 0 10px; /* Add some padding on sides */
+    padding: 15px 20px; /* Add some padding on sides */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }
 
 .game-controls button,
@@ -50,25 +124,39 @@ h1 {
 .welcome-screen button, 
 .welcome-screen input,
 .game-over-screen button { 
-    padding: 8px 15px;
+    padding: 12px 20px;
     font-size: 1em;
     cursor: pointer;
-    background-color: #007bff;
+    background: rgba(255, 255, 255, 0.15);
     color: white;
-    border: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px 0 rgba(31, 38, 135, 0.3);
+    font-weight: 500;
 }
 
 .game-controls button:hover,
 .game-controls select:hover,
 .welcome-screen button:hover,
 .game-over-screen button:hover { 
-    background-color: #0056b3;
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px 0 rgba(31, 38, 135, 0.4);
+    border-color: rgba(255, 255, 255, 0.5);
 }
 
 .game-controls select {
-    background-color: #333; 
+    background: rgba(30, 30, 30, 0.8); 
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+}
+
+.game-controls select option {
+    background: rgba(30, 30, 30, 0.95);
+    color: white;
 }
 
 .game-controls label {
@@ -82,11 +170,18 @@ h1 {
     display: flex; 
     gap: 15px; /* Space between player score and AI score */
     align-items: center;
-    padding: 5px 10px; 
+    padding: 10px 15px; 
     /* --- Responsive CSS for Score Display --- */
     flex-wrap: wrap; /* Allow scores to wrap if space is tight */
     justify-content: center; /* Center scores */
     margin-left: 0; /* Remove fixed left margin for better centering */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px 0 rgba(31, 38, 135, 0.3);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Styles for the Welcome Screen */
@@ -96,7 +191,9 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.9); 
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     display: flex; /* Displayed by default on load */
     flex-direction: column;
     justify-content: center;
@@ -110,22 +207,42 @@ h1 {
 
 .welcome-screen h2 {
     font-size: 2.5em;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+    background-size: 200% 200%;
+    animation: gradientShift 6s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
 }
 
 .welcome-screen input {
-    margin-bottom: 15px;
-    background-color: #555;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.1);
     color: white;
-    border: 1px solid #777;
+    border: 1px solid rgba(255, 255, 255, 0.3);
     text-align: center;
     max-width: 250px;
     width: 100%; /* Take full width within max-width */
-    padding: 10px; /* Add some padding */
+    padding: 15px; /* Add some padding */
     box-sizing: border-box; /* Include padding in width */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
+    font-size: 1em;
+    transition: all 0.3s ease;
 }
+
+.welcome-screen input:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
 .welcome-screen input::placeholder {
-    color: #ccc;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 /* Styles for the Game Over Screen */
@@ -135,7 +252,9 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.9); 
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     display: none; /* Hidden by default, shown by JS */
     flex-direction: column;
     justify-content: center;
@@ -149,8 +268,42 @@ h1 {
 
 .game-over-screen h2 {
     font-size: 2.5em;
-    margin-bottom: 20px;
-    color: gold; 
+    margin-bottom: 30px;
+    background: linear-gradient(45deg, #ffd700, #ffed4e, #ff6b6b);
+    background-size: 200% 200%;
+    animation: gradientShift 4s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+}
+
+/* Add enhanced styling for better game element visibility */
+canvas:hover {
+    transform: scale(1.02);
+    transition: transform 0.3s ease;
+}
+
+/* Enhanced button styling with hover effects */
+.game-controls button:active,
+.welcome-screen button:active,
+.game-over-screen button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px 0 rgba(31, 38, 135, 0.3);
+}
+
+/* Score highlighting */
+.score span {
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.score span:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
 }
 
 /* --- Media Queries for Smaller Screens (Key for Responsiveness) --- */
@@ -161,6 +314,7 @@ h1 {
     .game-controls {
         flex-direction: column; /* Stack controls vertically */
         gap: 10px;
+        padding: 10px 15px;
     }
     .game-controls label, .game-controls select, .game-controls button {
         width: 80%; /* Make them take up more width */
@@ -170,7 +324,15 @@ h1 {
         flex-direction: column; /* Stack scores vertically */
         gap: 5px;
         margin-left: 0; /* Ensure no extra margin */
-        padding: 5px;
+        padding: 8px 12px;
+    }
+    canvas {
+        border-radius: 10px;
+        margin: 15px auto;
+    }
+    /* Reduce animation intensity on mobile for better performance */
+    body::before {
+        animation-duration: 30s;
     }
 }
 
@@ -187,5 +349,29 @@ h1 {
     }
     .score {
         font-size: 1.1em;
+    }
+    canvas {
+        border-radius: 8px;
+        max-width: 98%;
+    }
+    /* Further reduce particle effects on very small screens */
+    body::before {
+        opacity: 0.5;
+        animation-duration: 40s;
+    }
+}
+
+/* High-performance mode for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    body::before {
+        animation: none;
+    }
+    canvas {
+        animation: none;
     }
 }
