@@ -9,7 +9,10 @@ import {
     gameOverSound,
     playerWinSound,
     countdownBeepSound,
-    backgroundMusicTracks
+    backgroundMusicTracks,
+    setMusicVolume,
+    muteMusic,
+    unmuteMusic
 } from './audio.js';
 
 const canvas = document.getElementById('gameCanvas');
@@ -47,7 +50,7 @@ let countdownValue = 3;
 
 // Global variable to store the countdown interval ID
 let countdownIntervalId = null;
-
+let lastFrameTime = performance.now();
 let playerName = "Player";
 
 // DOM elements
@@ -414,31 +417,7 @@ function handleTouchMove(event) {
     }
 }
 
-// Update pauseButton event listener to show pause menu
-pauseButton.addEventListener('click', () => {
-    if (!countdownActive && gameState === GAME_STATES.PLAYING) {
-        gamePaused = true;
-        gameState = GAME_STATES.PAUSED;
-        pauseButton.textContent = "Resume";
-        if (animationFrameId) {
-            cancelAnimationFrame(animationFrameId);
-            animationFrameId = null;
-        }
-        stopBackgroundMusicRotation();
-        showPauseMenu(true);
-    } else if (gameState === GAME_STATES.PAUSED) {
-        // Resume from pause
-        gamePaused = false;
-        gameState = GAME_STATES.PLAYING;
-        pauseButton.textContent = "Pause";
-        startBackgroundMusicRotation();
-        showPauseMenu(false);
-        if (!countdownActive) {
-            lastFrameTime = performance.now();
-            requestAnimationFrame(gameLoop);
-        }
-    }
-});
+
 
 // Resume button
 resumeButton.addEventListener('click', () => {
@@ -461,6 +440,7 @@ restartButton.addEventListener('click', () => {
     gameState = GAME_STATES.PLAYING;
     pauseButton.textContent = "Pause";
     startBackgroundMusicRotation();
+    ensureMusicMuteState(); // Ensure music mute state is applied
     lastFrameTime = performance.now();
     requestAnimationFrame(gameLoop);
 });
@@ -519,7 +499,13 @@ document.addEventListener('DOMContentLoaded', () => {
     aiPaddleY = (canvas.height - paddleHeight) / 2;
     drawEverything(); // Draw initial state on canvas
 });
-
+function ensureMusicMuteState() {
+    if (musicMuted) {
+        muteMusic();
+        musicMuteBtn.textContent = 'Unmute';
+        musicVolumeSlider.value = 0;
+    }
+}
 // Minor adjustment in startGameButton to set gameState
 startGameButton.addEventListener('click', () => {
     playerName = playerNameInput.value.trim();
@@ -529,8 +515,10 @@ startGameButton.addEventListener('click', () => {
     welcomeScreen.style.display = 'none';
     gameState = GAME_STATES.PLAYING; // Set game state to playing
     startBackgroundMusicRotation();
+    ensureMusicMuteState(); // Ensure music mute state is applied
     resetGame();
     startCountdown();
+    showPauseMenu(false); // Hide pause menu on game start
 });
 
 // Minor adjustment in playAgainButton to set gameState
@@ -539,6 +527,7 @@ playAgainButton.addEventListener('click', () => {
     gameState = GAME_STATES.PLAYING; // Set game state to playing
     resetGame();
     startBackgroundMusicRotation();
+    ensureMusicMuteState(); // Ensure music mute state is applied
     startCountdown();
 });
 
@@ -548,17 +537,21 @@ pauseButton.addEventListener('click', () => {
         if (gameState === GAME_STATES.PLAYING) {
             gamePaused = true;
             gameState = GAME_STATES.PAUSED; // Set game state to paused
+           // console.log('Paused! gameState:', gameState);
             pauseButton.textContent = "Resume";
             if (animationFrameId) {
                 cancelAnimationFrame(animationFrameId);
                 animationFrameId = null;
             }
             stopBackgroundMusicRotation();
+            showPauseMenu(true); // Show pause menu
         } else if (gameState === GAME_STATES.PAUSED) {
             gamePaused = false;
             gameState = GAME_STATES.PLAYING; // Set game state to playing
+            //console.log('Resumed! gameState:', gameState);
             pauseButton.textContent = "Pause";
             startBackgroundMusicRotation();
+            showPauseMenu(false);
             if (!countdownActive) {
                  startCountdown();
             } else {
@@ -616,3 +609,56 @@ function keyboardPaddleControl() {
     if (playerPaddleY < 0) playerPaddleY = 0;
     if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
 }
+
+// Audio controls wiring
+const musicVolumeSlider = document.getElementById('musicVolume');
+const musicMuteBtn = document.getElementById('musicMute');
+let musicMuted = false;
+let lastMusicVolume = 1;
+musicVolumeSlider.addEventListener('input', (e) => {
+    const vol = parseFloat(e.target.value);
+    setMusicVolume(vol);
+    if (vol === 0) {
+        musicMuted = true;
+        musicMuteBtn.textContent = 'Unmute';
+    } else {
+        musicMuted = false;
+        musicMuteBtn.textContent = 'Mute';
+        lastMusicVolume = vol;
+    }
+});
+musicMuteBtn.addEventListener('click', () => {
+    if (!musicMuted) {
+        muteMusic();
+        musicMuted = true;
+        musicMuteBtn.textContent = 'Unmute';
+    } else {
+        unmuteMusic(lastMusicVolume);
+        musicMuted = false;
+        musicMuteBtn.textContent = 'Mute';
+        musicVolumeSlider.value = lastMusicVolume;
+    }
+});
+
+// Pause menu keyboard shortcuts
+// Esc: pause/resume, R: restart, M: exit to menu (when paused)
+document.addEventListener('keydown', (e) => {
+    console.log(`Key pressed: ${e.key},gameState: ${gameState}`); // Debugging line to see key presses
+    if (e.key === 'Escape') {
+        if (gameState === GAME_STATES.PLAYING) {
+            // Pause
+            pauseButton.click();
+        } else if (gameState === GAME_STATES.PAUSED) {
+            // Resume
+            resumeButton.click();
+        }
+    }
+    if (gameState === GAME_STATES.PAUSED) {
+        if (e.key.toLowerCase() === 'r') {
+            restartButton.click();
+        }
+        if (e.key.toLowerCase() === 'm') {
+            exitButton.click();
+        }
+    }
+});

@@ -345,6 +345,41 @@ canvas:hover {
     transform: scale(1.05);
 }
 
+.audio-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 20px;
+}
+.audio-controls label {
+    color: #fff;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.audio-controls input[type="range"] {
+    width: 120px;
+    accent-color: #4fc3f7;
+    margin: 0 8px;
+}
+.audio-controls button {
+    padding: 6px 16px;
+    font-size: 1em;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 8px;
+}
+.audio-controls button:hover {
+    background: rgba(255,255,255,0.22);
+    border-color: rgba(255,255,255,0.4);
+}
+
 /* --- Media Queries for Smaller Screens (Key for Responsiveness) --- */
 @media (max-width: 768px) {
     h1 {
