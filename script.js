@@ -12,6 +12,9 @@ import {
     backgroundMusicTracks
 } from './audio.js';
 
+// Import theme manager
+import themeManager from './theme.js';
+
 const canvas = document.getElementById('gameCanvas');
 // No console.error for missing canvas - fail silently or assume existence after DOMContentLoaded
 if (!canvas) {
@@ -116,9 +119,20 @@ function drawEverything() {
     // Clear the canvas - let CSS gradient show through
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Get current theme colors for dynamic rendering
+    const currentTheme = themeManager.getCurrentTheme();
+    const computedStyles = getComputedStyle(document.documentElement);
+    
+    // Dynamic paddle color based on theme
+    const paddleColor = computedStyles.getPropertyValue('--paddle-color').trim() || 'rgba(255, 255, 255, 0.9)';
+    const paddleGlow = computedStyles.getPropertyValue('--paddle-glow').trim() || 'rgba(255, 255, 255, 0.5)';
+    const ballColor = computedStyles.getPropertyValue('--ball-color').trim() || 'rgba(255, 255, 255, 0.95)';
+    const ballGlow = computedStyles.getPropertyValue('--ball-glow').trim() || 'rgba(255, 255, 255, 0.8)';
+    const centerLineColor = computedStyles.getPropertyValue('--center-line-color').trim() || 'rgba(255, 255, 255, 0.3)';
+
     // Draw paddles with enhanced styling and rounded corners
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+    ctx.fillStyle = paddleColor;
+    ctx.shadowColor = paddleGlow;
     ctx.shadowBlur = 10;
     
     // Draw player paddle with rounded corners
@@ -132,11 +146,11 @@ function drawEverything() {
     ctx.fill();
 
     // Draw ball with glow effect
-    ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+    ctx.shadowColor = ballGlow;
     ctx.shadowBlur = 15;
     ctx.beginPath();
     ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2, false);
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+    ctx.fillStyle = ballColor;
     ctx.fill();
     
     // Reset shadow for text
@@ -144,7 +158,7 @@ function drawEverything() {
 
     // Draw center line with modern styling
     ctx.setLineDash([5, 10]);
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.strokeStyle = centerLineColor;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(canvas.width / 2, 0);
@@ -154,10 +168,10 @@ function drawEverything() {
 
     // Draw countdown number ONLY if active
     if (countdownActive) {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.fillStyle = ballColor;
         ctx.font = '80px Segoe UI';
         ctx.textAlign = 'center';
-        ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+        ctx.shadowColor = ballGlow;
         ctx.shadowBlur = 10;
         // Display countdownValue, which will update from 3 down to 0 visually
         ctx.fillText(countdownValue === 0 ? "GO!" : countdownValue, canvas.width / 2, canvas.height / 2 + 30);
@@ -446,6 +460,12 @@ const GAME_STATES = {
     GAME_OVER: 'GAME_OVER'
 };
 let gameState = GAME_STATES.WELCOME; // Initialize game state
+
+// Listen for theme changes to update canvas rendering
+document.addEventListener('themeChanged', (event) => {
+    // Redraw canvas with new theme colors
+    drawEverything();
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     welcomeScreen.style.display = 'flex'; // Show the welcome screen

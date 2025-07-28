@@ -6,6 +6,7 @@
     <title>Advanced Pong Game</title>
     <link rel="icon" href="pong.jpeg" type="image/jpeg">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="themes.css">
 </head>
 <body>
     <div id="welcomeScreen" class="welcome-screen">
@@ -27,6 +28,13 @@
             <option value="easy">Easy</option>
             <option value="medium" selected>Medium</option>
             <option value="hard">Hard</option>
+        </select>
+        <label for="themeSelector">Theme:</label>
+        <select id="themeSelector">
+            <option value="default">Default</option>
+            <option value="neon-retro">Neon Retro</option>
+            <option value="dark-mode">Dark Mode</option>
+            <option value="ocean-blue">Ocean Blue</option>
         </select>
         <div class="score">
             <span id="playerScore">Player: 0</span> | <span id="aiScore">AI: 0</span>
