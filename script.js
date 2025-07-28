@@ -331,19 +331,17 @@ function resetGame() {
 }
 
 // --- Fullscreen Functionality ---
-function toggleFullscreen() {
+fullscreenButton.addEventListener("click", () => {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen().catch((err) => {
-      console.log(`Error attempting to enable fullscreen: ${err.message}`);
+      console.error(`Error enabling fullscreen: ${err.message}`);
     });
-    if (fullscreenButton) fullscreenButton.textContent = "⛷";
+    fullscreenButton.textContent = "⛷";
   } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    }
-    if (fullscreenButton) fullscreenButton.textContent = "⛶";
+    document.exitFullscreen();
+    fullscreenButton.textContent = "⛶";
   }
-}
+});
 
 // --- Countdown Function ---
 function startCountdown() {
