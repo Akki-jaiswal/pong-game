@@ -13,6 +13,11 @@ export const backgroundMusicTracks = [
     new Audio('sounds/bg_music_3.mp3')
 ];
 
+//Setting all tracks to muted by default
+backgroundMusicTracks.forEach(track => {
+    track.muted = true; // <--- ADD THIS LINE
+});
+
 let currentTrackIndex = 0;
 let currentBackgroundMusic = null;
 
@@ -42,7 +47,7 @@ export function startBackgroundMusicRotation() {
 
     currentBackgroundMusic.play()
         .then(() => {
-            // No console.log
+            // Music is playing muted
         })
         .catch(e => {
             // Silently fail or handle errors without console.warn

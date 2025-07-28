@@ -58,6 +58,13 @@ const pauseButton = document.getElementById('pauseButton');
 const difficultySelect = document.getElementById('difficulty');
 const playerScoreDisplay = document.getElementById('playerScore');
 const aiScoreDisplay = document.getElementById('aiScore');
+const ball= document.getElementById("cursor-ball"); //for the ball animation
+const input= document.getElementById("playerNameInput"); //for the name input
+const gameExit= document.querySelector(".game-exit");
+const exitButton= document.getElementById("exitButton"); //the exit button
+const gameControls= document.querySelector(".game-controls");
+const musicButton= document.getElementById('music-button');
+
 
 // DOM elements for Game Over Screen
 const gameOverScreen = document.getElementById('gameOverScreen');
@@ -257,10 +264,15 @@ function moveEverything() {
 }
 
 function gameLoop() {
+    if (gamePaused || gameState !== GAME_STATES.PLAYING){
+        animationFrameId = null; // Ensure no lingering ID if paused
+        return;
+    }
     moveEverything();
     drawEverything();
     animationFrameId = requestAnimationFrame(gameLoop);
 }
+
 
 function updateScoreDisplay() {
     playerScoreDisplay.textContent = `${playerName}: ${playerScore}`;
@@ -290,74 +302,178 @@ function resetGame() {
 
     resetBall();
 
-    gamePaused = true;
-    pauseButton.textContent = "Resume";
+    drawEverything();
+}
 
+//--Function to manage everything when returning to Welcome Screen
+function returnToWelcomeScreen() {
+    //Stopping any ongoing game loop or countdown
     if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
         animationFrameId = null;
     }
-    drawEverything();
+    if(countdownIntervalId) {
+        clearInterval(countdownIntervalId);
+        countdownIntervalId = null;
+    }
+
+    //Ensuring all relevant state variables are reset for the welcome screen
+    gamePaused = true;       // The game should be considered paused/inactive
+    countdownActive = false; // No countdown active
+    gameState = GAME_STATES.WELCOME; // Set the game state
+
+    //Stopping all background music and reset its position
+    stopBackgroundMusicRotation();
+
+    //Stopping countdown beep sound
+    if (countdownBeepSound) { // Check if the sound object exists
+        countdownBeepSound.pause(); // Pause the sound
+        countdownBeepSound.currentTime = 0; // Reset its playback position to the start
+    }
+
+    //Stopping any additional background track playing
+    backgroundMusicTracks.forEach(track => {
+        track.pause();
+        track.currentTime = 0;
+    });
+
+    //Resetting game scores and positions
+    resetGame(); // This resets scores, paddle positions, and calls drawEverything()
+
+    //Managing UI visibility for the welcome screen
+    welcomeScreen.style.display = 'flex';
+    gameOverScreen.style.display = 'none'; // Ensure game over is hidden
+    
+    //Hiding game elements that should not be visible
+    canvas.style.display = 'block';
+    gameControls.style.display = 'block'; // This hides the game controls tab
+    gameExit.style.display = 'none';     // This hides the exit button itself
+
+    //Resetting player name input field
+    playerNameInput.value = ""; 
+
+    //Ensuring cursor ball is visible and 'gameStarted' flag is reset
+    gameStarted = false; // Allow the cursor ball to be active again
+    if (ball) {
+        ball.style.display = "block";
+    }
 }
+
 
 // --- Countdown Function ---
 function startCountdown() {
+
     // Clear any existing countdown interval to prevent overlaps
     if (countdownIntervalId) {
         clearInterval(countdownIntervalId);
         countdownIntervalId = null;
     }
 
+    //Stopping animation during countdown
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+
     countdownActive = true;
     countdownValue = 3;
-    drawEverything(); // Draw initial 3
+    gamePaused= true; //prevent movement during countdown
 
     playSound(countdownBeepSound);
+    drawEverything(); // Draw initial 3
 
+    
     // Assign interval ID to the global variable
     countdownIntervalId = setInterval(() => {
         countdownValue--;
-        drawEverything(); // Draw updated number
+        drawEverything(); //Redrawing the canvas with the correct countdown
+
         if (countdownValue < 0) {
             clearInterval(countdownIntervalId);
             countdownIntervalId = null;
         }
     }, 1000);
-
     // This setTimeout runs after 3 seconds (for 3, 2, 1, GO! sequence)
-    setTimeout(() => {
-        countdownActive = false;
-        gamePaused = false;
-        pauseButton.textContent = "Pause";
-        if (!animationFrameId) {
-            gameLoop();
-        }
-    }, 3000);
+        setTimeout(() => {
+           if(countdownIntervalId) {
+            clearInterval(countdownIntervalId);
+            countdownIntervalId = null;
+           } 
+           countdownActive = false;
+           gamePaused = false;
+           pauseButton.textContent = "Pause";
+
+            if (!animationFrameId) {
+                gameLoop();
+            }
+        }, 3000);
 }
 
 // --- Initial Game Start Handler (from Welcome Screen) ---
-startGameButton.addEventListener('click', () => {
-    playerName = playerNameInput.value.trim();
-    if (playerName === "") {
-        playerName = "Player";
-    }
-    welcomeScreen.style.display = 'none';
 
-    startBackgroundMusicRotation();
+startGameButton.addEventListener("click", () => {
+  //Resetting and start the game
+  playerName = playerNameInput.value.trim() || "Player";
 
-    resetGame();
-    startCountdown();
+  //For the cursor ball visibility
+  gameStarted = true;
+  ball.style.display = "none";
+
+  //Hiding the welcome screen
+  welcomeScreen.style.display = "none";
+
+  //Showing game elements
+  canvas.style.display = "block";
+  gameControls.style.display = "flex";
+  gameExit.style.display = "block";
+
+  resetGame();
+  startBackgroundMusicRotation();
+  gamePaused = true;
+  gameState = GAME_STATES.PLAYING;
+  startCountdown();
 });
+
 
 // --- Event Listener for Play Again Button ---
 playAgainButton.addEventListener('click', () => {
     gameOverScreen.style.display = 'none';
+
+    canvas.style.display = 'block';
+    gameControls.style.display = 'flex';
+    gameExit.style.display = "block";
+
     resetGame();
     startBackgroundMusicRotation();
+
+    gamePaused = true;
+    gameState = GAME_STATES.PLAYING;
     startCountdown();
 });
 
+
 // --- Event Listeners for In-Game Controls ---
+
+//Music button listener
+if (musicButton) {
+    musicButton.addEventListener('click', () => {
+        if (backgroundMusicTracks.some(track => !track.paused)) { // Checking if any track is playing
+            // If music is currently playing, toggle its mute state
+            const isMuted = !currentBackgroundMusic.muted;
+            backgroundMusicTracks.forEach(track => {
+                track.muted = isMuted;
+            });
+            musicButton.textContent = isMuted ? "Unmute Music" : "Mute Music";
+        } else {
+            // If music is not currently playing, attempt to start it (unmuted)
+            startBackgroundMusicRotation();
+            backgroundMusicTracks.forEach(track => {
+                track.muted = false; // Ensure it starts unmuted
+            });
+            musicButton.textContent = "Mute Music";
+        }
+    });
+}
 
 // Keep existing mousemove for desktop
 canvas.addEventListener('mousemove', (evt) => {
@@ -405,16 +521,18 @@ function handleTouchMove(event) {
 
 // The pause button now only toggles Pause/Resume for an *already started* game
 pauseButton.addEventListener('click', () => {
-    if (!countdownActive) { // Only allow pause/resume when not in active countdown
+    if(!countdownActive) { // Only allow pause/resume when not in active countdown
         if (gamePaused) { // If currently paused, user wants to resume
-            startBackgroundMusicRotation();
             gamePaused = false;
+            gameState= GAME_STATES.PLAYING;
             pauseButton.textContent = "Pause";
+            startBackgroundMusicRotation();
             if (!animationFrameId) {
                 gameLoop();
             }
         } else { // If currently playing, user wants to pause
             gamePaused = true;
+            gameState= GAME_STATES.PAUSED;
             pauseButton.textContent = "Resume";
             if (animationFrameId) {
                 cancelAnimationFrame(animationFrameId);
@@ -443,7 +561,8 @@ const GAME_STATES = {
     WELCOME: 'WELCOME',
     PLAYING: 'PLAYING',
     PAUSED: 'PAUSED',
-    GAME_OVER: 'GAME_OVER'
+    GAME_OVER: 'GAME_OVER',
+    EXITED: 'EXITED' //New state added
 };
 let gameState = GAME_STATES.WELCOME; // Initialize game state
 
@@ -455,27 +574,29 @@ document.addEventListener('DOMContentLoaded', () => {
     playerPaddleY = (canvas.height - paddleHeight) / 2;
     aiPaddleY = (canvas.height - paddleHeight) / 2;
     drawEverything(); // Draw initial state on canvas
-});
 
-// Minor adjustment in startGameButton to set gameState
-startGameButton.addEventListener('click', () => {
-    playerName = playerNameInput.value.trim();
-    if (playerName === "") {
-        playerName = "Player";
-    }
-    welcomeScreen.style.display = 'none';
-    gameState = GAME_STATES.PLAYING; // Set game state to playing
+    //Plays the first music track, muted by default
     startBackgroundMusicRotation();
-    resetGame();
-    startCountdown();
+    if (musicButton) {
+        musicButton.textContent = backgroundMusicTracks[0].muted ? "Unmute Music" : "Mute Music";
+    }
 });
 
 // Minor adjustment in playAgainButton to set gameState
 playAgainButton.addEventListener('click', () => {
     gameOverScreen.style.display = 'none';
-    gameState = GAME_STATES.PLAYING; // Set game state to playing
-    resetGame();
+
+    // Showing game elements (if they were hidden by gameOverScreen being 'flex')
+    canvas.style.display = 'block';
+    gameControls.style.display = 'flex';
+    gameExit.style.display = 'block';
+
+    resetGame(); //Reset scores
     startBackgroundMusicRotation();
+
+    gamePaused = true; //initially for countdown
+    gameState = GAME_STATES.PLAYING; // Set game state to playing
+    
     startCountdown();
 });
 
@@ -553,3 +674,28 @@ function keyboardPaddleControl() {
     if (playerPaddleY < 0) playerPaddleY = 0;
     if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
 }
+
+//Function for a ball object to move with the cursor
+let gameStarted= false; //to track the transition to the game window
+
+//Ball follows cursor only when inside the welcome screen
+window.addEventListener("mousemove", (e) => {
+  if (gameStarted) return;
+  ball.style.transform = `translate(${e.clientX - 10}px, ${e.clientY - 10}px)`;
+});
+
+// Hide ball when hovering over input or start button
+[input, startGameButton].forEach((el) => {
+  el.addEventListener("mouseenter", () => {
+    if (!gameStarted) ball.style.display = "none";
+  });
+  el.addEventListener("mouseleave", () => {
+    if (!gameStarted) ball.style.display = "block";
+  });
+});
+
+
+//Functionality of exit button
+exitButton.addEventListener("click", ()=>{
+   returnToWelcomeScreen();
+});
