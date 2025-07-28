@@ -85,16 +85,16 @@ const difficultySettings = {
 
 // --- Game Functions ---
 
-function resetBall() {
+const resetBall = () => {
     ballX = canvas.width / 2;
     ballY = canvas.height / 2;
-    const currentSettings = difficultySettings[difficultyLevel];
-    ballSpeedX = (Math.random() > 0.5 ? 1 : -1) * currentSettings.ballInitialSpeed;
-    ballSpeedY = (Math.random() * 2 - 1) * currentSettings.ballInitialSpeed;
-}
+    const { ballInitialSpeed } = difficultySettings[difficultyLevel];
+    ballSpeedX = (Math.random() > 0.5 ? 1 : -1) * ballInitialSpeed;
+    ballSpeedY = (Math.random() * 2 - 1) * ballInitialSpeed;
+};
 
 // Helper function for rounded rectangles (fallback for older browsers)
-function drawRoundedRect(ctx, x, y, width, height, radius) {
+const drawRoundedRect = (ctx, x, y, width, height, radius) => {
     if (typeof ctx.roundRect === 'function') {
         ctx.roundRect(x, y, width, height, radius);
     } else {
@@ -110,9 +110,9 @@ function drawRoundedRect(ctx, x, y, width, height, radius) {
         ctx.quadraticCurveTo(x, y, x + radius, y);
         ctx.closePath();
     }
-}
+};
 
-function drawEverything() {
+const drawEverything = () => {
     // Clear the canvas - let CSS gradient show through
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -169,7 +169,7 @@ function drawEverything() {
     aiScoreDisplay.textContent = `AI: ${aiScore}`;
 }
 
-function moveEverything() {
+const moveEverything = () => {
     // Crucial check: Stop movement if game is paused or during countdown
     if (gamePaused || countdownActive) return;
 
@@ -256,19 +256,19 @@ function moveEverything() {
 
 }
 
-function gameLoop() {
+const gameLoop = () => {
     moveEverything();
     drawEverything();
     animationFrameId = requestAnimationFrame(gameLoop);
 }
 
-function updateScoreDisplay() {
+const updateScoreDisplay = () => {
     playerScoreDisplay.textContent = `${playerName}: ${playerScore}`;
     aiScoreDisplay.textContent = `AI: ${aiScore}`;
 }
 
 // Function to handle game over logic (now waits for permission to restart)
-function endGame(message) {
+const endGame = (message) => {
     if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
         animationFrameId = null;
@@ -280,7 +280,7 @@ function endGame(message) {
     gameOverScreen.style.display = 'flex';
 }
 
-function resetGame() {
+const resetGame = () => {
     playerScore = 0;
     aiScore = 0;
     updateScoreDisplay();
@@ -301,7 +301,7 @@ function resetGame() {
 }
 
 // --- Countdown Function ---
-function startCountdown() {
+const startCountdown = () => {
     // Clear any existing countdown interval to prevent overlaps
     if (countdownIntervalId) {
         clearInterval(countdownIntervalId);
@@ -383,7 +383,7 @@ canvas.addEventListener('touchmove', function(event) {
     handleTouchMove(event);
 }, { passive: false });
 
-function handleTouchMove(event) {
+const handleTouchMove = (event) => {
     // Corrected: Use paddleHeight instead of playerPaddle.height
     let touchY = event.touches[0].clientY;
 
@@ -546,7 +546,7 @@ document.addEventListener('keyup', function(e) {
 });
 
 // This function will move the paddle when up/down keys are pressed
-function keyboardPaddleControl() {
+const keyboardPaddleControl = () => {
     if (upArrowPressed) playerPaddleY -= paddleMoveSpeed;
     if (downArrowPressed) playerPaddleY += paddleMoveSpeed;
     // Do not let paddle go outside the screen:
