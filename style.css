@@ -65,6 +65,45 @@ body::before {
     }
 }
 
+/*Styling for the mute button*/
+.mute-container {
+    position: fixed; 
+    top: 20px;      
+    right: 20px;    
+    z-index: 101;   
+
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px 0 rgba(31, 38, 135, 0.3);
+}
+
+.mute-container button {
+    padding: 8px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px 0 rgba(31, 38, 135, 0.3);
+    font-weight: 500;
+}
+
+.mute-container button:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px 0 rgba(31, 38, 135, 0.4);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+
 canvas {
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
     border: 2px solid rgba(255, 255, 255, 0.3);
