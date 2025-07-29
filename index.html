@@ -8,11 +8,15 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    
     <div id="welcomeScreen" class="welcome-screen">
         <h2>Welcome to Pong!</h2>
         <input type="text" id="playerNameInput" placeholder="Enter your name (optional)" maxlength="15">
         <button id="startGameButton">Play Game</button>
+
     </div>
+
+    <button id="music-button">Mute</button>
 
     <div id="gameOverScreen" class="game-over-screen">
         <h2 id="gameOverMessage"></h2>
@@ -33,7 +37,12 @@
         </div>
     </div>
     <canvas id="gameCanvas" width="600" height="400"></canvas>
-
+    <div class="game-exit">
+        <button id="exitButton" class="game-controls">Exit</button>
+    </div>
+    <!--CHANGE: To add a ball which tracks the movement of cursor in welcome screen-->
+       <div id="cursor-ball"></div>
+    <!--CHANGE OVER-->
     <script type="module" src="script.js"></script>
 </body>
 </html>

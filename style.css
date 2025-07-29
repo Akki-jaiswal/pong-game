@@ -65,6 +65,49 @@ body::before {
     }
 }
 
+/*Styling for the mute button*/
+/* .mute-container {
+    position: fixed; 
+    top: 20px;      
+    right: 20px;    
+    z-index: 101;   
+
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px 0 rgba(31, 38, 135, 0.3);
+} */
+
+#music-button {
+    position: fixed; 
+    top: 20px;
+    right: 20px;   
+    z-index: 1001;    
+    padding: 8px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px 0 rgba(31, 38, 135, 0.3);
+    font-weight: 500;
+}
+
+#music-button:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px 0 rgba(31, 38, 135, 0.4);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+
 canvas {
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
     border: 2px solid rgba(255, 255, 255, 0.3);
@@ -210,11 +253,13 @@ h1 {
     margin-bottom: 30px;
     background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
     background-size: 200% 200%;
-    animation: gradientShift 6s ease infinite;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+    text-shadow: 0 0 60px/*40*/ rgba(255, 255, 255, 0.5);
+    animation: 
+    gradientShift 6s ease infinite,
+    dropIn 1.5s ease-out forwards;
 }
 
 .welcome-screen input {
@@ -245,6 +290,87 @@ h1 {
     color: rgba(255, 255, 255, 0.7);
 }
 
+/*CHANGE: Adding a drop effect */
+@keyframes dropIn {
+  0% {
+    transform: translateY(-100vh);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0); /* Ends at its natural position */
+    opacity: 1; /* Fully visible */
+  }
+}
+
+.welcome-screen h2 {
+  
+}
+
+/*CHANGE: Styling to cursor ball movement*/
+#cursor-ball {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background-color:  rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
+  pointer-events: none;  /* So it doesn't block clicks */
+  z-index: 1000;          /* On top of everything */
+  transition: transform 0.1s ease-out;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.8); /*provides glow effect*/
+}
+/*Play Button */
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 5px #00aaff, 0 0 10px #00aaff; }
+    50% { box-shadow: 0 0 15px #00aaff, 0 0 30px #00aaff; }
+    100% { box-shadow: 0 0 5px #00aaff, 0 0 10px #00aaff; }
+}
+
+#playAgainButton {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.5em;
+    cursor: pointer;
+    position: relative; 
+    overflow: hidden; 
+    transition: transform 0.1s ease-out, box-shadow 0.3s ease-in-out;
+    animation: pulse-glow 2s infinite alternate; 
+}
+
+#playAgainButton:hover {
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 15px rgba(0, 255, 255, 0.6); 
+    animation-play-state: paused; 
+}
+
+#playAgainButton:active {
+    transform: translateY(1px); /* Push down effect */
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
+}
+
+#playerNameInput {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 1.1em;
+    outline: none; /* Remove default blue outline */
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+#playerNameInput:focus {
+    border-color: #00aaff; /* Highlight color */
+    box-shadow: 0 0 8px rgba(0, 170, 255, 0.6); /* Soft glow */
+}
+
+/*CHANGE OVER***/
 /* Styles for the Game Over Screen */
 .game-over-screen {
     position: absolute;
@@ -306,6 +432,33 @@ canvas:hover {
     transform: scale(1.05);
 }
 
+/*Change */
+.game-exit {
+  margin-top: 20px;
+  text-align: center;
+  display:none;
+}
+
+#exitButton {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  background: linear-gradient(135deg, #ff6a00, #ee0979);
+  box-shadow: 0 4px 15px rgba(238, 9, 121, 0.4);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#exitButton:hover {
+  background: linear-gradient(135deg, #ee0979, #ff6a00);
+  box-shadow: 0 6px 20px rgba(255, 106, 0, 0.5);
+  transform: translateY(-2px);
+}
+
+/*change over */
 /* --- Media Queries for Smaller Screens (Key for Responsiveness) --- */
 @media (max-width: 768px) {
     h1 {
