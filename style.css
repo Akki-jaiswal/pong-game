@@ -66,7 +66,7 @@ body::before {
 }
 
 /*Styling for the mute button*/
-.mute-container {
+/* .mute-container {
     position: fixed; 
     top: 20px;      
     right: 20px;    
@@ -79,9 +79,13 @@ body::before {
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 4px 15px 0 rgba(31, 38, 135, 0.3);
-}
+} */
 
-.mute-container button {
+#music-button {
+    position: fixed; 
+    top: 20px;
+    right: 20px;   
+    z-index: 1001;    
     padding: 8px 20px;
     font-size: 1em;
     cursor: pointer;
@@ -96,7 +100,7 @@ body::before {
     font-weight: 500;
 }
 
-.mute-container button:hover {
+#music-button:hover {
     background: rgba(255, 255, 255, 0.25);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px 0 rgba(31, 38, 135, 0.4);
