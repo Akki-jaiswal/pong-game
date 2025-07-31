@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Advanced Pong Game</title>
     <link rel="icon" href="pong.jpeg" type="image/jpeg">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="welcomeScreen" class="welcome-screen">
+    <!-- Welcome Screen -->
+    <div id="welcomeScreen" class="welcome-screen active">
+        <img src="images\icon for game.png" alt="Ping Pong Icon" class="welcome-icon">
         <h2>Welcome to Pong!</h2>
         <input type="text" id="playerNameInput" placeholder="Enter your name (optional)" maxlength="15">
+        <br>
         <button id="startGameButton">Play Game</button>
     </div>
 
@@ -19,6 +22,7 @@
         <button id="playAgainButton">Play Again</button>
     </div>
 
+    <!-- Game UI -->
     <h1>Pong Game</h1>
     <div class="game-controls">
         <button id="pauseButton">Pause</button>
@@ -32,8 +36,10 @@
             <span id="playerScore">Player: 0</span> | <span id="aiScore">AI: 0</span>
         </div>
     </div>
+
     <canvas id="gameCanvas" width="600" height="400"></canvas>
 
+    <!-- Main game script -->
     <script type="module" src="script.js"></script>
 </body>
 </html>
