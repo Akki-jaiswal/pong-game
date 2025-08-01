@@ -476,6 +476,8 @@ soundToggleButton.addEventListener('click', () => {
     }
 });
 
+
+
 difficultySelect.addEventListener('change', (event) => {
     difficultyLevel = event.target.value;
     resetGame();
