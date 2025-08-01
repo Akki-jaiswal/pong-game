@@ -12,10 +12,15 @@
         <h2>Welcome to Pong!</h2>
         <input type="text" id="playerNameInput" placeholder="Enter your name (optional)" maxlength="15">
         <button id="startGameButton">Play Game</button>
+        <button id="exitGameButton">Exit Game</button> <!-- Exit Game Button -->
     </div>
 
     <div id="gameOverScreen" class="game-over-screen">
         <h2 id="gameOverMessage"></h2>
+        <div class="score-display">
+            <span id="finalPlayerScore"></span>
+            <span id="finalAiScore"></span>
+        </div>
         <button id="playAgainButton">Play Again</button>
     </div>
 
