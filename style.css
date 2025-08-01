@@ -279,6 +279,45 @@ h1 {
     filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
 }
 
+.pause-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(20, 20, 40, 0.85);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+}
+.pause-menu h2 {
+    color: #fff;
+    font-size: 2.2em;
+    margin-bottom: 30px;
+}
+.pause-menu button {
+    padding: 14px 28px;
+    font-size: 1.1em;
+    margin: 12px 0;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+    box-shadow: 0 4px 15px 0 rgba(31,38,135,0.3);
+}
+.pause-menu button:hover {
+    background: rgba(255,255,255,0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px 0 rgba(31,38,135,0.4);
+    border-color: rgba(255,255,255,0.5);
+}
+
 /* Add enhanced styling for better game element visibility */
 canvas:hover {
     transform: scale(1.02);
@@ -304,6 +343,41 @@ canvas:hover {
 .score span:hover {
     background: rgba(255, 255, 255, 0.1);
     transform: scale(1.05);
+}
+
+.audio-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 20px;
+}
+.audio-controls label {
+    color: #fff;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.audio-controls input[type="range"] {
+    width: 120px;
+    accent-color: #4fc3f7;
+    margin: 0 8px;
+}
+.audio-controls button {
+    padding: 6px 16px;
+    font-size: 1em;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 8px;
+}
+.audio-controls button:hover {
+    background: rgba(255,255,255,0.22);
+    border-color: rgba(255,255,255,0.4);
 }
 
 /* --- Media Queries for Smaller Screens (Key for Responsiveness) --- */
