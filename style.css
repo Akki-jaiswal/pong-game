@@ -293,6 +293,21 @@ canvas:hover {
     box-shadow: 0 2px 10px 0 rgba(31, 38, 135, 0.3);
 }
 
+.sound-toggle {
+    font-size: 1.2em;
+    min-width: 50px;
+    transition: all 0.3s ease;
+}
+
+.sound-toggle.muted {
+    opacity: 0.6;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+}
+
+.sound-toggle.muted:hover {
+    background: linear-gradient(135deg, #ff5252 0%, #d63031 100%);
+}
+
 /* Score highlighting */
 .score span {
     padding: 5px 10px;
