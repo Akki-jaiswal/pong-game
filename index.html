@@ -3,37 +3,577 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Pong Game</title>
-    <link rel="icon" href="pong.jpeg" type="image/jpeg">
+    <title>Pong Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="welcomeScreen" class="welcome-screen">
+    <!-- Welcome Screen - VISIBLE BY DEFAULT -->
+    <div class="welcome-screen" id="welcomeScreen">
         <h2>Welcome to Pong!</h2>
-        <input type="text" id="playerNameInput" placeholder="Enter your name (optional)" maxlength="15">
-        <button id="startGameButton">Play Game</button>
-    </div>
-
-    <div id="gameOverScreen" class="game-over-screen">
-        <h2 id="gameOverMessage"></h2>
-        <button id="playAgainButton">Play Again</button>
-    </div>
-
-    <h1>Pong Game</h1>
-    <div class="game-controls">
-        <button id="pauseButton">Pause</button>
-        <label for="difficulty">Difficulty:</label>
-        <select id="difficulty">
-            <option value="easy">Easy</option>
-            <option value="medium" selected>Medium</option>
-            <option value="hard">Hard</option>
-        </select>
-        <div class="score">
-            <span id="playerScore">Player: 0</span> | <span id="aiScore">AI: 0</span>
+        <input type="text" id="playerName" placeholder="Enter your name (optional)">
+        <div class="welcome-buttons">
+            <button id="playButton">Play Game</button>
+            <button class="help-button" id="helpButton">How to Play</button>
         </div>
     </div>
-    <canvas id="gameCanvas" width="600" height="400"></canvas>
-
-    <script type="module" src="script.js"></script>
+    
+    <!-- Game Elements - HIDDEN UNTIL WELCOME SCREEN IS DISMISSED -->
+    <div id="gameContainer" style="display: none;">
+        <h1>Pong Game</h1>
+        <div class="game-controls">
+            <button id="startButton">Start Game</button>
+            <button id="pauseButton">Pause</button>
+            <label for="difficulty">Difficulty:</label>
+            <select id="difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+            <button class="help-button" id="gameHelpButton">Controls</button>
+        </div>
+        <div class="score">
+            <span>Player: <span id="playerScore">0</span></span>
+            <span>AI: <span id="aiScore">0</span></span>
+        </div>
+        <canvas id="gameCanvas" width="800" height="400"></canvas>
+    </div>
+    
+    <!-- Game Over Screen - HIDDEN BY DEFAULT -->
+    <div class="game-over-screen" id="gameOverScreen">
+        <h2>Game Over!</h2>
+        <div class="winner-announcement" id="winnerAnnouncement"></div>
+        <div class="final-score" id="finalScore">Score: 0 - 0</div>
+        <div class="stats-container" id="statsContainer">
+            <div class="stat-item">
+                <span>Longest Rally:</span>
+                <span id="longestRally">0</span>
+            </div>
+            <div class="stat-item">
+                <span>Player Hits:</span>
+                <span id="playerHits">0</span>
+            </div>
+            <div class="stat-item">
+                <span>AI Hits:</span>
+                <span id="aiHits">0</span>
+            </div>
+        </div>
+        <div class="game-over-buttons">
+            <button id="restartButton">Play Again</button>
+            <button id="newGameButton">New Game</button>
+        </div>
+    </div>
+    <!-- Add this to your welcome screen -->
+    <div class="how-to-play-modal" id="howToPlayModal">
+        <div class="how-to-play-content">
+            <h3>How to Play Pong</h3>
+            <ul>
+                <li><strong>Controls:</strong> Use your mouse or touch to move the paddle up and down</li>
+                <li><strong>Keyboard:</strong> Arrow keys or W/S keys to move your paddle</li>
+                <li><strong>Goal:</strong> Score points by getting the ball past your opponent's paddle</li>
+                <li><strong>Winning:</strong> First player to reach 5 points wins the game</li>
+                <li><strong>Difficulty:</strong> Choose between Easy, Medium, or Hard</li>
+            </ul>
+            <button class="close-how-to-play" id="closeHowToPlay">Close</button>
+        </div>
+    </div>
+    <script>
+        // DOM Elements
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const gameContainer = document.getElementById('gameContainer');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const playButton = document.getElementById('playButton');
+        const helpButton = document.getElementById('helpButton');
+        const gameHelpButton = document.getElementById('gameHelpButton');
+        const closeHowToPlay = document.getElementById('closeHowToPlay');
+        const playerNameInput = document.getElementById('playerName');
+        const startButton = document.getElementById('startButton');
+        const pauseButton = document.getElementById('pauseButton');
+        const difficultySelect = document.getElementById('difficulty');
+        const playerScoreElement = document.getElementById('playerScore');
+        const aiScoreElement = document.getElementById('aiScore');
+        const finalScoreElement = document.getElementById('finalScore');
+        const winnerAnnouncement = document.getElementById('winnerAnnouncement');
+        const longestRallyElement = document.getElementById('longestRally');
+        const playerHitsElement = document.getElementById('playerHits');
+        const aiHitsElement = document.getElementById('aiHits');
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Game variables
+        let playerScore = 0;
+        let aiScore = 0;
+        let gameRunning = false;
+        let animationId;
+        let paddleHeight = 100;
+        let paddleWidth = 10;
+        let ballRadius = 8;
+        let paddleSpeed = 8;
+        let ballSpeed = 5;
+        let ballX;
+        let ballY;
+        let ballDX = ballSpeed;
+        let ballDY = ballSpeed;
+        let playerPaddleY;
+        let aiPaddleY;
+        let keys = {};
+        let playerName = '';
+        let rallyCount = 0;
+        let longestRally = 0;
+        let playerHits = 0;
+        let aiHits = 0;
+        let particles = [];
+        let difficultyLevel = 'medium';
+        
+        // Game state variables
+        let gameState = 'WELCOME'; // WELCOME, PLAYING, PAUSED, GAME_OVER
+        
+        // --- Difficulty Settings ---
+        const difficultySettings = {
+            easy: {
+                ballInitialSpeed: 5,
+                aiPaddleSpeed: 3
+            },
+            medium: {
+                ballInitialSpeed: 6,
+                aiPaddleSpeed: 5
+            },
+            hard: {
+                ballInitialSpeed: 7,
+                aiPaddleSpeed: 7
+            }
+        };
+        
+        // --- Game Functions ---
+        function resetBall() {
+            ballX = canvas.width / 2;
+            ballY = canvas.height / 2;
+            const currentSettings = difficultySettings[difficultyLevel];
+            ballDX = (Math.random() > 0.5 ? 1 : -1) * currentSettings.ballInitialSpeed;
+            ballDY = (Math.random() * 2 - 1) * currentSettings.ballInitialSpeed;
+            rallyCount = 0;
+        }
+        
+        // Helper function for rounded rectangles (fallback for older browsers)
+        function drawRoundedRect(ctx, x, y, width, height, radius) {
+            if (typeof ctx.roundRect === 'function') {
+                ctx.roundRect(x, y, width, height, radius);
+            } else {
+                ctx.beginPath();
+                ctx.moveTo(x + radius, y);
+                ctx.lineTo(x + width - radius, y);
+                ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+                ctx.lineTo(x + width, y + height - radius);
+                ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                ctx.lineTo(x + radius, y + height);
+                ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+                ctx.lineTo(x, y + radius);
+                ctx.quadraticCurveTo(x, y, x + radius, y);
+                ctx.closePath();
+            }
+        }
+        
+        function drawEverything() {
+            // Clear the canvas - let CSS gradient show through
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw paddles with enhanced styling and rounded corners
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+            ctx.shadowBlur = 10;
+            
+            // Draw player paddle with rounded corners
+            ctx.beginPath();
+            drawRoundedRect(ctx, 0, playerPaddleY, paddleWidth, paddleHeight, 5);
+            ctx.fill();
+            
+            // Draw AI paddle with rounded corners
+            ctx.beginPath();
+            drawRoundedRect(ctx, canvas.width - paddleWidth, aiPaddleY, paddleWidth, paddleHeight, 5);
+            ctx.fill();
+            
+            // Draw ball with glow effect
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2, false);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            ctx.fill();
+            
+            // Reset shadow for text
+            ctx.shadowBlur = 0;
+            
+            // Draw center line with modern styling
+            ctx.setLineDash([5, 10]);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, 0);
+            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset line dash
+            
+            // Draw countdown number ONLY if active
+            if (countdownActive) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.font = '80px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+                ctx.shadowBlur = 10;
+                // Display countdownValue, which will update from 3 down to 0 visually
+                ctx.fillText(countdownValue === 0 ? "GO!" : countdownValue, canvas.width / 2, canvas.height / 2 + 30);
+                ctx.shadowBlur = 0;
+            }
+            
+            // Update score display with player name
+            playerScoreElement.textContent = `${playerName}: ${playerScore}`;
+            aiScoreElement.textContent = `AI: ${aiScore}`;
+        }
+        
+        function moveEverything() {
+            // Crucial check: Stop movement if game is paused or during countdown
+            if (gameState !== 'PLAYING' || countdownActive) return;
+            
+            ballX += ballDX;
+            ballY += ballDY;
+            
+            // Wall collision
+            if (ballY + ballRadius > canvas.height || ballY - ballRadius < 0) {
+                ballDY = -ballDY;
+                playSound(wallHitSound);
+            }
+            
+            // --- Scoring Logic ---
+            // Check if ball goes off screen to the left (AI scores)
+            if (ballX < 0) {
+                aiScore++;
+                updateScoreDisplay();
+                playSound(scoreSound);
+                // Check for AI win condition
+                if (aiScore >= 3 && (aiScore - playerScore >= 2)) {
+                    gameState = 'GAME_OVER';
+                    playSound(gameOverSound);
+                    setTimeout(() => {
+                        endGame("AI Wins!");
+                    }, 500);
+                } else {
+                    gameState = 'PAUSED';
+                    resetBall();
+                    startCountdown();
+                }
+            }
+            
+            // Check if ball goes off screen to the right (Player scores)
+            if (ballX > canvas.width) {
+                playerScore++;
+                updateScoreDisplay();
+                playSound(scoreSound);
+                // Check for Player win condition
+                if (playerScore >= 3 && (playerScore - aiScore >= 2)) {
+                    gameState = 'GAME_OVER';
+                    playSound(playerWinSound);
+                    setTimeout(() => {
+                        endGame(`${playerName} Wins!`);
+                    }, 500);
+                } else {
+                    gameState = 'PAUSED';
+                    resetBall();
+                    startCountdown();
+                }
+            }
+            
+            // --- Paddle Collision Logic ---
+            // Player paddle collision
+            if (ballX - ballRadius < paddleWidth && ballY > playerPaddleY && ballY < playerPaddleY + paddleHeight) {
+                ballSpeedX = -ballSpeedX;
+                let deltaY = ballY - (playerPaddleY + paddleHeight / 2);
+                ballDY = deltaY * 0.35;
+                playSound(paddleHitSound);
+                playerHits++;
+                rallyCount++;
+                createParticles(ballX, ballY, '#4ECDC4', 15);
+            }
+            
+            // AI paddle collision
+            if (ballX + ballRadius > canvas.width - paddleWidth && ballY > aiPaddleY && ballY < aiPaddleY + paddleHeight) {
+                ballSpeedX = -ballSpeedX;
+                let deltaY = ballY - (aiPaddleY + paddleHeight / 2);
+                ballDY = deltaY * 0.35;
+                playSound(paddleHitSound);
+                aiHits++;
+                rallyCount++;
+                createParticles(ballX, ballY, '#FF6B6B', 15);
+            }
+            
+            // Update longest rally
+            if (rallyCount > longestRally) {
+                longestRally = rallyCount;
+            }
+            
+            // AI Paddle Movement Logic
+            const aiPaddleSpeed = difficultySettings[difficultyLevel].aiPaddleSpeed;
+            const aiPaddleCenter = aiPaddleY + (paddleHeight / 2);
+            const distanceToMove = ballY - aiPaddleCenter;
+            
+            // Add some delay to make AI beatable
+            if (Math.abs(distanceToMove) > 35) {
+                if (distanceToMove > 0) {
+                    aiPaddleY += aiPaddleSpeed;
+                } else {
+                    aiPaddleY -= aiPaddleSpeed;
+                }
+            }
+            
+            // Keep AI paddle within canvas bounds
+            if (aiPaddleY < 0) aiPaddleY = 0;
+            if (aiPaddleY + paddleHeight > canvas.height) aiPaddleY = canvas.height - paddleHeight;
+            
+            keyboardPaddleControl();
+        }
+        
+        function gameLoop() {
+            moveEverything();
+            drawEverything();
+            animationId = requestAnimationFrame(gameLoop);
+        }
+        
+        function updateScoreDisplay() {
+            playerScoreElement.textContent = `${playerName}: ${playerScore}`;
+            aiScoreElement.textContent = `AI: ${aiScore}`;
+        }
+        
+        // Function to handle game over logic
+        function endGame(message) {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            gameState = 'GAME_OVER';
+            stopBackgroundMusicRotation();
+            gameOverMessage.textContent = message;
+            gameOverScreen.style.display = 'flex';
+        }
+        
+        function resetGame() {
+            playerScore = 0;
+            aiScore = 0;
+            updateScoreDisplay();
+            playerPaddleY = (canvas.height - paddleHeight) / 2;
+            aiPaddleY = (canvas.height - paddleHeight) / 2;
+            resetBall();
+            gameState = 'PAUSED';
+            pauseButton.textContent = "Resume";
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            drawEverything();
+        }
+        
+        // --- Countdown Function ---
+        let countdownActive = false;
+        let countdownValue = 3;
+        let countdownIntervalId = null;
+        
+        function startCountdown() {
+            // Clear any existing countdown interval to prevent overlaps
+            if (countdownIntervalId) {
+                clearInterval(countdownIntervalId);
+                countdownIntervalId = null;
+            }
+            countdownActive = true;
+            countdownValue = 3;
+            drawEverything(); // Draw initial 3
+            playSound(countdownBeepSound);
+            
+            // Assign interval ID to the global variable
+            countdownIntervalId = setInterval(() => {
+                countdownValue--;
+                drawEverything(); // Draw updated number
+                if (countdownValue < 0) {
+                    clearInterval(countdownIntervalId);
+                    countdownIntervalId = null;
+                }
+            }, 1000);
+            
+            // This setTimeout runs after 3 seconds (for 3, 2, 1, GO! sequence)
+            setTimeout(() => {
+                countdownActive = false;
+                gameState = 'PLAYING';
+                pauseButton.textContent = "Pause";
+                if (!animationId) {
+                    gameLoop();
+                }
+            }, 3000);
+        }
+        
+        // --- Event Listeners for Game Controls ---
+        // Keep existing mousemove for desktop
+        canvas.addEventListener('mousemove', (evt) => {
+            if (gameState === 'PLAYING' && !countdownActive) {
+                let rect = canvas.getBoundingClientRect();
+                let mousePos = evt.clientY - rect.top;
+                playerPaddleY = mousePos - (paddleHeight / 2);
+                if (playerPaddleY < 0) playerPaddleY = 0;
+                if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
+            }
+        });
+        
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', function(event) {
+            event.preventDefault();
+            handleTouchMove(event);
+        }, { passive: false });
+        
+        canvas.addEventListener('touchmove', function(event) {
+            event.preventDefault();
+            handleTouchMove(event);
+        }, { passive: false });
+        
+        function handleTouchMove(event) {
+            // Corrected: Use paddleHeight instead of playerPaddle.height
+            let touchY = event.touches[0].clientY;
+            // Get canvas position to calculate relative Y
+            let canvasRect = canvas.getBoundingClientRect();
+            let relativeTouchY = touchY - canvasRect.top;
+            // Update player paddle's Y position
+            // Center paddle on the touch point
+            playerPaddleY = relativeTouchY - paddleHeight / 2;
+            // Clamp paddle position to stay within canvas bounds
+            if (playerPaddleY < 0) {
+                playerPaddleY = 0;
+            } else if (playerPaddleY + paddleHeight > canvas.height) {
+                playerPaddleY = canvas.height - paddleHeight;
+            }
+        }
+        
+        // The pause button now only toggles Pause/Resume for an *already started* game
+        pauseButton.addEventListener('click', () => {
+            if (!countdownActive) { // Only allow pause/resume when not in active countdown
+                if (gameState === 'PLAYING') { // If currently playing, user wants to pause
+                    gameState = 'PAUSED';
+                    pauseButton.textContent = "Resume";
+                    if (animationId) {
+                        cancelAnimationFrame(animationId);
+                        animationId = null;
+                    }
+                    stopBackgroundMusicRotation();
+                } else if (gameState === 'PAUSED') { // If currently paused, user wants to resume
+                    gameState = 'PLAYING';
+                    pauseButton.textContent = "Pause";
+                    startBackgroundMusicRotation();
+                    if (!animationId) {
+                        gameLoop();
+                    }
+                }
+            }
+        });
+        
+        difficultySelect.addEventListener('change', (event) => {
+            difficultyLevel = event.target.value;
+            resetGame();
+            // If game was paused for difficulty change, restart countdown
+            if (gameState === 'PLAYING' || gameState === 'PAUSED') {
+                startCountdown();
+            } else {
+                drawEverything();
+            }
+        });
+        
+        // --- Initial Setup (Show Welcome Screen) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            welcomeScreen.style.display = 'flex';
+            gameOverScreen.style.display = 'none';
+            playerPaddleY = (canvas.height - paddleHeight) / 2;
+            aiPaddleY = (canvas.height - paddleHeight) / 2;
+            drawEverything();
+        });
+        
+        // --- Event Listeners for Buttons ---
+        // Play Game button
+        document.getElementById('playButton').addEventListener('click', function() {
+            playerName = playerNameInput.value.trim();
+            if (playerName === "") {
+                playerName = "Player";
+            }
+            welcomeScreen.style.display = 'none';
+            gameContainer.style.display = 'block';
+            resetGame();
+            startCountdown();
+        });
+        
+        // Help button
+        document.getElementById('helpButton').addEventListener('click', function() {
+            document.getElementById('howToPlayModal').style.display = 'flex';
+        });
+        
+        // Close help modal
+        document.getElementById('closeHowToPlay').addEventListener('click', function() {
+            document.getElementById('howToPlayModal').style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        document.getElementById('howToPlayModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        });
+        
+        // Restart button
+        document.getElementById('restartButton').addEventListener('click', function() {
+            gameOverScreen.style.display = 'none';
+            gameContainer.style.display = 'block';
+            resetGame();
+            startCountdown();
+        });
+        
+        // New Game button
+        document.getElementById('newGameButton').addEventListener('click', function() {
+            gameOverScreen.style.display = 'none';
+            welcomeScreen.style.display = 'flex';
+            resetGame();
+        });
+        
+        // Keyboard controls for paddle movement
+        let upArrowPressed = false;
+        let downArrowPressed = false;
+        const paddleMoveSpeed = 8;
+        
+        document.addEventListener('keydown', function(e) {
+            if (gameState === 'PLAYING' && !countdownActive) {
+                if (e.key === "ArrowUp") upArrowPressed = true;
+                if (e.key === "ArrowDown") downArrowPressed = true;
+            }
+        });
+        
+        document.addEventListener('keyup', function(e) {
+            if (e.key === "ArrowUp") upArrowPressed = false;
+            if (e.key === "ArrowDown") downArrowPressed = false;
+        });
+        
+        // Add these event listeners for the how-to-play modal
+        document.getElementById('helpButton').addEventListener('click', function() {
+            document.getElementById('howToPlayModal').style.display = 'flex';
+        });
+        
+        document.getElementById('closeHowToPlay').addEventListener('click', function() {
+            document.getElementById('howToPlayModal').style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        document.getElementById('howToPlayModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        });
+        
+        // This function will move the paddle when up/down keys are pressed
+        function keyboardPaddleControl() {
+            if (upArrowPressed) playerPaddleY -= paddleMoveSpeed;
+            if (downArrowPressed) playerPaddleY += paddleMoveSpeed;
+            // Do not let paddle go outside the screen:
+            if (playerPaddleY < 0) playerPaddleY = 0;
+            if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
+        }
+    </script>
 </body>
 </html>
