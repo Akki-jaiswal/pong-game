@@ -1,3 +1,9 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     display: flex;
     flex-direction: column;
@@ -10,11 +16,63 @@ body {
     animation: gradientShift 15s ease infinite;
     color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    position: relative; /* Needed for absolute positioning of welcome/game over screens */
-    overflow-x: hidden; /* Prevent horizontal scroll on smaller screens */
+    position: relative;
+    overflow-x: hidden;
+    transition: background 0.5s ease;
 }
 
-/* Floating particles background effect */
+body.score-1 {
+    background: linear-gradient(-45deg, #0d1b2a, #1b263b, #415a77, #F44336);
+    /* Deep Blue + Red */
+}
+
+body.score-2 {
+    background: linear-gradient(-45deg, #102027, #37474f, #62727b, #3F51B5);
+    /* Blue Grey + Indigo */
+}
+
+body.score-3 {
+    background: linear-gradient(-45deg, #1b262c, #344955, #5c6b73, #00BCD4);
+    /* Dark Teal + Cyan */
+}
+
+body.score-4 {
+    background: linear-gradient(-45deg, #263238, #455a64, #78909c, #4CAF50);
+    /* Slate + Green */
+}
+
+body.score-5 {
+    background: linear-gradient(-45deg, #2c2c54, #474787, #706fd3, #FF9800);
+    /* Violet + Orange */
+}
+
+body.score-6 {
+    background: linear-gradient(-45deg, #2f3640, #353b48, #718093, #9C27B0);
+    /* Gray Blue + Purple */
+}
+
+body.score-7 {
+    background: linear-gradient(-45deg, #37474f, #546e7a, #90a4ae, #CDDC39);
+    /* Bluish Gray + Lime */
+}
+
+body.score-8 {
+    background: linear-gradient(-45deg, #1e272e, #2f3542, #57606f, #E91E63);
+    /* Steel + Pink */
+}
+
+body.score-9 {
+    background: linear-gradient(-45deg, #212121, #3e3e3e, #616161, #009688);
+    /* Charcoal + Teal */
+}
+
+body.score-10 {
+    background: linear-gradient(-45deg, #3e3e3e, #757575, #b0bec5, #FFC107);
+    /* Gray + Amber */
+}
+
+
+/* Rest of your existing CSS remains the same */
 body::before {
     content: '';
     position: fixed;
@@ -22,12 +80,12 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: 
-        radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.1), transparent),
-        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.1), transparent),
-        radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.1), transparent),
-        radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.1), transparent),
-        radial-gradient(2px 2px at 160px 30px, rgba(255,255,255,0.1), transparent);
+    background-image:
+        radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.1), transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.1), transparent),
+        radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.1), transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.1), transparent),
+        radial-gradient(2px 2px at 160px 30px, rgba(255, 255, 255, 0.1), transparent);
     background-repeat: repeat;
     background-size: 200px 100px;
     animation: sparkle 20s linear infinite;
@@ -36,30 +94,40 @@ body::before {
 }
 
 @keyframes sparkle {
-    from { transform: translateY(0); }
-    to { transform: translateY(-100px); }
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-100px);
+    }
 }
 
 @keyframes gradientShift {
     0% {
         background-position: 0% 50%;
     }
+
     50% {
         background-position: 100% 50%;
     }
+
     100% {
         background-position: 0% 50%;
     }
 }
 
 @keyframes pulseGlow {
-    0%, 100% {
-        box-shadow: 
+
+    0%,
+    100% {
+        box-shadow:
             0 8px 32px 0 rgba(31, 38, 135, 0.37),
             inset 0 0 50px rgba(255, 255, 255, 0.1);
     }
+
     50% {
-        box-shadow: 
+        box-shadow:
             0 12px 40px 0 rgba(31, 38, 135, 0.5),
             inset 0 0 60px rgba(255, 255, 255, 0.15);
     }
@@ -69,27 +137,24 @@ canvas {
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 15px;
-    box-shadow: 
+    box-shadow:
         0 8px 32px 0 rgba(31, 38, 135, 0.37),
         inset 0 0 50px rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     animation: pulseGlow 4s ease-in-out infinite;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* --- Responsive CSS for Canvas --- */
-    display: block; /* Remove extra space below inline elements */
-    max-width: 95%; /* Make it take up almost full width on small screens */
-    height: auto;   /* Maintain aspect ratio based on width */
-    margin: 20px auto; /* Center the canvas horizontally and add some top margin */
-    
-    /* --- Fix Touch Scrolling (added previously) --- */
-    touch-action: none; 
+    display: block;
+    max-width: 95%;
+    height: auto;
+    margin: 20px auto;
+    touch-action: none;
 }
 
 h1 {
-    margin-top: 0; /* Adjust as needed */
-    margin-bottom: 20px;
-    font-size: 2.5em; /* Default font size for desktop */
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 2.5em;
     text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
     background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
     background-size: 400% 400%;
@@ -100,17 +165,16 @@ h1 {
 }
 
 .game-controls {
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
     display: flex;
-    gap: 15px; /* Spacing between elements */
+    gap: 20px;
     align-items: center;
-    /* --- Responsive CSS for Game Controls --- */
-    max-width: 95%; /* Limit width on small screens */
-    width: 100%; /* Take full width within max-width */
-    box-sizing: border-box; /* Include padding/border in element's total width */
-    justify-content: center; /* Center controls */
-    flex-wrap: wrap; /* Allow items to wrap to next line on small screens */
-    padding: 15px 20px; /* Add some padding on sides */
+    max-width: 90%;
+    width: 90%;
+    box-sizing: border-box;
+    justify-content: center;
+    flex-wrap: wrap;
+    /* padding: 15px 20px; */
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -121,9 +185,9 @@ h1 {
 
 .game-controls button,
 .game-controls select,
-.welcome-screen button, 
+.welcome-screen button,
 .welcome-screen input,
-.game-over-screen button { 
+.game-over-screen button {
     padding: 12px 20px;
     font-size: 1em;
     cursor: pointer;
@@ -141,7 +205,7 @@ h1 {
 .game-controls button:hover,
 .game-controls select:hover,
 .welcome-screen button:hover,
-.game-over-screen button:hover { 
+.game-over-screen button:hover {
     background: rgba(255, 255, 255, 0.25);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px 0 rgba(31, 38, 135, 0.4);
@@ -149,7 +213,7 @@ h1 {
 }
 
 .game-controls select {
-    background: rgba(30, 30, 30, 0.8); 
+    background: rgba(30, 30, 30, 0.8);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
 }
@@ -167,14 +231,13 @@ h1 {
     font-size: 1.2em;
     font-weight: bold;
     margin-left: 20px;
-    display: flex; 
-    gap: 15px; /* Space between player score and AI score */
+    display: flex;
+    gap: 15px;
     align-items: center;
-    padding: 10px 15px; 
-    /* --- Responsive CSS for Score Display --- */
-    flex-wrap: wrap; /* Allow scores to wrap if space is tight */
-    justify-content: center; /* Center scores */
-    margin-left: 0; /* Remove fixed left margin for better centering */
+    /* padding: 10px 15px; */
+    flex-wrap: wrap;
+    justify-content: center;
+    /* margin-left: 0; */
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
@@ -184,7 +247,6 @@ h1 {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Styles for the Welcome Screen */
 .welcome-screen {
     position: absolute;
     top: 0;
@@ -194,15 +256,14 @@ h1 {
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    display: flex; /* Displayed by default on load */
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 100; 
+    z-index: 100;
     text-align: center;
-    /* --- Responsive CSS for Welcome/Game Over Screens --- */
     padding: 20px;
-    box-sizing: border-box; /* Include padding in element's total width */
+    box-sizing: border-box;
 }
 
 .welcome-screen h2 {
@@ -224,9 +285,9 @@ h1 {
     border: 1px solid rgba(255, 255, 255, 0.3);
     text-align: center;
     max-width: 250px;
-    width: 100%; /* Take full width within max-width */
-    padding: 15px; /* Add some padding */
-    box-sizing: border-box; /* Include padding in width */
+    width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 12px;
@@ -245,7 +306,6 @@ h1 {
     color: rgba(255, 255, 255, 0.7);
 }
 
-/* Styles for the Game Over Screen */
 .game-over-screen {
     position: absolute;
     top: 0;
@@ -255,13 +315,12 @@ h1 {
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    display: none; /* Hidden by default, shown by JS */
+    display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 100;
     text-align: center;
-    /* --- Responsive CSS for Welcome/Game Over Screens --- */
     padding: 20px;
     box-sizing: border-box;
 }
@@ -279,13 +338,11 @@ h1 {
     filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
 }
 
-/* Add enhanced styling for better game element visibility */
 canvas:hover {
     transform: scale(1.02);
     transition: transform 0.3s ease;
 }
 
-/* Enhanced button styling with hover effects */
 .game-controls button:active,
 .welcome-screen button:active,
 .game-over-screen button:active {
@@ -293,7 +350,6 @@ canvas:hover {
     box-shadow: 0 2px 10px 0 rgba(31, 38, 135, 0.3);
 }
 
-/* Score highlighting */
 .score span {
     padding: 5px 10px;
     border-radius: 8px;
@@ -306,31 +362,36 @@ canvas:hover {
     transform: scale(1.05);
 }
 
-/* --- Media Queries for Smaller Screens (Key for Responsiveness) --- */
 @media (max-width: 768px) {
     h1 {
         font-size: 2em;
     }
+
     .game-controls {
-        flex-direction: column; /* Stack controls vertically */
+        flex-direction: column;
         gap: 10px;
         padding: 10px 15px;
     }
-    .game-controls label, .game-controls select, .game-controls button {
-        width: 80%; /* Make them take up more width */
-        max-width: 250px; /* Limit their max width */
+
+    .game-controls label,
+    .game-controls select,
+    .game-controls button {
+        width: 80%;
+        max-width: 250px;
     }
+
     .score {
-        flex-direction: column; /* Stack scores vertically */
+        flex-direction: column;
         gap: 5px;
-        margin-left: 0; /* Ensure no extra margin */
+        margin-left: 0;
         padding: 8px 12px;
     }
+
     canvas {
         border-radius: 10px;
         margin: 15px auto;
     }
-    /* Reduce animation intensity on mobile for better performance */
+
     body::before {
         animation-duration: 30s;
     }
@@ -340,37 +401,46 @@ canvas:hover {
     h1 {
         font-size: 1.8em;
     }
-    .welcome-screen h2, .game-over-screen h2 {
+
+    .welcome-screen h2,
+    .game-over-screen h2 {
         font-size: 1.8em;
     }
-    .game-controls button, .game-controls select, .welcome-screen button, .game-over-screen button {
+
+    .game-controls button,
+    .game-controls select,
+    .welcome-screen button,
+    .game-over-screen button {
         font-size: 0.9em;
         padding: 10px 15px;
     }
+
     .score {
         font-size: 1.1em;
     }
+
     canvas {
         border-radius: 8px;
         max-width: 98%;
     }
-    /* Further reduce particle effects on very small screens */
+
     body::before {
         opacity: 0.5;
         animation-duration: 40s;
     }
 }
 
-/* High-performance mode for reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
+
     body::before {
         animation: none;
     }
+
     canvas {
         animation: none;
     }
