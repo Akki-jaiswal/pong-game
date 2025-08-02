@@ -61,7 +61,7 @@ To run this project on your local machine:
 
 1.  **Clone the repository:**
     ```bash
-    git clone git clone https://github.com/Akki-jaiswal/pong-game.git
+    git clone https://github.com/Akki-jaiswal/pong-game.git
 
     ```
 2.  **Navigate to the project directory:**
