@@ -17,15 +17,15 @@ let currentTrackIndex = 0;
 let currentBackgroundMusic = null;
 
 // Function to play a sound effect
-export function playSound(audioElement) {
+export const playSound = (audioElement) => {
     if (audioElement) {
         audioElement.currentTime = 0; // Rewind to start
         audioElement.play().catch(e => { /* Silently fail or handle errors without console.warn */ });
     }
-}
+};
 
 // Function to start the background music rotation
-export function startBackgroundMusicRotation() {
+export const startBackgroundMusicRotation = () => {
     // If music is already playing or about to play, do nothing
     if (currentBackgroundMusic && !currentBackgroundMusic.paused) {
         return;
@@ -49,13 +49,13 @@ export function startBackgroundMusicRotation() {
         });
 
     currentTrackIndex = (currentTrackIndex + 1) % backgroundMusicTracks.length; // Move to next track for next time
-}
+};
 
 // Function to stop background music
-export function stopBackgroundMusicRotation() {
+export const stopBackgroundMusicRotation = () => {
     if (currentBackgroundMusic) {
         currentBackgroundMusic.pause();
         currentBackgroundMusic.currentTime = 0; // Reset for next play
         // No console.log
     }
-}
+};
