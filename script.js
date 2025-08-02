@@ -55,6 +55,7 @@ const welcomeScreen = document.getElementById('welcomeScreen');
 const startGameButton = document.getElementById('startGameButton');
 const playerNameInput = document.getElementById('playerNameInput');
 const pauseButton = document.getElementById('pauseButton');
+const restartButton = document.getElementById('restartButton');
 const difficultySelect = document.getElementById('difficulty');
 const playerScoreDisplay = document.getElementById('playerScore');
 const aiScoreDisplay = document.getElementById('aiScore');
@@ -425,6 +426,27 @@ pauseButton.addEventListener('click', () => {
     }
 });
 
+// Restart button functionality
+restartButton.addEventListener('click', () => {
+    // Only allow restart if game has started (not on welcome screen)
+    if (gameState !== GAME_STATES.WELCOME) {
+        // Stop any ongoing countdown
+        if (countdownIntervalId) {
+            clearInterval(countdownIntervalId);
+            countdownIntervalId = null;
+        }
+        
+        // Reset the game
+        resetGame();
+        
+        // Start a new countdown
+        startCountdown();
+        
+        // Ensure background music is playing
+        startBackgroundMusicRotation();
+    }
+});
+
 difficultySelect.addEventListener('change', (event) => {
     difficultyLevel = event.target.value;
     resetGame();
@@ -555,3 +577,49 @@ function keyboardPaddleControl() {
     if (playerPaddleY < 0) playerPaddleY = 0;
     if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
 }
+// Place this at the very end of script.js
+
+document.addEventListener("DOMContentLoaded", () => {
+    const howToPlayButton = document.getElementById('howToPlayButton');
+    const howToPlayModal = document.getElementById('howToPlayModal');
+    const closeHowToPlay = document.getElementById('closeHowToPlay');
+
+    if (howToPlayButton && howToPlayModal && closeHowToPlay) {
+        howToPlayButton.addEventListener('click', () => {
+            howToPlayModal.classList.remove('hidden');
+        });
+
+        closeHowToPlay.addEventListener('click', () => {
+            howToPlayModal.classList.add('hidden');
+        });
+
+        howToPlayModal.addEventListener('click', (e) => {
+            if (e.target === howToPlayModal) {
+                howToPlayModal.classList.add('hidden');
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                howToPlayModal.classList.add('hidden');
+            }
+        });
+    }
+
+    // ✅ Add your existing Play Game button logic here as well
+    const startGameButton = document.getElementById("startGameButton");
+    const welcomeScreen = document.getElementById("welcomeScreen");
+    const gameCanvas = document.getElementById("gameCanvas");
+
+    if (startGameButton && welcomeScreen && gameCanvas) {
+        startGameButton.addEventListener("click", () => {
+            welcomeScreen.style.display = "none";
+            gameCanvas.style.display = "block";
+            // Start game here...
+        });
+    }
+});
+howToPlayButton.addEventListener('click', () => {
+    console.log("Clicked How to Play!");
+    howToPlayModal.classList.remove('hidden');
+});

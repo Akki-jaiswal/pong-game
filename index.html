@@ -12,6 +12,7 @@
         <h2>Welcome to Pong!</h2>
         <input type="text" id="playerNameInput" placeholder="Enter your name (optional)" maxlength="15">
         <button id="startGameButton">Play Game</button>
+        <button id="howToPlayButton">How to Play</button>
     </div>
 
     <div id="gameOverScreen" class="game-over-screen">
@@ -22,6 +23,7 @@
     <h1>Pong Game</h1>
     <div class="game-controls">
         <button id="pauseButton">Pause</button>
+        <button id="restartButton">Restart</button>
         <label for="difficulty">Difficulty:</label>
         <select id="difficulty">
             <option value="easy">Easy</option>
@@ -34,6 +36,22 @@
     </div>
     <canvas id="gameCanvas" width="600" height="400"></canvas>
 
+    <!-- How to Play Modal -->
+    <div id="howToPlayModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>🎮 How to Play</h3>
+            <ul style="text-align: left;">
+                <li>Use <strong>↑</strong> and <strong>↓</strong> keys or <strong>touch</strong> to move your paddle.</li>
+                <li>First to score 3 points and lead by 2 wins the game.</li>
+                <li>Select difficulty: Easy, Medium, or Hard.</li>
+                <li>Use Pause/Resume to control the game state.</li>
+                <li>Use Restart to reset the current game and start over.</li>
+            </ul>
+            <button id="closeHowToPlay">Close</button>
+        </div>
+    </div>
+
     <script type="module" src="script.js"></script>
+
 </body>
 </html>
