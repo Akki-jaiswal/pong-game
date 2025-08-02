@@ -10,7 +10,8 @@
 <body>
     <div id="welcomeScreen" class="welcome-screen">
         <h2>Welcome to Pong!</h2>
-        <input type="text" id="playerNameInput" placeholder="Enter your name (optional)" maxlength="15">
+        <input type="text" id="playerNameInput" placeholder="Enter your name (optional)" maxlength="30" pattern="^[A-Za-z]+( [A-Za-z]+)*$" title="Name should contain only letters(A-Z or a-z)" spellcheck="false" required>
+        <div class="error-message" id="error-message" style="color : red; font-size : 20px; font-weight : bold;"></div>
         <button id="startGameButton">Play Game</button>
     </div>
 
@@ -35,5 +36,23 @@
     <canvas id="gameCanvas" width="600" height="400"></canvas>
 
     <script type="module" src="script.js"></script>
+
+    <script>
+  const startGameButton = document.getElementById('startGameButton');
+  const playerNameInput = document.getElementById('playerNameInput');
+
+  startGameButton.addEventListener('click', function () {
+    const name = playerNameInput.value.trim();
+    const namePattern = /^[A-Za-z]+( [A-Za-z]+)*$/;
+
+    if (!namePattern.test(name)) {
+      alert("Prioritize the name should be valid..");
+      playerNameInput.style.borderColor = "red";
+    } else {
+      playerNameInput.style.borderColor = "";
+    }
+  });
+</script>
+
 </body>
 </html>
