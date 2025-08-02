@@ -64,6 +64,25 @@ const gameOverScreen = document.getElementById('gameOverScreen');
 const gameOverMessage = document.getElementById('gameOverMessage');
 const playAgainButton = document.getElementById('playAgainButton');
 
+
+// If your script uses type="module", attach the function to window to make it global
+window.showWelcomeScreen = function() {
+    // Hide the Game Over screen
+    document.getElementById('gameOverScreen').style.display = 'none';
+    // Show the Welcome screen
+    document.getElementById('welcomeScreen').style.display = 'flex';
+
+    // Optionally cancel any animation frame or pause game
+    if (typeof animationFrameId !== 'undefined' && animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+
+    gamePaused = true;
+};
+
+
+
 // Difficulty level variable
 let difficultyLevel = 'medium';
 
@@ -193,7 +212,7 @@ function moveEverything() {
             gamePaused = true;
             playSound(gameOverSound);
             setTimeout(() => {
-                endGame("AI Wins!");
+                endGame("GAME OVER");
             }, 500);
         } else {
             gamePaused = true;
@@ -278,6 +297,8 @@ function endGame(message) {
 
     gameOverMessage.textContent = message;
     gameOverScreen.style.display = 'flex';
+    document.getElementById('finalPlayerScore').textContent = `${playerName}: ${playerScore}`;
+    document.getElementById('finalAiScore').textContent = `AI: ${aiScore}`;
 }
 
 function resetGame() {
