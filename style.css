@@ -246,38 +246,9 @@ h1 {
 }
 
 /* Styles for the Game Over Screen */
-.game-over-screen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    display: none; /* Hidden by default, shown by JS */
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 100;
-    text-align: center;
-    /* --- Responsive CSS for Welcome/Game Over Screens --- */
-    padding: 20px;
-    box-sizing: border-box;
-}
 
-.game-over-screen h2 {
-    font-size: 2.5em;
-    margin-bottom: 30px;
-    background: linear-gradient(45deg, #ffd700, #ffed4e, #ff6b6b);
-    background-size: 200% 200%;
-    animation: gradientShift 4s ease infinite;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
-    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
-}
+
+
 
 /* Add enhanced styling for better game element visibility */
 canvas:hover {
@@ -374,4 +345,57 @@ canvas:hover {
     canvas {
         animation: none;
     }
+}
+.game-over-overlay {
+  position: fixed;
+  z-index: 1000;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: radial-gradient(ellipse at center, #222a4c 60%, #00082a 100%);
+  background-color: rgba(12, 15, 36, 0.97);
+  display: none; /* Show when needed */
+  justify-content: center;
+  align-items: center;
+}
+.game-over-content {
+  background: rgba(36, 41, 70, 0.96);
+  border-radius: 2em;
+  padding: 2.5em 3em 2.2em 3em;
+  box-shadow: 0 8px 44px 0 rgba(40,56,146,0.28);
+  text-align: center;
+  min-width: 340px;
+  color: #fff;
+}
+.game-over-content svg {
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 18px #fbffb4b7);
+}
+.game-over-content h1 {
+  font-size: 2.2em;
+  margin-bottom: 0.7em;
+  letter-spacing: 1.5px;
+  color: #ffe55e;
+  text-shadow: 0 2px 14px #fcfff0dc;
+}
+.score-summary p {
+  font-size: 1.2em;
+  margin: 0.3em 0;
+  color: #e6eaff;
+}
+.play-again-btn, .main-menu-btn {
+  margin: 1.2em 0.8em 0 0.8em;
+  padding: 0.7em 2.2em;
+  font-size: 1.13em;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(92deg, #ffda74 10%, #84b4ff 90%);
+  color: #191c2f;
+  font-weight: bold;
+  box-shadow: 0 2px 12px #5156a1d2;
+  cursor: pointer;
+  transition: background 0.16s, transform 0.12s;
+}
+.play-again-btn:hover, .main-menu-btn:hover {
+  background: linear-gradient(92deg, #ffe577 0%, #2861f7 100%);
+  transform: scale(1.06);
 }
