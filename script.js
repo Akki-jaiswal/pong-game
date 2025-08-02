@@ -3,6 +3,9 @@ import {
     playSound,
     startBackgroundMusicRotation,
     stopBackgroundMusicRotation,
+    toggleSound,
+    isSoundEnabled,
+    setSoundEnabled,
     paddleHitSound,
     wallHitSound,
     scoreSound,
@@ -55,6 +58,8 @@ const welcomeScreen = document.getElementById('welcomeScreen');
 const startGameButton = document.getElementById('startGameButton');
 const playerNameInput = document.getElementById('playerNameInput');
 const pauseButton = document.getElementById('pauseButton');
+const restartButton = document.getElementById('restartButton');
+const soundToggleButton = document.getElementById('soundToggleButton');
 const difficultySelect = document.getElementById('difficulty');
 const playerScoreDisplay = document.getElementById('playerScore');
 const aiScoreDisplay = document.getElementById('aiScore');
@@ -407,7 +412,10 @@ function handleTouchMove(event) {
 pauseButton.addEventListener('click', () => {
     if (!countdownActive) { // Only allow pause/resume when not in active countdown
         if (gamePaused) { // If currently paused, user wants to resume
-            startBackgroundMusicRotation();
+            // Only start background music if sound is enabled
+            if (isSoundEnabled()) {
+                startBackgroundMusicRotation();
+            }
             gamePaused = false;
             pauseButton.textContent = "Pause";
             if (!animationFrameId) {
@@ -424,6 +432,51 @@ pauseButton.addEventListener('click', () => {
         }
     }
 });
+
+// Restart button functionality
+restartButton.addEventListener('click', () => {
+    // Only allow restart if game has started (not on welcome screen)
+    if (gameState !== GAME_STATES.WELCOME) {
+        // Stop any ongoing countdown
+        if (countdownIntervalId) {
+            clearInterval(countdownIntervalId);
+            countdownIntervalId = null;
+        }
+        
+        // Reset the game
+        resetGame();
+        
+        // Start a new countdown
+        startCountdown();
+        
+        // Ensure background music is playing only if sound is enabled
+        if (isSoundEnabled()) {
+            startBackgroundMusicRotation();
+        }
+    }
+});
+
+// Sound toggle button functionality
+soundToggleButton.addEventListener('click', () => {
+    const soundEnabled = toggleSound();
+    
+    // Update button appearance
+    if (soundEnabled) {
+        soundToggleButton.textContent = '🔊';
+        soundToggleButton.classList.remove('muted');
+        // Start background music if game is playing
+        if (gameState === GAME_STATES.PLAYING && !gamePaused) {
+            startBackgroundMusicRotation();
+        }
+    } else {
+        soundToggleButton.textContent = '🔇';
+        soundToggleButton.classList.add('muted');
+        // Stop background music
+        stopBackgroundMusicRotation();
+    }
+});
+
+
 
 difficultySelect.addEventListener('change', (event) => {
     difficultyLevel = event.target.value;
@@ -465,7 +518,10 @@ startGameButton.addEventListener('click', () => {
     }
     welcomeScreen.style.display = 'none';
     gameState = GAME_STATES.PLAYING; // Set game state to playing
-    startBackgroundMusicRotation();
+    // Only start background music if sound is enabled
+    if (isSoundEnabled()) {
+        startBackgroundMusicRotation();
+    }
     resetGame();
     startCountdown();
 });
@@ -475,7 +531,10 @@ playAgainButton.addEventListener('click', () => {
     gameOverScreen.style.display = 'none';
     gameState = GAME_STATES.PLAYING; // Set game state to playing
     resetGame();
-    startBackgroundMusicRotation();
+    // Only start background music if sound is enabled
+    if (isSoundEnabled()) {
+        startBackgroundMusicRotation();
+    }
     startCountdown();
 });
 
@@ -495,7 +554,10 @@ pauseButton.addEventListener('click', () => {
             gamePaused = false;
             gameState = GAME_STATES.PLAYING; // Set game state to playing
             pauseButton.textContent = "Pause";
-            startBackgroundMusicRotation();
+            // Only start background music if sound is enabled
+            if (isSoundEnabled()) {
+                startBackgroundMusicRotation();
+            }
             if (!countdownActive) {
                  startCountdown();
             } else {
@@ -555,3 +617,49 @@ function keyboardPaddleControl() {
     if (playerPaddleY < 0) playerPaddleY = 0;
     if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
 }
+// Place this at the very end of script.js
+
+document.addEventListener("DOMContentLoaded", () => {
+    const howToPlayButton = document.getElementById('howToPlayButton');
+    const howToPlayModal = document.getElementById('howToPlayModal');
+    const closeHowToPlay = document.getElementById('closeHowToPlay');
+
+    if (howToPlayButton && howToPlayModal && closeHowToPlay) {
+        howToPlayButton.addEventListener('click', () => {
+            howToPlayModal.classList.remove('hidden');
+        });
+
+        closeHowToPlay.addEventListener('click', () => {
+            howToPlayModal.classList.add('hidden');
+        });
+
+        howToPlayModal.addEventListener('click', (e) => {
+            if (e.target === howToPlayModal) {
+                howToPlayModal.classList.add('hidden');
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                howToPlayModal.classList.add('hidden');
+            }
+        });
+    }
+
+    // ✅ Add your existing Play Game button logic here as well
+    const startGameButton = document.getElementById("startGameButton");
+    const welcomeScreen = document.getElementById("welcomeScreen");
+    const gameCanvas = document.getElementById("gameCanvas");
+
+    if (startGameButton && welcomeScreen && gameCanvas) {
+        startGameButton.addEventListener("click", () => {
+            welcomeScreen.style.display = "none";
+            gameCanvas.style.display = "block";
+            // Start game here...
+        });
+    }
+});
+howToPlayButton.addEventListener('click', () => {
+    console.log("Clicked How to Play!");
+    howToPlayModal.classList.remove('hidden');
+});
