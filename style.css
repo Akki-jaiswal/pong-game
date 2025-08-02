@@ -5,13 +5,14 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #533483);
+    background: linear-gradient(-45deg, #111123, #0d193a, #07203e, #3a1c68);
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
     color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     position: relative; /* Needed for absolute positioning of welcome/game over screens */
     overflow-x: hidden; /* Prevent horizontal scroll on smaller screens */
+     text-shadow: 0 1px 2px rgba(0,0,0,0.7);
 }
 
 /* Floating particles background effect */
@@ -97,6 +98,13 @@ h1 {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    h1 {
+    font-weight: 800;
+    letter-spacing: 1px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 10px;
+}
+
 }
 
 .game-controls {
@@ -240,6 +248,10 @@ h1 {
     background: rgba(255, 255, 255, 0.15);
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
 }
+.welcome-screen input:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
 
 .welcome-screen input::placeholder {
     color: rgba(255, 255, 255, 0.7);
@@ -375,3 +387,24 @@ canvas:hover {
         animation: none;
     }
 }
+
+/* Custom neon-themed dropdown for difficulty selector */
+#difficulty {
+    background-color: #0ff;         /* Same color as Pause */
+    color: #000;                    /* Same text color */
+    border: none;                   /* Remove default border */
+    border-radius: 6px;             /* Match Pause button */
+    padding: 6px 12px;              /* Match padding */
+    font-size: 16px;                /* Match font */
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgb(4, 192, 192);      /* Neon glow like Pause */
+    transition: all 0.3s ease;
+    appearance: none;              /* Hide default arrow */
+}
+
+#difficulty:hover {
+    box-shadow: 0 0 15px #0ff;
+    background-color: #00fdfd;     /* Lighter neon on hover */
+}
+
