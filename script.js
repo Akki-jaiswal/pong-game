@@ -120,12 +120,12 @@ function drawEverything() {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
     ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
     ctx.shadowBlur = 10;
-    
+
     // Draw player paddle with rounded corners
     ctx.beginPath();
     drawRoundedRect(ctx, 0, playerPaddleY, paddleWidth, paddleHeight, 5);
     ctx.fill();
-    
+
     // Draw AI paddle with rounded corners
     ctx.beginPath();
     drawRoundedRect(ctx, canvas.width - paddleWidth, aiPaddleY, paddleWidth, paddleHeight, 5);
@@ -138,7 +138,7 @@ function drawEverything() {
     ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2, false);
     ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
     ctx.fill();
-    
+
     // Reset shadow for text
     ctx.shadowBlur = 0;
 
@@ -373,12 +373,12 @@ canvas.addEventListener('mousemove', (evt) => {
 });
 
 // --- NEW: Touch Event Listeners for Mobile ---
-canvas.addEventListener('touchstart', function(event) {
+canvas.addEventListener('touchstart', function (event) {
     event.preventDefault();
     handleTouchMove(event);
 }, { passive: false });
 
-canvas.addEventListener('touchmove', function(event) {
+canvas.addEventListener('touchmove', function (event) {
     event.preventDefault();
     handleTouchMove(event);
 }, { passive: false });
@@ -497,9 +497,9 @@ pauseButton.addEventListener('click', () => {
             pauseButton.textContent = "Pause";
             startBackgroundMusicRotation();
             if (!countdownActive) {
-                 startCountdown();
+                startCountdown();
             } else {
-                 gameLoop();
+                gameLoop();
             }
         }
     }
@@ -536,13 +536,13 @@ let upArrowPressed = false;
 let downArrowPressed = false;
 const paddleMoveSpeed = 8; // we can change this number for faster/slower paddle movement
 
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function (e) {
     if (typeof gameState !== "undefined" && gameState === "PLAYING" && !countdownActive) {
         if (e.key === "ArrowUp") upArrowPressed = true;
         if (e.key === "ArrowDown") downArrowPressed = true;
     }
 });
-document.addEventListener('keyup', function(e) {
+document.addEventListener('keyup', function (e) {
     if (e.key === "ArrowUp") upArrowPressed = false;
     if (e.key === "ArrowDown") downArrowPressed = false;
 });
