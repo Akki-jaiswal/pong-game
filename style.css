@@ -305,6 +305,40 @@ canvas:hover {
     background: rgba(255, 255, 255, 0.1);
     transform: scale(1.05);
 }
+/*High score updates */
+.high-score-label {
+    margin-left: 15px;
+    color: #ffd700;
+    font-weight: bold;
+    text-shadow: 0 0 8px #ffd700, 0 0 2px #fff;
+    font-size: 1.1em;
+    letter-spacing: 1px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: rgba(255, 215, 0, 0.08);
+    transition: all 0.3s;
+}
+/* Style for Recent High Score Log */
+.score-log {
+  margin: 20px 20px; /* Top 20px, Bottom 30px for spacing from button */
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  font-family: "Segoe UI", sans-serif;
+  color: #ffffffcc;
+  font-size: 16px;
+  text-align: left;
+  max-width: 90%;
+}
+
+.log-entry {
+  margin: 8px 0;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.25);
+  border-left: 3px solid gold;
+  border-radius: 6px;
+  line-height: 1.6;
+}
 
 /* --- Media Queries for Smaller Screens (Key for Responsiveness) --- */
 @media (max-width: 768px) {

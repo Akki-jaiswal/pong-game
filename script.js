@@ -51,18 +51,27 @@ let countdownIntervalId = null;
 let playerName = "Player";
 
 // DOM elements
-const welcomeScreen = document.getElementById('welcomeScreen');
-const startGameButton = document.getElementById('startGameButton');
-const playerNameInput = document.getElementById('playerNameInput');
-const pauseButton = document.getElementById('pauseButton');
-const difficultySelect = document.getElementById('difficulty');
-const playerScoreDisplay = document.getElementById('playerScore');
-const aiScoreDisplay = document.getElementById('aiScore');
+const welcomeScreen = document.getElementById("welcomeScreen");
+const startGameButton = document.getElementById("startGameButton");
+const playerNameInput = document.getElementById("playerNameInput");
+const pauseButton = document.getElementById("pauseButton");
+const difficultySelect = document.getElementById("difficulty");
+const playerScoreDisplay = document.getElementById("playerScore");
+const aiScoreDisplay = document.getElementById("aiScore");
+const highScoreDisplay = document.getElementById("highScore");
+const resetScoreButton = document.getElementById("resetScoreButton");
 
 // DOM elements for Game Over Screen
-const gameOverScreen = document.getElementById('gameOverScreen');
-const gameOverMessage = document.getElementById('gameOverMessage');
-const playAgainButton = document.getElementById('playAgainButton');
+const gameOverScreen = document.getElementById("gameOverScreen");
+const gameOverMessage = document.getElementById("gameOverMessage");
+const playAgainButton = document.getElementById("playAgainButton");
+
+const SCORE_STORAGE_KEY = "pong_scores";
+const HIGH_SCORE_KEY = "pong_high_score";
+const HIGH_SCORE_LOG_KEY = "pong_high_score_log";
+
+// Load scores from localStorage
+let highScore = 0;
 
 // Difficulty level variable
 let difficultyLevel = 'medium';
@@ -186,6 +195,7 @@ function moveEverything() {
     // Check if ball goes off screen to the left (AI scores)
     if (ballX < 0) {
         aiScore++;
+        saveScores();
         updateScoreDisplay();
         playSound(scoreSound);
         // Check for AI win condition
@@ -205,6 +215,7 @@ function moveEverything() {
     // Check if ball goes off screen to the right (Player scores)
     if (ballX > canvas.width) {
         playerScore++;
+        saveScores();
         updateScoreDisplay();
         playSound(scoreSound);
         // Check for Player win condition
@@ -265,6 +276,9 @@ function gameLoop() {
 function updateScoreDisplay() {
     playerScoreDisplay.textContent = `${playerName}: ${playerScore}`;
     aiScoreDisplay.textContent = `AI: ${aiScore}`;
+    highScoreDisplay.textContent = `🏆 High Score: ${
+        highScore > 0 ? highScore : "0"
+    }`;
 }
 
 // Function to handle game over logic (now waits for permission to restart)
@@ -276,8 +290,28 @@ function endGame(message) {
     gamePaused = true;
     stopBackgroundMusicRotation();
 
-    gameOverMessage.textContent = message;
-    gameOverScreen.style.display = 'flex';
+  gameOverMessage.textContent = message;
+  const log = JSON.parse(localStorage.getItem(HIGH_SCORE_LOG_KEY)) || [];
+  const logHTML = log
+    .map((entry) => {
+      const [date, time] = entry.time.split(", ");
+      return `
+      <div class="log-entry">
+        🏅 <strong>Score:</strong> ${entry.score} |
+        📅 ${date}
+        🕒 ${time}
+      </div>
+    `;
+    })
+    .slice(0, 5)
+    .join("");
+
+  const logContainer = document.getElementById("gameOverLog");
+  logContainer.innerHTML = log.length
+    ? `<strong>📜 Recent High Scores:</strong><br>${logHTML}`
+    : "<i>No recent scores yet.</i>";
+  console.log("logContainer innerHTML", logContainer.innerHTML);
+  gameOverScreen.style.display = "flex";
 }
 
 function resetGame() {
@@ -549,9 +583,69 @@ document.addEventListener('keyup', function(e) {
 
 // This function will move the paddle when up/down keys are pressed
 function keyboardPaddleControl() {
-    if (upArrowPressed) playerPaddleY -= paddleMoveSpeed;
-    if (downArrowPressed) playerPaddleY += paddleMoveSpeed;
-    // Do not let paddle go outside the screen:
-    if (playerPaddleY < 0) playerPaddleY = 0;
-    if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
+    playerPaddleY = canvas.height - paddleHeight;
 }
+
+resetScoreButton.addEventListener("click", () => {
+  if (
+    confirm("Are you sure you want to reset all scores including high score?")
+  ) {
+    resetScores();
+  }
+});
+// Save name
+localStorage.setItem("pong_player_name", playerName);
+
+// On load
+const savedName = localStorage.getItem("pong_player_name");
+if (savedName) {
+  playerName = savedName;
+  playerNameInput.value = savedName;
+}
+function loadScores() {
+  const saved = JSON.parse(localStorage.getItem(SCORE_STORAGE_KEY));
+  if (saved) {
+    playerScore = saved.playerScore || 0;
+    aiScore = saved.aiScore || 0;
+  }
+  highScore = parseInt(localStorage.getItem(HIGH_SCORE_KEY)) || 0;
+}
+
+function saveScores() {
+  localStorage.setItem(
+    SCORE_STORAGE_KEY,
+    JSON.stringify({
+      playerScore,
+      aiScore
+    })
+  );
+
+  if (playerScore > highScore) {
+    highScore = playerScore;
+    localStorage.setItem(HIGH_SCORE_KEY, highScore);
+  }
+
+  // Log every score regardless of high score
+  const log = JSON.parse(localStorage.getItem(HIGH_SCORE_LOG_KEY)) || [];
+  const timestamp = new Date().toLocaleString();
+  log.unshift({ score: playerScore, time: timestamp });
+  if (log.length > 10) log.pop();
+  localStorage.setItem(HIGH_SCORE_LOG_KEY, JSON.stringify(log));
+  updateScoreDisplay();
+}
+
+function resetScores() {
+  playerScore = 0;
+  aiScore = 0;
+  highScore = 0;
+  localStorage.removeItem(SCORE_STORAGE_KEY);
+  localStorage.removeItem(HIGH_SCORE_KEY);
+  localStorage.removeItem("pong_high_score_log"); // Clear high score log
+  updateScoreDisplay();
+}
+
+resetScoreButton.addEventListener("click", () => {
+  if (confirm("Reset all scores and high score?")) {
+    resetScores();
+  }
+});
