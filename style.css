@@ -375,3 +375,29 @@ canvas:hover {
         animation: none;
     }
 }
+
+.game_controls button{
+    padding: 12px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px 0 rgba(31, 38, 135, 0.3);
+    font-weight: 500;
+}
+
+.game_controls button:hover{ 
+    background: rgba(71, 167, 227, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px 0 rgba(123, 234, 246, 0.4);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.game-controls label{
+    font-weight: bold;
+}
