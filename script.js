@@ -1,16 +1,17 @@
 // Import audio functions and elements from audio.js
 import {
-    playSound,
-    startBackgroundMusicRotation,
-    stopBackgroundMusicRotation,
-    paddleHitSound,
-    wallHitSound,
-    scoreSound,
-    gameOverSound,
-    playerWinSound,
-    countdownBeepSound,
-    backgroundMusicTracks
-} from './audio.js';
+  playSound,
+  startBackgroundMusicRotation,
+  stopBackgroundMusicRotation,
+  paddleHitSound,
+  wallHitSound,
+  scoreSound,
+  gameOverSound,
+  playerWinSound,
+  countdownBeepSound,
+  backgroundMusicTracks,
+  initializeVolumeControls,
+} from "./audio.js";
 
 const canvas = document.getElementById('gameCanvas');
 // No console.error for missing canvas - fail silently or assume existence after DOMContentLoaded
@@ -451,10 +452,12 @@ document.addEventListener('DOMContentLoaded', () => {
     welcomeScreen.style.display = 'flex'; // Show the welcome screen
     gameOverScreen.style.display = 'none'; // Ensure game over screen is hidden initially
 
-    // Update playerPaddleY and aiPaddleY only after canvas dimensions are known
-    playerPaddleY = (canvas.height - paddleHeight) / 2;
-    aiPaddleY = (canvas.height - paddleHeight) / 2;
-    drawEverything(); // Draw initial state on canvas
+  // Update playerPaddleY and aiPaddleY only after canvas dimensions are known
+  playerPaddleY = (canvas.height - paddleHeight) / 2;
+  aiPaddleY = (canvas.height - paddleHeight) / 2;
+  drawEverything(); // Draw initial state on canvas
+
+  initializeVolumeControls();
 });
 
 // Minor adjustment in startGameButton to set gameState
