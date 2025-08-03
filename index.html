@@ -1,39 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Advanced Pong Game</title>
-    <link rel="icon" href="pong.jpeg" type="image/jpeg">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="icon" href="pong.jpeg" type="image/jpeg" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <div id="welcomeScreen" class="welcome-screen">
-        <h2>Welcome to Pong!</h2>
-        <input type="text" id="playerNameInput" placeholder="Enter your name (optional)" maxlength="15">
-        <button id="startGameButton">Play Game</button>
+      <h2>Welcome to Pong!</h2>
+      <input
+        type="text"
+        id="playerNameInput"
+        placeholder="Enter your name (optional)"
+        maxlength="15"
+      />
+      <button id="startGameButton">Play Game</button>
     </div>
 
     <div id="gameOverScreen" class="game-over-screen">
-        <h2 id="gameOverMessage"></h2>
-        <button id="playAgainButton">Play Again</button>
+      <h2 id="gameOverMessage"></h2>
+      <button id="playAgainButton">Play Again</button>
     </div>
 
     <h1>Pong Game</h1>
     <div class="game-controls">
-        <button id="pauseButton">Pause</button>
-        <label for="difficulty">Difficulty:</label>
-        <select id="difficulty">
-            <option value="easy">Easy</option>
-            <option value="medium" selected>Medium</option>
-            <option value="hard">Hard</option>
-        </select>
-        <div class="score">
-            <span id="playerScore">Player: 0</span> | <span id="aiScore">AI: 0</span>
-        </div>
+      <button id="pauseButton">Pause</button>
+      <label for="difficulty">Difficulty:</label>
+      <select id="difficulty">
+        <option value="easy">Easy</option>
+        <option value="medium" selected>Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+
+      <div class="volume-control">
+        <button id="muteButton" class="mute-btn" title="Mute/Unmute">🔊</button>
+        <input
+          type="range"
+          id="volumeSlider"
+          class="volume-slider"
+          min="0"
+          max="100"
+          value="70"
+          title="Volume Control"
+        />
+        <span id="volumeLabel" class="volume-label">70</span>
+      </div>
+
+      <div class="score">
+        <span id="playerScore">Player: 0</span> |
+        <span id="aiScore">AI: 0</span>
+      </div>
     </div>
     <canvas id="gameCanvas" width="600" height="400"></canvas>
 
     <script type="module" src="script.js"></script>
-</body>
+  </body>
 </html>
