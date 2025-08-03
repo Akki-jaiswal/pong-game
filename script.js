@@ -583,7 +583,11 @@ document.addEventListener('keyup', function(e) {
 
 // This function will move the paddle when up/down keys are pressed
 function keyboardPaddleControl() {
-    playerPaddleY = canvas.height - paddleHeight;
+    if (upArrowPressed) playerPaddleY -= paddleMoveSpeed;
+    if (downArrowPressed) playerPaddleY += paddleMoveSpeed;
+    // Do not let paddle go outside the screen:
+    if (playerPaddleY < 0) playerPaddleY = 0;
+    if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
 }
 
 resetScoreButton.addEventListener("click", () => {
