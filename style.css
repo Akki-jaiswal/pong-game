@@ -13,7 +13,14 @@ body {
     position: relative; /* Needed for absolute positioning of welcome/game over screens */
     overflow-x: hidden; /* Prevent horizontal scroll on smaller screens */
 }
-
+.welcome-icon {
+    width: 100px;
+    height: auto;
+    margin-bottom: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
 /* Floating particles background effect */
 body::before {
     content: '';
