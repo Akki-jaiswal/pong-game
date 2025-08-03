@@ -267,6 +267,9 @@ function updateScoreDisplay() {
     aiScoreDisplay.textContent = `AI: ${aiScore}`;
 }
 
+const highestScore = document.getElementById('highestScore');
+
+
 // Function to handle game over logic (now waits for permission to restart)
 function endGame(message) {
     if (animationFrameId) {
@@ -276,9 +279,40 @@ function endGame(message) {
     gamePaused = true;
     stopBackgroundMusicRotation();
 
-    gameOverMessage.textContent = message;
+    const storageKey = 'pong_highest_score';
+    const previousHighScore = parseInt(localStorage.getItem(storageKey)) || 0;
+
+    if (playerScore > previousHighScore) {
+        localStorage.setItem(storageKey, playerScore);
+    }
+
+    highestScore.textContent = Math.max(playerScore, previousHighScore).toString();
+
+    gameOverMessage.innerHTML = "";
+
+    const messageElem = document.createElement('div');
+    messageElem.textContent = message;
+    messageElem.style.fontSize = '1em';
+    messageElem.style.fontWeight = 'bold';
+    messageElem.style.marginBottom = '10px';
+    messageElem.style.color = '#FFD700'
+
+    const scoreInfoElem = document.createElement('div');
+    scoreInfoElem.textContent = `Player Score: ${playerScore} | AI Score: ${aiScore}`;
+    scoreInfoElem.style.fontSize = '1em';
+    scoreInfoElem.style.color = '#FFFFFF'; // White color for scores
+    scoreInfoElem.style.fontWeight = '600';
+
+    gameOverMessage.appendChild(messageElem);
+    gameOverMessage.appendChild(scoreInfoElem);
+
     gameOverScreen.style.display = 'flex';
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const savedHighScore = parseInt(localStorage.getItem('pong_highest_score')) || 0;
+    highestScore.textContent = savedHighScore.toString();
+});
 
 function resetGame() {
     playerScore = 0;
