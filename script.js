@@ -55,6 +55,7 @@ const welcomeScreen = document.getElementById('welcomeScreen');
 const startGameButton = document.getElementById('startGameButton');
 const playerNameInput = document.getElementById('playerNameInput');
 const pauseButton = document.getElementById('pauseButton');
+const exitBtn = document.getElementById('exitBtn');
 const difficultySelect = document.getElementById('difficulty');
 const playerScoreDisplay = document.getElementById('playerScore');
 const aiScoreDisplay = document.getElementById('aiScore');
@@ -355,6 +356,36 @@ playAgainButton.addEventListener('click', () => {
     resetGame();
     startBackgroundMusicRotation();
     startCountdown();
+});
+
+//ExitBtn variables
+
+const ExitBtn = document.getElementById('exitBtn');
+const ConfirmBox = document.getElementById('confirmBox')
+const YesBtn = document.getElementById('yesBtn');
+const NoBtn = document.getElementById('noBtn');
+
+
+
+// showing confirmation box on clicking exit
+
+ExitBtn.addEventListener('click' , () => {
+   
+    ConfirmBox.style.display = 'block';
+});
+
+//on clicking yes btn
+
+YesBtn.addEventListener("click",() => {
+  window.location.href = 'index.html';
+
+});
+
+// on clicking NoBtn
+
+NoBtn.addEventListener("click" , () => {
+    ConfirmBox.style.display='none';
+    
 });
 
 // --- Event Listeners for In-Game Controls ---
