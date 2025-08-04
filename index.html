@@ -14,6 +14,31 @@
         <button id="startGameButton">Play Game</button>
         <button id="howToPlayButton">How to Play</button>
     </div>
+    <!-- Leaderboard Section -->
+    <div id="leaderboardSection" class="leaderboard-box">
+    <h3>🏆 Top Scores</h3>
+    <ul id="leaderboardList">
+        <!-- Scores will be injected here via JavaScript -->
+    </ul>
+    </div>
+    <!-- Player Profile Box -->
+<div class="profile-box">
+  <h3>👤 Player Profile</h3>
+  <p>Games Played: <span id="gamesPlayed">0</span></p>
+  <p>Wins: <span id="wins">0</span></p>
+  <p>Losses: <span id="losses">0</span></p>
+  <p>Average Score: <span id="averageScore">0</span></p>
+  <p>Longest Rally: <span id="longestRally">0</span></p>
+</div>
+
+<!-- Daily Challenge Box -->
+<div class="challenge-box">
+  <h3>🗓️ Daily Challenge</h3>
+  <p id="challengeText">Score 10 points without missing.</p>
+  <p>Status: <span id="challengeStatus">❌ Not Completed</span></p>
+</div>
+
+
 
     <div id="gameOverScreen" class="game-over-screen">
         <h2 id="gameOverMessage"></h2>
