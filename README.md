@@ -16,6 +16,15 @@ Relive the nostalgia of a retro classic! This project is a straightforward yet e
 | **Fully Responsive**               | Optimized for desktops and mobile devices.                                                    |
 | **Touch Controls**                 | Touch-and-drag controls for smooth mobile gameplay.                                           |
 | **Browser-Based**                  | No installation required — play directly in your web browser.                                |
+## 🔧 Behind the Feature: Difficulty Settings Menu
+
+As part of the GSSoC'25 contribution, a new **Settings Menu** was added to let players choose their desired difficulty level before starting the game:
+
+- 🎯 **Easy** – Slower ball speed and more forgiving AI
+- ⚖️ **Medium** – Balanced AI speed and paddle reaction
+- 🔥 **Hard** – Fast-paced ball speed with challenging AI
+
+This interactive dropdown makes the game more customizable and enjoyable for all skill levels.
 
 
 ## 🕹️ How to Play
@@ -123,3 +132,4 @@ This project is open-source and available under the MIT License. See the `LICENS
 
 * Inspired by the original Pong game for endless classic fun.
 * Sound effects sourced from FreeSound.org, mixit.com. 
+* Difficulty Settings Menu added by [Poushali Mitra] (https://github.com/Poushali-Mitra) as part of GSSoC'25 🚀
