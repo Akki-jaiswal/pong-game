@@ -199,6 +199,8 @@ h1 {
     justify-content: center;
     align-items: center;
     z-index: 100; 
+    margin-bottom: 12px;
+
     text-align: center;
     /* --- Responsive CSS for Welcome/Game Over Screens --- */
     padding: 20px;
@@ -267,6 +269,7 @@ h1 {
 }
 
 .game-over-screen h2 {
+    
     font-size: 2.5em;
     margin-bottom: 30px;
     background: linear-gradient(45deg, #ffd700, #ffed4e, #ff6b6b);
@@ -291,6 +294,7 @@ canvas:hover {
 .game-over-screen button:active {
     transform: translateY(0);
     box-shadow: 0 2px 10px 0 rgba(31, 38, 135, 0.3);
+    
 }
 
 /* Score highlighting */
@@ -372,6 +376,7 @@ canvas:hover {
     .game-controls button, .game-controls select, .welcome-screen button, .game-over-screen button {
         font-size: 0.9em;
         padding: 10px 15px;
+        margin-bottom:10px;
     }
     .score {
         font-size: 1.1em;
