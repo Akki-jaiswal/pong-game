@@ -82,6 +82,28 @@ const difficultySettings = {
         aiPaddleSpeed: 7
     }
 };
+let stats = JSON.parse(localStorage.getItem("playerStats")) || {
+  gamesPlayed: 0, wins: 0, losses: 0, totalScore: 0, longestRally: 0
+};
+
+function updateStats(score, didWin, rallyLength) {
+  stats.gamesPlayed++;
+  stats.totalScore += score;
+  if (didWin) stats.wins++; else stats.losses++;
+  if (rallyLength > stats.longestRally) stats.longestRally = rallyLength;
+  localStorage.setItem("playerStats", JSON.stringify(stats));
+}
+
+function renderStats() {
+  document.getElementById("gamesPlayed").textContent = stats.gamesPlayed;
+  document.getElementById("wins").textContent = stats.wins;
+  document.getElementById("losses").textContent = stats.losses;
+  document.getElementById("averageScore").textContent =
+    stats.gamesPlayed ? Math.round(stats.totalScore / stats.gamesPlayed) : 0;
+  document.getElementById("longestRally").textContent = stats.longestRally;
+}
+window.onload = renderStats;
+
 
 // --- Game Functions ---
 

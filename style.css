@@ -13,6 +13,40 @@ body {
     position: relative; /* Needed for absolute positioning of welcome/game over screens */
     overflow-x: hidden; /* Prevent horizontal scroll on smaller screens */
 }
+#leaderboardList li:first-child {
+    font-weight: bold;
+    color: gold;
+}
+#leaderboardList li:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transition: background 0.3s ease;
+    border-radius: 4px;
+}
+
+
+
+.leaderboard-box {
+    background: #1c1c1c;
+    color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+#leaderboardList {
+    list-style: none;
+    padding-left: 0;
+}
+
+#leaderboardList li {
+    padding: 4px 0;
+    border-bottom: 1px solid #555;
+}
 
 /* Floating particles background effect */
 body::before {
@@ -34,6 +68,16 @@ body::before {
     pointer-events: none;
     z-index: -1;
 }
+.profile-box, .challenge-box {
+  background: rgba(255,255,255,0.1);
+  padding: 15px;
+  border-radius: 12px;
+  margin: 20px auto;
+  max-width: 300px;
+  color: white;
+  box-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
 
 @keyframes sparkle {
     from { transform: translateY(0); }
@@ -199,6 +243,8 @@ h1 {
     justify-content: center;
     align-items: center;
     z-index: 100; 
+    margin-bottom: 12px;
+
     text-align: center;
     /* --- Responsive CSS for Welcome/Game Over Screens --- */
     padding: 20px;
@@ -267,6 +313,7 @@ h1 {
 }
 
 .game-over-screen h2 {
+    
     font-size: 2.5em;
     margin-bottom: 30px;
     background: linear-gradient(45deg, #ffd700, #ffed4e, #ff6b6b);
@@ -291,6 +338,7 @@ canvas:hover {
 .game-over-screen button:active {
     transform: translateY(0);
     box-shadow: 0 2px 10px 0 rgba(31, 38, 135, 0.3);
+    
 }
 
 /* Score highlighting */
@@ -372,6 +420,7 @@ canvas:hover {
     .game-controls button, .game-controls select, .welcome-screen button, .game-over-screen button {
         font-size: 0.9em;
         padding: 10px 15px;
+        margin-bottom:10px;
     }
     .score {
         font-size: 1.1em;

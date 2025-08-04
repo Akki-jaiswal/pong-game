@@ -50,6 +50,22 @@ export function startBackgroundMusicRotation() {
 
     currentTrackIndex = (currentTrackIndex + 1) % backgroundMusicTracks.length; // Move to next track for next time
 }
+function renderLeaderboard() {
+  const leaderboardList = document.getElementById("leaderboardList");
+  const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+  leaderboardList.innerHTML = "";
+
+  leaderboard.forEach((entry, index) => {
+    const li = document.createElement("li");
+    li.textContent = `${index + 1}. ${entry.name} — ${entry.score}`;
+    leaderboardList.appendChild(li);
+  });
+}
+
+window.onload = () => {
+  renderLeaderboard(); // Call when welcome screen loads
+};
+
 
 // Function to stop background music
 export function stopBackgroundMusicRotation() {
