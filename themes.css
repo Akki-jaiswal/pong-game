@@ -1,0 +1,304 @@
+/* ===========================================
+   MULTI-THEME SUPPORT FOR PONG GAME
+   Using CSS Custom Properties (Variables)
+   =========================================== */
+
+/* ===== ROOT: CSS VARIABLES FOR DEFAULT THEME ===== */
+:root {
+    /* Background gradients */
+    --bg-gradient-1: #1a1a2e;
+    --bg-gradient-2: #16213e;
+    --bg-gradient-3: #0f3460;
+    --bg-gradient-4: #533483;
+    
+    /* Canvas styling */
+    --canvas-bg-gradient-1: #1e3c72;
+    --canvas-bg-gradient-2: #2a5298;
+    --canvas-bg-gradient-3: #1e3c72;
+    --canvas-border-color: rgba(255, 255, 255, 0.3);
+    --canvas-glow-color: rgba(31, 38, 135, 0.37);
+    
+    /* Game elements */
+    --paddle-color: rgba(255, 255, 255, 0.9);
+    --paddle-glow: rgba(255, 255, 255, 0.5);
+    --ball-color: rgba(255, 255, 255, 0.95);
+    --ball-glow: rgba(255, 255, 255, 0.8);
+    --center-line-color: rgba(255, 255, 255, 0.3);
+    
+    /* UI Elements */
+    --text-color: white;
+    --title-gradient-1: #ff6b6b;
+    --title-gradient-2: #4ecdc4;
+    --title-gradient-3: #45b7d1;
+    --title-gradient-4: #96ceb4;
+    --title-glow: rgba(255, 255, 255, 0.5);
+    
+    /* Controls and buttons */
+    --control-bg: rgba(255, 255, 255, 0.1);
+    --control-border: rgba(255, 255, 255, 0.2);
+    --control-glow: rgba(31, 38, 135, 0.37);
+    --button-bg: rgba(255, 255, 255, 0.15);
+    --button-border: rgba(255, 255, 255, 0.3);
+    --button-hover-bg: rgba(255, 255, 255, 0.25);
+    --button-hover-border: rgba(255, 255, 255, 0.5);
+    
+    /* Screen overlays */
+    --overlay-bg: rgba(0, 0, 0, 0.3);
+    --welcome-title-gradient-1: #ff6b6b;
+    --welcome-title-gradient-2: #4ecdc4;
+    --welcome-title-gradient-3: #45b7d1;
+    --gameover-title-gradient-1: #ffd700;
+    --gameover-title-gradient-2: #ffed4e;
+    --gameover-title-gradient-3: #ff6b6b;
+    --gameover-glow: rgba(255, 215, 0, 0.8);
+    
+    /* Particle effects */
+    --particle-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ===== NEON RETRO THEME ===== */
+.theme-neon-retro {
+    /* Background gradients - Dark with neon accents */
+    --bg-gradient-1: #0a0a0a;
+    --bg-gradient-2: #1a0033;
+    --bg-gradient-3: #330066;
+    --bg-gradient-4: #ff0099;
+    
+    /* Canvas styling - Electric purple/pink */
+    --canvas-bg-gradient-1: #2d1b69;
+    --canvas-bg-gradient-2: #ff0099;
+    --canvas-bg-gradient-3: #2d1b69;
+    --canvas-border-color: rgba(255, 0, 153, 0.6);
+    --canvas-glow-color: rgba(255, 0, 153, 0.4);
+    
+    /* Game elements - Bright neon colors */
+    --paddle-color: rgba(0, 255, 255, 0.95);
+    --paddle-glow: rgba(0, 255, 255, 0.8);
+    --ball-color: rgba(255, 255, 0, 0.95);
+    --ball-glow: rgba(255, 255, 0, 0.9);
+    --center-line-color: rgba(255, 0, 153, 0.5);
+    
+    /* UI Elements */
+    --text-color: #00ffff;
+    --title-gradient-1: #ff0099;
+    --title-gradient-2: #00ffff;
+    --title-gradient-3: #ffff00;
+    --title-gradient-4: #ff0099;
+    --title-glow: rgba(0, 255, 255, 0.8);
+    
+    /* Controls and buttons */
+    --control-bg: rgba(255, 0, 153, 0.15);
+    --control-border: rgba(255, 0, 153, 0.4);
+    --control-glow: rgba(255, 0, 153, 0.3);
+    --button-bg: rgba(0, 255, 255, 0.2);
+    --button-border: rgba(0, 255, 255, 0.5);
+    --button-hover-bg: rgba(0, 255, 255, 0.35);
+    --button-hover-border: rgba(0, 255, 255, 0.8);
+    
+    /* Screen overlays */
+    --overlay-bg: rgba(0, 0, 0, 0.7);
+    --welcome-title-gradient-1: #ff0099;
+    --welcome-title-gradient-2: #00ffff;
+    --welcome-title-gradient-3: #ffff00;
+    --gameover-title-gradient-1: #ffff00;
+    --gameover-title-gradient-2: #ff0099;
+    --gameover-title-gradient-3: #00ffff;
+    --gameover-glow: rgba(255, 255, 0, 0.9);
+    
+    /* Particle effects */
+    --particle-color: rgba(255, 0, 153, 0.2);
+}
+
+/* ===== DARK MODE THEME ===== */
+.theme-dark-mode {
+    /* Background gradients - Pure dark tones */
+    --bg-gradient-1: #000000;
+    --bg-gradient-2: #1a1a1a;
+    --bg-gradient-3: #2d2d2d;
+    --bg-gradient-4: #404040;
+    
+    /* Canvas styling - Dark gray tones */
+    --canvas-bg-gradient-1: #1a1a1a;
+    --canvas-bg-gradient-2: #333333;
+    --canvas-bg-gradient-3: #1a1a1a;
+    --canvas-border-color: rgba(128, 128, 128, 0.5);
+    --canvas-glow-color: rgba(128, 128, 128, 0.2);
+    
+    /* Game elements - Minimalist white/gray */
+    --paddle-color: rgba(200, 200, 200, 0.9);
+    --paddle-glow: rgba(200, 200, 200, 0.3);
+    --ball-color: rgba(255, 255, 255, 0.9);
+    --ball-glow: rgba(255, 255, 255, 0.4);
+    --center-line-color: rgba(128, 128, 128, 0.4);
+    
+    /* UI Elements */
+    --text-color: #e0e0e0;
+    --title-gradient-1: #808080;
+    --title-gradient-2: #a0a0a0;
+    --title-gradient-3: #c0c0c0;
+    --title-gradient-4: #ffffff;
+    --title-glow: rgba(255, 255, 255, 0.3);
+    
+    /* Controls and buttons */
+    --control-bg: rgba(128, 128, 128, 0.1);
+    --control-border: rgba(128, 128, 128, 0.3);
+    --control-glow: rgba(128, 128, 128, 0.2);
+    --button-bg: rgba(128, 128, 128, 0.2);
+    --button-border: rgba(128, 128, 128, 0.4);
+    --button-hover-bg: rgba(128, 128, 128, 0.3);
+    --button-hover-border: rgba(255, 255, 255, 0.6);
+    
+    /* Screen overlays */
+    --overlay-bg: rgba(0, 0, 0, 0.8);
+    --welcome-title-gradient-1: #808080;
+    --welcome-title-gradient-2: #a0a0a0;
+    --welcome-title-gradient-3: #ffffff;
+    --gameover-title-gradient-1: #c0c0c0;
+    --gameover-title-gradient-2: #ffffff;
+    --gameover-title-gradient-3: #e0e0e0;
+    --gameover-glow: rgba(255, 255, 255, 0.5);
+    
+    /* Particle effects */
+    --particle-color: rgba(128, 128, 128, 0.08);
+}
+
+/* ===== OCEAN BLUE THEME ===== */
+.theme-ocean-blue {
+    /* Background gradients - Ocean depths */
+    --bg-gradient-1: #001122;
+    --bg-gradient-2: #003366;
+    --bg-gradient-3: #004488;
+    --bg-gradient-4: #0066aa;
+    
+    /* Canvas styling - Deep ocean blues */
+    --canvas-bg-gradient-1: #003d5c;
+    --canvas-bg-gradient-2: #0077be;
+    --canvas-bg-gradient-3: #003d5c;
+    --canvas-border-color: rgba(0, 191, 255, 0.4);
+    --canvas-glow-color: rgba(0, 191, 255, 0.3);
+    
+    /* Game elements - Aquatic colors */
+    --paddle-color: rgba(0, 255, 255, 0.9);
+    --paddle-glow: rgba(0, 255, 255, 0.6);
+    --ball-color: rgba(255, 255, 255, 0.95);
+    --ball-glow: rgba(135, 206, 235, 0.8);
+    --center-line-color: rgba(0, 191, 255, 0.4);
+    
+    /* UI Elements */
+    --text-color: #87ceeb;
+    --title-gradient-1: #00bfff;
+    --title-gradient-2: #1e90ff;
+    --title-gradient-3: #00ffff;
+    --title-gradient-4: #87ceeb;
+    --title-glow: rgba(135, 206, 235, 0.6);
+    
+    /* Controls and buttons */
+    --control-bg: rgba(0, 191, 255, 0.1);
+    --control-border: rgba(0, 191, 255, 0.3);
+    --control-glow: rgba(0, 191, 255, 0.25);
+    --button-bg: rgba(0, 191, 255, 0.15);
+    --button-border: rgba(0, 191, 255, 0.4);
+    --button-hover-bg: rgba(0, 191, 255, 0.25);
+    --button-hover-border: rgba(0, 255, 255, 0.6);
+    
+    /* Screen overlays */
+    --overlay-bg: rgba(0, 17, 34, 0.6);
+    --welcome-title-gradient-1: #00bfff;
+    --welcome-title-gradient-2: #00ffff;
+    --welcome-title-gradient-3: #87ceeb;
+    --gameover-title-gradient-1: #00ffff;
+    --gameover-title-gradient-2: #87ceeb;
+    --gameover-title-gradient-3: #1e90ff;
+    --gameover-glow: rgba(0, 255, 255, 0.7);
+    
+    /* Particle effects */
+    --particle-color: rgba(0, 191, 255, 0.15);
+}
+
+/* ===== THEME-SPECIFIC ANIMATIONS ===== */
+
+/* Neon Retro - More intense pulsing */
+.theme-neon-retro canvas {
+    animation: neonPulse 2s ease-in-out infinite;
+}
+
+@keyframes neonPulse {
+    0%, 100% {
+        box-shadow: 
+            0 8px 32px 0 var(--canvas-glow-color),
+            inset 0 0 50px rgba(255, 0, 153, 0.2);
+    }
+    50% {
+        box-shadow: 
+            0 12px 40px 0 var(--canvas-glow-color),
+            inset 0 0 60px rgba(255, 0, 153, 0.4);
+    }
+}
+
+/* Dark Mode - Subtle glow */
+.theme-dark-mode canvas {
+    animation: subtleGlow 6s ease-in-out infinite;
+}
+
+@keyframes subtleGlow {
+    0%, 100% {
+        box-shadow: 
+            0 4px 16px 0 var(--canvas-glow-color),
+            inset 0 0 20px rgba(128, 128, 128, 0.1);
+    }
+    50% {
+        box-shadow: 
+            0 6px 20px 0 var(--canvas-glow-color),
+            inset 0 0 25px rgba(128, 128, 128, 0.15);
+    }
+}
+
+/* Ocean Blue - Wave-like animation */
+.theme-ocean-blue canvas {
+    animation: oceanWave 5s ease-in-out infinite;
+}
+
+@keyframes oceanWave {
+    0%, 100% {
+        box-shadow: 
+            0 8px 32px 0 var(--canvas-glow-color),
+            inset 0 0 40px rgba(0, 191, 255, 0.15);
+    }
+    50% {
+        box-shadow: 
+            0 12px 40px 0 var(--canvas-glow-color),
+            inset 0 0 50px rgba(0, 191, 255, 0.25);
+    }
+}
+
+/* ===== RESPONSIVE THEME ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+    /* Reduce animation intensity on mobile for all themes */
+    .theme-neon-retro canvas,
+    .theme-dark-mode canvas,
+    .theme-ocean-blue canvas {
+        animation-duration: 8s;
+    }
+    
+    /* Adjust particle effects for mobile performance */
+    .theme-neon-retro body::before {
+        opacity: 0.6;
+    }
+    
+    .theme-dark-mode body::before {
+        opacity: 0.3;
+    }
+    
+    .theme-ocean-blue body::before {
+        opacity: 0.5;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    /* Disable theme-specific animations for accessibility */
+    .theme-neon-retro canvas,
+    .theme-dark-mode canvas,
+    .theme-ocean-blue canvas {
+        animation: none !important;
+    }
+}
