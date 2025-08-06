@@ -37,8 +37,8 @@ let aiPaddleY;
 
 let playerScore = 0;
 let aiScore = 0;
-const minimumWinningScore = 1;
-const scoreDifferenceToWin = 0;
+const minimumWinningScore = 3;
+const scoreDifferenceToWin = 2;
 
 let gamePaused = true;
 let animationFrameId = null;
