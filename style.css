@@ -227,8 +227,8 @@ h1 {
 }
 
 .game-controls select option {
-    background: var(--button-bg);
-    color: var(--text-color);
+    background: var(--dropdown-bg);
+    color: var(--dropdown-color);
 }
 
 /* Enhanced dropdown for better theme consistency */
