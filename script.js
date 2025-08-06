@@ -37,8 +37,8 @@ let aiPaddleY;
 
 let playerScore = 0;
 let aiScore = 0;
-const minimumWinningScore = 3;
-const scoreDifferenceToWin = 2;
+const minimumWinningScore = 1;
+const scoreDifferenceToWin = 0;
 
 let gamePaused = true;
 let animationFrameId = null;
@@ -209,12 +209,29 @@ function moveEverything() {
         playSound(scoreSound);
         // Check for Player win condition
         if (playerScore >= minimumWinningScore && (playerScore - aiScore >= scoreDifferenceToWin)) {
-            gamePaused = true;
-            playSound(playerWinSound);
-            setTimeout(() => {
-                endGame(`${playerName} Wins!`);
-            }, 500);
-        } else {
+    gamePaused = true;
+    playSound(playerWinSound);
+
+    confetti({
+        particleCount: 600,
+        spread: 120,
+        startVelocity: 45,
+        decay: 0.9,
+        scalar: 1.1,
+        origin: { y: 0.6 }
+    });
+
+    const lastCanvas = document.querySelector("canvas:not(#gameCanvas)");
+    if (lastCanvas && !lastCanvas.classList.contains("confetti-canvas")) {
+      lastCanvas.classList.add("confetti-canvas");
+    }
+
+    // Show game over screen after small delay
+    setTimeout(() => {
+        endGame(`${playerName} Wins!`);
+    }, 500);
+}
+else {
             gamePaused = true;
             resetBall();
             startCountdown();
@@ -553,3 +570,4 @@ function keyboardPaddleControl() {
     if (playerPaddleY < 0) playerPaddleY = 0;
     if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
 }
+
