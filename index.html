@@ -41,7 +41,17 @@
             <span id="playerScore">Player: 0</span> | <span id="aiScore">AI: 0</span>
         </div>
     </div>
-    <canvas id="gameCanvas" width="600" height="400"></canvas>
+    <!-- <canvas id="gameCanvas" width="600" height="400"></canvas> -->
+       <div class="game-wrapper" style="position: relative; display: inline-block;">
+  <div style="position: absolute; left: 10px; top: 100%; color: white; font-weight: bold;">
+    You
+  </div>
+  <canvas id="gameCanvas" width="600" height="400"></canvas>
+  <div style="position: absolute; right: 10px; top: 100%; color: white; font-weight: bold;">
+    AI
+  </div>
+</div>
+
 
     <!-- How to Play Modal -->
     <div id="howToPlayModal" class="modal hidden">
