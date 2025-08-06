@@ -601,3 +601,33 @@ howToPlayButton.addEventListener('click', () => {
     console.log("Clicked How to Play!");
     howToPlayModal.classList.remove('hidden');
 });
+function showGameOver(winnerName) {
+    const gameOverScreen = document.getElementById("gameOverScreen");
+    const gameOverMessage = document.getElementById("gameOverMessage");
+    const canvas = document.getElementById("gameCanvas");
+
+    gameOverMessage.innerHTML = `🏆 <strong>${winnerName} Wins!</strong> 🎉`;
+    gameOverScreen.style.display = "flex";
+    canvas.style.display = "none";
+
+    launchConfetti();
+}
+
+// Simple confetti generator
+function launchConfetti() {
+    const container = document.getElementById("gameOverScreen");
+
+    for (let i = 0; i < 100; i++) {
+        const confetti = document.createElement("div");
+        confetti.classList.add("confetti");
+        confetti.style.left = Math.random() * 100 + "vw";
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
+        confetti.style.animationDuration = (Math.random() * 2 + 2) + "s";
+        container.appendChild(confetti);
+
+        // Remove confetti after animation
+        setTimeout(() => {
+            confetti.remove();
+        }, 3000);
+    }
+}
