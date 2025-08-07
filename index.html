@@ -6,12 +6,14 @@
     <title>Advanced Pong Game</title>
     <link rel="icon" href="pong.jpeg" type="image/jpeg">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="themes.css">
 </head>
 <body>
     <div id="welcomeScreen" class="welcome-screen">
-        <h2>Welcome to Pong!</h2>
+        <h2>Welcome to Pong-Game!</h2>
         <input type="text" id="playerNameInput" placeholder="Enter your name (optional)" maxlength="15">
         <button id="startGameButton">Play Game</button>
+        <button id="howToPlayButton">How to Play</button>
     </div>
 
     <div id="gameOverScreen" class="game-over-screen">
@@ -29,6 +31,13 @@
             <option value="medium" selected>Medium</option>
             <option value="hard">Hard</option>
         </select>
+        <label for="themeSelector">Theme:</label>
+        <select id="themeSelector">
+            <option value="default">Default</option>
+            <option value="neon-retro">Neon Retro</option>
+            <option value="dark-mode">Dark Mode</option>
+            <option value="ocean-blue">Ocean Blue</option>
+        </select>
         <div class="score">
             <span id="playerScore">Player: 0</span> | <span id="aiScore">AI: 0</span>
             <span id="highScore" class="high-score-label">🏆 High Score: 0</span>
@@ -37,6 +46,21 @@
     </div>
     <canvas id="gameCanvas" width="600" height="400"></canvas>
 
+    <!-- How to Play Modal -->
+    <div id="howToPlayModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>🎮 How to Play</h3>
+            <ul style="text-align: left;">
+                <li>Use <strong>↑</strong> and <strong>↓</strong> keys or <strong>touch</strong> to move your paddle.</li>
+                <li>First to score 3 points and lead by 2 wins the game.</li>
+                <li>Select difficulty: Easy, Medium, or Hard.</li>
+                <li>Use Pause/Resume to control the game state.</li>
+            </ul>
+            <button id="closeHowToPlay">Close</button>
+        </div>
+    </div>
+
     <script type="module" src="script.js"></script>
+
 </body>
 </html>
