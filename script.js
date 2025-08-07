@@ -90,6 +90,12 @@ let upArrowPressed = false;
 let downArrowPressed = false;
 const paddleMoveSpeed = 8;
 
+// Power-up variables
+let powerUpActive = false;
+let powerUpX;
+let powerUpY;
+const powerUpSize = 10;
+
 // --- Game Functions ---
 
 function updateBackgroundBasedOnScore() {
@@ -196,6 +202,12 @@ function drawEverything() {
     // Update score displays
     playerScoreDisplay.textContent = `${playerName}: ${playerScore}`;
     aiScoreDisplay.textContent = `AI: ${aiScore}`;
+
+    // Draw power-up (example)
+    if (powerUpActive) {
+        ctx.fillStyle = 'yellow';
+        ctx.fillRect(powerUpX, powerUpY, powerUpSize, powerUpSize);
+    }
 }
 
 function moveEverything() {
@@ -283,6 +295,13 @@ function moveEverything() {
 
     // Handle keyboard controls
     keyboardPaddleControl();
+
+    // Power-up collision (example)
+    if (powerUpActive && ballX + ballRadius > powerUpX && ballX - ballRadius < powerUpX + powerUpSize &&
+        ballY + ballRadius > powerUpY && ballY - ballRadius < powerUpY + powerUpSize) {
+        applyPowerUp();
+        powerUpActive = false;
+    }
 }
 
 function gameLoop() {
@@ -384,6 +403,20 @@ function handleTouchMove(event) {
     }
 }
 
+function generatePowerUp() {
+    powerUpActive = true;
+    powerUpX = Math.random() * (canvas.width - powerUpSize);
+    powerUpY = Math.random() * (canvas.height - powerUpSize);
+}
+
+function applyPowerUp() {
+    // Implement power-up effect (e.g., increase paddle size)
+    paddleHeight = 150; // Increase paddle height
+    setTimeout(() => {
+        paddleHeight = 100; // Revert after a delay
+    }, 5000);
+}
+
 // --- Event Listeners ---
 
 // Start game button
@@ -393,7 +426,7 @@ startGameButton.addEventListener('click', () => {
         playerName = "Player";
     }
     welcomeScreen.style.display = 'none';
-
+    gameState = GAME_STATES.PLAYING; // Set game state to playing
     startBackgroundMusicRotation();
     resetGame();
     startCountdown();
@@ -402,6 +435,7 @@ startGameButton.addEventListener('click', () => {
 // Play again button
 playAgainButton.addEventListener('click', () => {
     gameOverScreen.style.display = 'none';
+    gameState = GAME_STATES.PLAYING; // Set game state to playing
     resetGame();
     startBackgroundMusicRotation();
     startCountdown();
@@ -434,14 +468,15 @@ canvas.addEventListener('touchmove', function(event) {
 // Pause button
 pauseButton.addEventListener('click', () => {
     if (!countdownActive) {
-        if (gamePaused) {
-            startBackgroundMusicRotation();
-            gamePaused = false;
-            pauseButton.textContent = "Pause";
-            if (!animationFrameId) {
-                gameLoop();
-            }
+        if (gameState === GAME_STATES.PLAYING) {
 
+            gamePaused = true;
+            pauseButton.textContent = "Resume";
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            stopBackgroundMusicRotation();
         } else { // If currently playing, user wants to pause
             gamePaused = true;
             pauseButton.textContent = "Resume";
