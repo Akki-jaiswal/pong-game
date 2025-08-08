@@ -207,7 +207,10 @@ h1 {
     box-shadow: 0 4px 15px 0 var(--control-glow);
     font-weight: 500;
 }
-
+/* Improper alignment between buttons in home page fixed */
+.welcome-screen button{
+    margin-bottom: 1rem; 
+}
 .game-controls button:hover,
 .game-controls select:hover,
 .welcome-screen button:hover,
