@@ -41,6 +41,8 @@
     --button-border: rgba(255, 255, 255, 0.3);
     --button-hover-bg: rgba(255, 255, 255, 0.25);
     --button-hover-border: rgba(255, 255, 255, 0.5);
+    --dropdown-bg: #1e1e2f;
+    --dropdown-color: white;
     
     /* Screen overlays */
     --overlay-bg: rgba(0, 0, 0, 0.3);
@@ -94,6 +96,8 @@
     --button-border: rgba(0, 255, 255, 0.5);
     --button-hover-bg: rgba(0, 255, 255, 0.35);
     --button-hover-border: rgba(0, 255, 255, 0.8);
+    --dropdown-bg: #000;
+    --dropdown-color: #FF6B6B;
     
     /* Screen overlays */
     --overlay-bg: rgba(0, 0, 0, 0.7);
@@ -147,6 +151,8 @@
     --button-border: rgba(128, 128, 128, 0.4);
     --button-hover-bg: rgba(128, 128, 128, 0.3);
     --button-hover-border: rgba(255, 255, 255, 0.6);
+    --dropdown-bg: #1e1e2f;
+    --dropdown-color: white;
     
     /* Screen overlays */
     --overlay-bg: rgba(0, 0, 0, 0.8);
@@ -200,6 +206,8 @@
     --button-border: rgba(0, 191, 255, 0.4);
     --button-hover-bg: rgba(0, 191, 255, 0.25);
     --button-hover-border: rgba(0, 255, 255, 0.6);
+    --dropdown-bg: #0a3d62;
+    --dropdown-color: #80cae5;
     
     /* Screen overlays */
     --overlay-bg: rgba(0, 17, 34, 0.6);
