@@ -69,6 +69,12 @@ const gameOverScreen = document.getElementById('gameOverScreen');
 const gameOverMessage = document.getElementById('gameOverMessage');
 const playAgainButton = document.getElementById('playAgainButton');
 
+// Winning Modal elements
+const winningModal = document.getElementById('winningModal');
+const winnerText = document.getElementById('winnerText');
+const winnerMessage = document.getElementById('winnerMessage');
+const restartBtn = document.getElementById('restartBtn');
+
 // Difficulty level variable
 let difficultyLevel = 'medium';
 
@@ -307,8 +313,15 @@ function endGame(message) {
     gamePaused = true;
     stopBackgroundMusicRotation();
 
-    gameOverMessage.textContent = message;
-    gameOverScreen.style.display = 'flex';
+    // Show the new winning modal
+    if (winningModal && winnerMessage) {
+        winnerMessage.textContent = message;
+        winningModal.style.display = 'flex';
+    } else {
+        // fallback to old game over screen if modal not found
+        gameOverMessage.textContent = message;
+        gameOverScreen.style.display = 'flex';
+    }
 }
 
 function resetGame() {
@@ -323,6 +336,22 @@ function resetGame() {
     resetBall();
 
     gamePaused = true;
+
+    // Hide winning modal if visible
+    if (winningModal) {
+        winningModal.style.display = 'none';
+    }
+    // Hide old game over screen if visible
+    if (gameOverScreen) {
+        gameOverScreen.style.display = 'none';
+    }
+// Handle restart from winning modal
+if (restartBtn) {
+    restartBtn.addEventListener('click', () => {
+        resetGame();
+        // Optionally, start the game immediately or show menu
+    });
+}
     pauseButton.textContent = "Resume";
 
     if (animationFrameId) {
