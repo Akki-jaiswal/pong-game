@@ -1,3 +1,54 @@
+/* Winning Modal Styles */
+.winning-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+.winning-content {
+    background: #222;
+    color: #fff;
+    padding: 3rem 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    text-align: center;
+    animation: popIn 0.5s cubic-bezier(.68,-0.55,.27,1.55);
+}
+.winning-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #ffd700;
+    letter-spacing: 2px;
+}
+.winning-content p {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+}
+#restartBtn {
+    background: linear-gradient(90deg, #ff8c00, #ffd700);
+    color: #222;
+    border: none;
+    padding: 0.8rem 2.2rem;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+#restartBtn:hover {
+    background: linear-gradient(90deg, #ffd700, #ff8c00);
+    color: #fff;
+}
+@keyframes popIn {
+    0% { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
 * {
     margin: 0;
     padding: 0;
