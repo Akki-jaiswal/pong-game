@@ -60,6 +60,7 @@ const aiScoreDisplay = document.getElementById('aiScore');
 const howToPlayButton = document.getElementById('howToPlayButton');
 const howToPlayModal = document.getElementById('howToPlayModal');
 const closeHowToPlay = document.getElementById('closeHowToPlay');
+const fullscreenButton = document.getElementById("fullscreenButton");
 
 // Game Over Screen elements
 const gameOverScreen = document.getElementById('gameOverScreen');
@@ -329,6 +330,22 @@ function resetGame() {
     drawEverything();
 }
 
+// --- Fullscreen Functionality ---
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch((err) => {
+      console.log(`Error attempting to enable fullscreen: ${err.message}`);
+    });
+    if (fullscreenButton) fullscreenButton.textContent = "⛷";
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+    if (fullscreenButton) fullscreenButton.textContent = "⛶";
+  }
+}
+
+// --- Countdown Function ---
 function startCountdown() {
     if (countdownIntervalId) {
         clearInterval(countdownIntervalId);
