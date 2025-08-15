@@ -59,9 +59,12 @@ const playerScoreDisplay = document.getElementById("playerScore");
 const aiScoreDisplay = document.getElementById("aiScore");
 const highScoreDisplay = document.getElementById("highScore");
 const resetScoreButton = document.getElementById("resetScoreButton");
+const fullscreenButton = document.getElementById("fullscreenButton");
+
 const howToPlayButton = document.getElementById('howToPlayButton');
 const howToPlayModal = document.getElementById('howToPlayModal');
 const closeHowToPlay = document.getElementById('closeHowToPlay');
+
 
 // Game Over Screen elements
 const gameOverScreen = document.getElementById("gameOverScreen");
@@ -362,6 +365,63 @@ function resetGame() {
     }
     drawEverything();
 }
+
+// --- Fullscreen Functionality ---
+fullscreenButton.addEventListener("click", () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch((err) => {
+      console.error(`Error enabling fullscreen: ${err.message}`);
+    });
+    fullscreenButton.textContent = "⛷";
+  } else {
+    document.exitFullscreen();
+    fullscreenButton.textContent = "⛶";
+  }
+});
+
+// --- Fullscreen Functions ---
+function resizeCanvas() {
+  const newWidth = document.fullscreenElement ? 1400 : 800;
+  const newHeight = document.fullscreenElement ? 600 : 400;
+
+  // Preserve positions as percentages
+  const ballXPercent = ballX / canvas.width;
+  const ballYPercent = ballY / canvas.height;
+  const playerPaddleYPercent = playerPaddleY / canvas.height;
+  const aiPaddleYPercent = aiPaddleY / canvas.height;
+
+  // Resize canvas
+  canvas.width = newWidth;
+  canvas.height = newHeight;
+
+  // Restore positions
+  ballX = ballXPercent * canvas.width;
+  ballY = ballYPercent * canvas.height;
+  playerPaddleY = playerPaddleYPercent * canvas.height;
+  aiPaddleY = aiPaddleYPercent * canvas.height;
+
+  drawEverything();
+}
+
+// Listen for fullscreen changes
+document.addEventListener('fullscreenchange', () => {
+  if (document.fullscreenElement) {
+    fullscreenButton.textContent = "⛷";
+  } else {
+    fullscreenButton.textContent = "⛶";
+  }
+  // Resize canvas when fullscreen state changes
+  resizeCanvas();
+});
+
+// Listen for window resize events (useful when in fullscreen)
+window.addEventListener('resize', () => {
+  if (document.fullscreenElement) {
+    resizeCanvas();
+  }
+});
+
+// --- Countdown Function ---
 
 function startCountdown() {
     if (countdownIntervalId) {
