@@ -54,6 +54,7 @@ const welcomeScreen = document.getElementById('welcomeScreen');
 const startGameButton = document.getElementById('startGameButton');
 const playerNameInput = document.getElementById('playerNameInput');
 const pauseButton = document.getElementById('pauseButton');
+const restartButton = document.getElementById('restartButton');
 const difficultySelect = document.getElementById('difficulty');
 const playerScoreDisplay = document.getElementById('playerScore');
 const aiScoreDisplay = document.getElementById('aiScore');
@@ -511,6 +512,27 @@ pauseButton.addEventListener('click', () => {
             }
             stopBackgroundMusicRotation();
         }
+    }
+});
+
+// Restart button functionality
+restartButton.addEventListener('click', () => {
+    // Only allow restart if game has started (not on welcome screen)
+    if (gameState !== GAME_STATES.WELCOME) {
+        // Stop any ongoing countdown
+        if (countdownIntervalId) {
+            clearInterval(countdownIntervalId);
+            countdownIntervalId = null;
+        }
+        
+        // Reset the game
+        resetGame();
+        
+        // Start a new countdown
+        startCountdown();
+        
+        // Ensure background music is playing
+        startBackgroundMusicRotation();
     }
 });
 
