@@ -499,4 +499,6 @@ canvas:hover {
         animation: none;
     }
 }
-
+#gameCanvas {
+    display: none;
+}
