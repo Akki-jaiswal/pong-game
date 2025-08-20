@@ -189,6 +189,14 @@ h1 {
     box-shadow: 0 8px 32px 0 var(--control-glow);
 }
 
+/* Keep controls (including scoreboard) visible above the canvas during gameplay */
+.game-controls {
+    position: sticky;
+    top: 10px;
+    z-index: 10;
+    margin-bottom: 20px;
+}
+
 .game-controls button,
 .game-controls select,
 .welcome-screen button,
@@ -229,7 +237,8 @@ h1 {
 html, body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 canvas {
   display: block;
