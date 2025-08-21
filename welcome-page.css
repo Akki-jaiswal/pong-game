@@ -1,0 +1,133 @@
+
+.form__group {
+  position: relative;
+  padding: 20px 0 0;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  gap: 28px;
+}
+
+.form__field {
+  font-family: inherit;
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #1a0909;
+  outline: 0;
+  font-size: 17px;
+  color: #100303;
+  padding: 7px 0;
+  background: transparent;
+  transition: border-blue 0.2s;
+  max-width: 250px;
+}
+
+.form__field::placeholder {
+  color: transparent;
+}
+
+.form__field:placeholder-shown ~ .form__label {
+  font-size: 17px;
+  cursor: text;
+  top: 20px;
+}
+
+.form__label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 1.5rem;
+  color: #0b133b;
+  font-weight: 800;
+  pointer-events: none;
+}
+
+.form__field:focus {
+  padding-bottom: 6px;
+  font-weight: 700;
+  border-width: 3px;
+  border-image: linear-gradient(to right, #070743, #050e65);
+  border-image-slice: 1;
+}
+
+.form__field:focus ~ .form__label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 25px;
+  color: #080a40;
+  font-weight: 700;
+}
+
+/* reset input */
+.form__field:required, .form__field:invalid {
+  box-shadow: none;
+}
+
+.balls div {
+    width: 25px;
+    height: 25px;
+    background-image: linear-gradient(rgb(20, 28, 80), rgba(68, 142, 238, 0.979));
+    
+    
+    border-radius: 50%;
+    animation: ball 7s linear infinite;
+}
+
+.balls {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: absolute;
+    bottom: -70px;
+}
+
+@keyframes ball {
+    0%{
+        transform: translateY(0);
+        opacity: 0;
+    }
+    50%{
+       
+        opacity: 1;
+    }
+    70%{
+        
+        opacity: 1;
+    }
+    100%{
+        transform: translateY(-80vh);
+        opacity: 0;
+    }
+}
+
+.balls div:nth-child(1){
+    animation-delay: 2s;
+    
+}
+.balls div:nth-child(2){
+    animation-delay: 1s;
+    
+}
+.balls div:nth-child(3){
+    animation-delay: 3s;
+   
+}
+.balls div:nth-child(4){
+    animation-delay: 4.5s;
+    
+}
+.balls div:nth-child(5){
+    animation-delay: 3s;
+}
+.balls div:nth-child(6){
+    animation-delay: 6s;
+    
+}
+.balls div:nth-child(7){
+    animation-delay: 7s;
+    
+}
