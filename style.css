@@ -71,7 +71,6 @@ body.score-10 {
     /* Gray + Amber */
 }
 
-
 /* Rest of your existing CSS remains the same */
 body::before {
     content: '';
@@ -98,7 +97,6 @@ body::before {
     from {
         transform: translateY(0);
     }
-
     to {
         transform: translateY(-100px);
     }
@@ -108,30 +106,24 @@ body::before {
     0% {
         background-position: 0% 50%;
     }
-
     50% {
         background-position: 100% 50%;
     }
-
     100% {
         background-position: 0% 50%;
     }
 }
 
 @keyframes pulseGlow {
-
     0%, 100% {
         box-shadow: 
             0 8px 32px 0 var(--canvas-glow-color),
             inset 0 0 50px var(--control-bg);
-
     }
-
     50% {
         box-shadow: 
             0 12px 40px 0 var(--canvas-glow-color),
             inset 0 0 60px var(--button-bg);
-
     }
 }
 
@@ -142,7 +134,6 @@ canvas {
     box-shadow: 
         0 8px 32px 0 var(--canvas-glow-color),
         inset 0 0 50px var(--control-bg);
-
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     animation: pulseGlow 4s ease-in-out infinite;
@@ -160,7 +151,6 @@ h1 {
     font-size: 2.5em; /* Default font size for desktop */
     text-shadow: 0 0 20px var(--title-glow);
     background: linear-gradient(45deg, var(--title-gradient-1), var(--title-gradient-2), var(--title-gradient-3), var(--title-gradient-4));
-
     background-size: 400% 400%;
     animation: gradientShift 8s ease infinite;
     -webkit-background-clip: text;
@@ -181,7 +171,6 @@ h1 {
     flex-wrap: wrap; /* Allow items to wrap to next line on small screens */
     padding: 15px 20px; /* Add some padding on sides */
     background: var(--control-bg);
-
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 20px;
@@ -213,7 +202,6 @@ h1 {
 .welcome-screen button:hover,
 .game-over-screen button:hover { 
     background: var(--button-hover-bg);
-
     transform: translateY(-2px);
     box-shadow: 0 6px 20px 0 var(--control-glow);
     border-color: var(--button-hover-border);
@@ -221,7 +209,6 @@ h1 {
 
 .game-controls select {
     background: var(--button-bg); 
-
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
 }
@@ -265,7 +252,6 @@ canvas {
     justify-content: center; /* Center scores */
     margin-left: 0; /* Remove fixed left margin for better centering */
     background: var(--control-bg);
-
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border-radius: 15px;
@@ -353,9 +339,21 @@ canvas {
     box-sizing: border-box;
 }
 
+.game-over-content {
+    background: var(--control-bg);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px var(--control-glow);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
 .game-over-screen h2 {
-    font-size: 2.5em;
-    margin-bottom: 30px;
+    font-size: 3em;
+    margin-bottom: 20px;
     background: linear-gradient(45deg, var(--gameover-title-gradient-1), var(--gameover-title-gradient-2), var(--gameover-title-gradient-3));
     background-size: 200% 200%;
     animation: gradientShift 4s ease infinite;
@@ -364,6 +362,72 @@ canvas {
     background-clip: text;
     text-shadow: 0 0 30px var(--gameover-glow);
     filter: drop-shadow(0 0 10px var(--gameover-glow));
+}
+
+.game-over-screen .fade-in {
+    animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.game-over-screen .pulse {
+    animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { text-shadow: 0 0 30px var(--gameover-glow); }
+    50% { text-shadow: 0 0 50px var(--gameover-glow); }
+}
+
+.game-over-screen .scale-in {
+    animation: scaleIn 0.5s ease;
+}
+
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.game-over-screen .score-display {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: var(--text-color);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    background: var(--button-bg);
+    padding: 10px 20px;
+    border-radius: 10px;
+}
+
+.game-over-screen .play-again-btn {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    background: var(--button-bg);
+    border: 2px solid var(--button-border);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.game-over-screen .play-again-btn:hover {
+    background: var(--button-hover-bg);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px 0 var(--control-glow);
+    border-color: var(--button-hover-border);
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    opacity: 0.8;
+    animation: fall 3s linear infinite;
+}
+
+@keyframes fall {
+    0% { top: -10px; transform: rotate(0deg); }
+    100% { top: 100vh; transform: rotate(360deg); }
 }
 
 canvas:hover {
@@ -389,6 +453,7 @@ canvas:hover {
     background: var(--button-hover-bg);
     transform: scale(1.05);
 }
+
 .modal {
     position: fixed;
     top: 0; left: 0;
@@ -449,6 +514,15 @@ canvas:hover {
     body::before {
         animation-duration: 30s;
     }
+
+    .game-over-screen h2 {
+        font-size: 2em;
+    }
+
+    .game-over-screen .play-again-btn {
+        padding: 12px 25px;
+        font-size: 1em;
+    }
 }
 
 @media (max-width: 480px) {
@@ -482,6 +556,15 @@ canvas:hover {
         opacity: 0.5;
         animation-duration: 40s;
     }
+
+    .game-over-screen h2 {
+        font-size: 1.5em;
+    }
+
+    .game-over-screen .play-again-btn {
+        padding: 10px 20px;
+        font-size: 0.9em;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -499,4 +582,3 @@ canvas:hover {
         animation: none;
     }
 }
-

@@ -17,8 +17,11 @@
     </div>
 
     <div id="gameOverScreen" class="game-over-screen">
-        <h2 id="gameOverMessage"></h2>
-        <button id="playAgainButton">Play Again</button>
+        <div id="gameOverContent" class="game-over-content scale-in">
+            <h2 id="gameOverMessage" class="fade-in pulse"></h2>
+            <div id="finalScore" class="score-display">Final Score: <span id="finalPlayerScore">0</span> | AI: <span id="finalAiScore">0</span></div>
+            <button id="playAgainButton" class="play-again-btn">Play Again</button>
+        </div>
     </div>
 
     <h1>Pong Game</h1>
@@ -30,15 +33,14 @@
             <option value="medium" selected>Medium</option>
             <option value="hard">Hard</option>
         </select>
-<button id="fullscreenButton">⛶</button>
-
-<label for="themeSelector">Theme:</label>
-<select id="themeSelector">
-    <option value="default">Default</option>
-    <option value="neon-retro">Neon Retro</option>
-    <option value="dark-mode">Dark Mode</option>
-    <option value="ocean-blue">Ocean Blue</option>
-</select>
+        <button id="fullscreenButton">⛶</button>
+        <label for="themeSelector">Theme:</label>
+        <select id="themeSelector">
+            <option value="default">Default</option>
+            <option value="neon-retro">Neon Retro</option>
+            <option value="dark-mode">Dark Mode</option>
+            <option value="ocean-blue">Ocean Blue</option>
+        </select>
         <div class="score">
             <span id="playerScore">Player: 0</span> | <span id="aiScore">AI: 0</span>
         </div>
@@ -60,6 +62,5 @@
     </div>
 
     <script type="module" src="script.js"></script>
-
 </body>
 </html>
