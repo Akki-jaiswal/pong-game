@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome page</title>
+    <link rel="stylesheet" href="welcome-page.css">
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="m-0 p-0 sans-serif">
+    <div class="w-[100%] h-[100vh] overflow-hidden bg-[url(./bg.avif)] bg-cover bg-center relative bg-opacity-50 fixed">
+        
+        <div class="overflow-scrollable flex flex-wrap md:w-[100%]">
+            <div class="text-[#fbfcfd] absolute top-[50%] left-[8%] transform translate-y-[-50%] z-2">
+            
+                <h1 class="p-4 font-bold text-7xl mb-8 bg-gradient-to-tr from-red-700 to-blue-900 bg-clip-text text-transparent md:w-[100%] ">Welcome to our <br> <b>Pong Game</b> </h1>
+                <div class="form__group field">
+                    <input type="input" class="form__field" placeholder="Name" required="">
+                    <label for="name" class="form__label">Name</label>
+                    <button onclick="location.href = 'index.html';" type="button" class="text-black px-2 py-3 bg-gradient-to-r from-skyblue-900 via-blue-700 to-blue-800 rounded-lg cursor-pointer w-[150px] text-md font-extrabold hover:w-[160px] hover:text-lg">Play Game</button>
+                </div>
+                
+            </div>
+            <div class="flex flex-col md:flex-row h-screen justify-center items-center right-[10%] absolute overflow-scrollable top-[30%] hidden lg:block">
+                <div class="m-auto flip-card bg-transparent w-[400px] h-[400px] perspective-1000">
+                    <div class="flip-card-inner relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] hover:[transform:rotateY(180deg)]">
+                        <div  class="flip-card-front absolute w-full h-full [backface-visibility:hidden] text-white flex items-center justify-center rounded-lg shadow-md bg-skyblue-100 " >
+                            <h2 class="text-2xl font-bold">How to Play?</h2>
+                        </div>
+                        <div class="flip-card-back absolute w-full h-full [backface-visibility:hidden] bg-radial-[at_50%_70%] from-indigo-500 via-purple-500 to-pink-500 text-white flex items-center justify-center rounded-lg shadow-md [transform:rotateY(180deg)]">
+                            <div class="flex flex-col h-full w-[80%] items-center">
+                                <h2 class="text-xl font-bold items-center justify-center text-center h-[30%] top-[10%] absolute text-black">
+                                    🎮 How to Play
+                                </h2>
+                                <ul class="mt-4 gap-y-2 justify-center absolute bottom-[20%] justify-between text-black">
+                                    <li>Use <strong>↑</strong> and <strong>↓</strong> keys or <strong>touch</strong> to move your paddle.</li> <br>
+                                    <li>First to score 3 points and lead by 2 wins the game.</li> <br>
+                                    <li>Select difficulty: Easy, Medium, or Hard.</li> <br>
+                                    <li>Use Pause/Resume to control the game state.</li>
+                                </ul>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="balls">
+                <div style="background-color: rgba(42, 143, 202, 0.536); size: 80%;"></div>
+                <div style="background-color: rgba(51, 188, 233, 0.441);"></div>
+                <div style="background-color: rgb(38, 94, 139);"></div>
+                <div style="background-color: rgba(68, 168, 211, 0.751);"></div>
+                <div style="background-color: rgb(44, 140, 224);"></div>
+                <div style="background-color: rgb(95, 178, 222);"></div>
+                <div style="background-color: rgb(15, 134, 219);"></div>
+            </div>
+        </div>
+        
+    </div>
+    
+</body>
+</html>
