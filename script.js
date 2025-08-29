@@ -8,6 +8,7 @@ window.addEventListener("DOMContentLoaded", () => {
     let playerScore = 0;
     let aiScore = 0;
     let difficulty = "medium";
+    let playerName = "Player";
 
     // --- Paddle settings ---
     const paddleHeight = 80;
@@ -65,7 +66,7 @@ const aiScoreDisplay = document.getElementById('aiScore');
         // Score
         ctx.fillStyle = "white";
         ctx.font = "20px Arial";
-        ctx.fillText(`Player: ${playerScore}`, 50, 30);
+        ctx.fillText(`${playerName}: ${playerScore}`, 50, 30);
         ctx.fillText(`AI: ${aiScore}`, canvas.width - 150, 30);
     }
 
@@ -421,6 +422,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- Start Game ---
     function startGame() {
+        playerName = document.getElementById("playerNameInput").value.trim() || "Player";
         gameRunning = true;
         paused = false;
         playerScore = 0;
@@ -433,9 +435,32 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- End Game ---
     function endGame() {
         gameRunning = false;
-        document.getElementById("gameOverMessage").textContent =
-            playerScore > aiScore ? "🎉 You Win!" : "😢 AI Wins!";
-        document.getElementById("gameOverScreen").style.display = "block";
+        const gameOverScreen = document.getElementById("gameOverScreen");
+        const gameOverMessage = document.getElementById("gameOverMessage");
+        const finalPlayerScore = document.getElementById("finalPlayerScore");
+        const finalAiScore = document.getElementById("finalAiScore");
+        const isPlayerWin = playerScore > aiScore;
+        gameOverMessage.textContent = isPlayerWin ? `🎉 ${playerName} Wins!` : "😢 AI Wins!";
+        finalPlayerScore.textContent = `${playerName}: ${playerScore}`;
+        finalAiScore.textContent = aiScore;
+        gameOverScreen.style.display = "flex"; // Changed to flex for centering
+        if (isPlayerWin) {
+            launchConfetti();
+        }
+    }
+
+    // --- Confetti for player win ---
+    function launchConfetti() {
+        const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff']; // Theme-able colors
+        for (let i = 0; i < 100; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.left = Math.random() * window.innerWidth + 'px';
+            confetti.style.animationDelay = Math.random() * 3 + 's';
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 5000);
+        }
     }
 
     // --- Controls ---
