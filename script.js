@@ -162,6 +162,27 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("startGameButton").addEventListener("click", startGame);
     document.getElementById("playAgainButton").addEventListener("click", startGame);
 
+     // --- NEW: How to Play Modal logic ---
+    const howToPlayBtn = document.getElementById("howToPlayButton");
+    const howToPlayModal = document.getElementById("howToPlayModal");
+    const closeHowToPlay = document.getElementById("closeHowToPlay");
+
+    // Show modal
+    howToPlayBtn.addEventListener("click", () => {
+        howToPlayModal.classList.remove("hidden");
+    });
+
+    // Hide modal
+    closeHowToPlay.addEventListener("click", () => {
+        howToPlayModal.classList.add("hidden");
+    });
+
+    // Hide if click outside modal-content
+    window.addEventListener("click", (e) => {
+   if (e.target === howToPlayModal) {
+            howToPlayModal.classList.add("hidden");
+        }
+    });
     // --- Kick off loop ---
     requestAnimationFrame(gameLoop);
 });
