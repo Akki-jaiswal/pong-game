@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Test - Pong Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="themes.css">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .theme-preview {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+        .preview-card {
+            width: 150px;
+            height: 150px;
+            border-radius: 15px;
+            border: 2px solid var(--canvas-border-color);
+            background: linear-gradient(135deg, var(--canvas-bg-gradient-1), var(--canvas-bg-gradient-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 15px var(--control-glow);
+        }
+        .preview-card:hover {
+            transform: scale(1.05);
+        }
+        .preview-ball {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--ball-color);
+            box-shadow: 0 0 10px var(--ball-glow);
+        }
+        .current-theme {
+            font-size: 1.2em;
+            margin: 20px 0;
+            padding: 10px;
+            background: var(--control-bg);
+            border-radius: 10px;
+            border: 1px solid var(--control-border);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎨 Pong Game Theme Test</h1>
+        
+        <div class="current-theme">
+            Current Theme: <span id="currentThemeDisplay">Default</span>
+        </div>
+        
+        <label for="themeSelector">Choose Theme:</label>
+        <select id="themeSelector">
+            <option value="default">Default</option>
+            <option value="neon-retro">Neon Retro</option>
+            <option value="dark-mode">Dark Mode</option>
+            <option value="ocean-blue">Ocean Blue</option>
+        </select>
+        
+        <div class="theme-preview">
+            <div class="preview-card">
+                <div class="preview-ball"></div>
+            </div>
+            <div class="preview-card">
+                <div class="preview-ball"></div>
+            </div>
+            <div class="preview-card">
+                <div class="preview-ball"></div>
+            </div>
+        </div>
+        
+        <canvas id="gameCanvas" width="400" height="200" style="border: 2px solid var(--canvas-border-color); border-radius: 10px; background: linear-gradient(135deg, var(--canvas-bg-gradient-1), var(--canvas-bg-gradient-2));"></canvas>
+        
+        <div style="margin-top: 20px;">
+            <a href="index.html">← Back to Game</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import themeManager from './theme.js';
+        
+        const currentThemeDisplay = document.getElementById('currentThemeDisplay');
+        
+        // Listen for theme changes
+        document.addEventListener('themeChanged', (event) => {
+            currentThemeDisplay.textContent = event.detail.themeName;
+            console.log('Theme changed to:', event.detail.theme);
+        });
+        
+        // Update display with initial theme
+        setTimeout(() => {
+            const current = themeManager.getCurrentTheme();
+            currentThemeDisplay.textContent = current.name;
+        }, 100);
+    </script>
+</body>
+</html>

@@ -1,238 +1,87 @@
-// Import audio functions and elements from audio.js
-import {
-    playSound,
-    startBackgroundMusicRotation,
-    stopBackgroundMusicRotation,
-    toggleSound,
-    isSoundEnabled,
-    setSoundEnabled,
-    paddleHitSound,
-    wallHitSound,
-    scoreSound,
-    gameOverSound,
-    playerWinSound,
-    countdownBeepSound,
-    backgroundMusicTracks
-} from './audio.js';
+// script.js
+window.addEventListener("DOMContentLoaded", () => {
+    // ---- DOM refs ----
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
 
-const canvas = document.getElementById('gameCanvas');
-// No console.error for missing canvas - fail silently or assume existence after DOMContentLoaded
-if (!canvas) {
-    throw new Error("Canvas element with ID 'gameCanvas' not found.");
-}
-const ctx = canvas.getContext('2d');
-// No console.error for missing context - fail silently or assume existence
-if (!ctx) {
-    throw new Error("2D rendering context for canvas not available.");
-}
+    const welcomeScreen = document.getElementById("welcomeScreen");
+    const startGameButton = document.getElementById("startGameButton");
 
-// Game state variables
-let ballX;
-let ballY;
-let ballSpeedX = 0;
-let ballSpeedY = 0;
-const ballRadius = 10;
+    const gameOverScreen = document.getElementById("gameOverScreen");
+    const gameOverMessage = document.getElementById("gameOverMessage");
+    const playAgainButton = document.getElementById("playAgainButton");
 
-const paddleWidth = 10;
-const paddleHeight = 100;
-let playerPaddleY;
-let aiPaddleY;
+    const pauseButton = document.getElementById("pauseButton");
+    const restartButton = document.getElementById("restartButton");
+    const difficultySelect = document.getElementById("difficulty");
+    const fullscreenButton = document.getElementById("fullscreenButton");
+    const themeSelector = document.getElementById("themeSelector");
 
-let playerScore = 0;
-let aiScore = 0;
-const minimumWinningScore = 3;
-const scoreDifferenceToWin = 2;
+    const playerScoreDisplay = document.getElementById("playerScore");
+    const aiScoreDisplay = document.getElementById("aiScore");
 
-let gamePaused = true;
-let animationFrameId = null;
-let countdownActive = false;
-let countdownValue = 3;
+    // How to Play modal
+    const howToPlayButton = document.getElementById("howToPlayButton");
+    const howToPlayModal = document.getElementById("howToPlayModal");
+    const closeHowToPlay = document.getElementById("closeHowToPlay");
+    const closeHowToPlayBtn = document.getElementById("closeHowToPlayBtn");
 
-// Global variable to store the countdown interval ID
-let countdownIntervalId = null;
+    // ---- Game state ----
+    let gameRunning = false;
+    let paused = false;
+    let playerScore = 0;
+    let aiScore = 0;
+    let difficulty = "medium";
+    let playerName = "";
 
-let playerName = "Player";
+    // ---- Objects ----
+    const paddleWidth = 10;
+    const paddleHeight = 80;
 
-// DOM elements
-const welcomeScreen = document.getElementById('welcomeScreen');
-const startGameButton = document.getElementById('startGameButton');
-const playerNameInput = document.getElementById('playerNameInput');
-const pauseButton = document.getElementById('pauseButton');
-const restartButton = document.getElementById('restartButton');
-const soundToggleButton = document.getElementById('soundToggleButton');
-const difficultySelect = document.getElementById('difficulty');
-const playerScoreDisplay = document.getElementById('playerScore');
-const aiScoreDisplay = document.getElementById('aiScore');
+    const player = { x: 10, y: canvas.height / 2 - paddleHeight / 2, dy: 6 };
+    const ai = { x: canvas.width - 20, y: canvas.height / 2 - paddleHeight / 2, dy: 5 };
 
-// DOM elements for Game Over Screen
-const gameOverScreen = document.getElementById('gameOverScreen');
-const gameOverMessage = document.getElementById('gameOverMessage');
-const playAgainButton = document.getElementById('playAgainButton');
+    const ball = { x: canvas.width / 2, y: canvas.height / 2, r: 8, dx: 4, dy: 4 };
 
-// Difficulty level variable
-let difficultyLevel = 'medium';
+    const speeds = {
+        easy: 3,
+        medium: 5,
+        hard: 7
+    };
 
-// --- Difficulty Settings ---
-const difficultySettings = {
-    easy: {
-        ballInitialSpeed: 5,
-        aiPaddleSpeed: 3
-    },
-    medium: {
-        ballInitialSpeed: 6,
-        aiPaddleSpeed: 5
-    },
-    hard: {
-        ballInitialSpeed: 7,
-        aiPaddleSpeed: 7
-    }
-};
+    // ---- Theme functionality ----
+    themeSelector.addEventListener("change", (e) => {
+        // Remove all theme classes
+        document.body.classList.remove("neon-retro", "dark-mode", "ocean-blue");
+        
+        // Add the selected theme class
+        if (e.target.value !== "default") {
+            document.body.classList.add(e.target.value);
+        }
+    });
 
-// --- Game Functions ---
+    // ---- Fullscreen functionality ----
+    fullscreenButton.addEventListener("click", toggleFullscreen);
 
-function resetBall() {
-    ballX = canvas.width / 2;
-    ballY = canvas.height / 2;
-    const currentSettings = difficultySettings[difficultyLevel];
-    ballSpeedX = (Math.random() > 0.5 ? 1 : -1) * currentSettings.ballInitialSpeed;
-    ballSpeedY = (Math.random() * 2 - 1) * currentSettings.ballInitialSpeed;
-}
-
-// Helper function for rounded rectangles (fallback for older browsers)
-function drawRoundedRect(ctx, x, y, width, height, radius) {
-    if (typeof ctx.roundRect === 'function') {
-        ctx.roundRect(x, y, width, height, radius);
-    } else {
-        ctx.beginPath();
-        ctx.moveTo(x + radius, y);
-        ctx.lineTo(x + width - radius, y);
-        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-        ctx.lineTo(x + width, y + height - radius);
-        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-        ctx.lineTo(x + radius, y + height);
-        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-        ctx.lineTo(x, y + radius);
-        ctx.quadraticCurveTo(x, y, x + radius, y);
-        ctx.closePath();
-    }
-}
-
-function drawEverything() {
-    // Clear the canvas - let CSS gradient show through
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw paddles with enhanced styling and rounded corners
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
-    ctx.shadowBlur = 10;
-    
-    // Draw player paddle with rounded corners
-    ctx.beginPath();
-    drawRoundedRect(ctx, 0, playerPaddleY, paddleWidth, paddleHeight, 5);
-    ctx.fill();
-    
-    // Draw AI paddle with rounded corners
-    ctx.beginPath();
-    drawRoundedRect(ctx, canvas.width - paddleWidth, aiPaddleY, paddleWidth, paddleHeight, 5);
-    ctx.fill();
-
-    // Draw ball with glow effect
-    ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
-    ctx.shadowBlur = 15;
-    ctx.beginPath();
-    ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2, false);
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-    ctx.fill();
-    
-    // Reset shadow for text
-    ctx.shadowBlur = 0;
-
-    // Draw center line with modern styling
-    ctx.setLineDash([5, 10]);
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(canvas.width / 2, 0);
-    ctx.lineTo(canvas.width / 2, canvas.height);
-    ctx.stroke();
-    ctx.setLineDash([]); // Reset line dash
-
-    // Draw countdown number ONLY if active
-    if (countdownActive) {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-        ctx.font = '80px Segoe UI';
-        ctx.textAlign = 'center';
-        ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
-        ctx.shadowBlur = 10;
-        // Display countdownValue, which will update from 3 down to 0 visually
-        ctx.fillText(countdownValue === 0 ? "GO!" : countdownValue, canvas.width / 2, canvas.height / 2 + 30);
-        ctx.shadowBlur = 0;
-    }
-
-    // Update score display with player name
-    playerScoreDisplay.textContent = `${playerName}: ${playerScore}`;
-    aiScoreDisplay.textContent = `AI: ${aiScore}`;
-}
-
-function moveEverything() {
-    // Crucial check: Stop movement if game is paused or during countdown
-    if (gamePaused || countdownActive) return;
-
-    ballX += ballSpeedX;
-    ballY += ballSpeedY;
-
-    // Wall collision
-    if (ballY + ballRadius > canvas.height || ballY - ballRadius < 0) {
-        ballSpeedY = -ballSpeedY;
-        playSound(wallHitSound);
-    }
-
-    // --- Scoring Logic ---
-    // Check if ball goes off screen to the left (AI scores)
-    if (ballX < 0) {
-        aiScore++;
-        updateScoreDisplay();
-        playSound(scoreSound);
-        // Check for AI win condition
-        if (aiScore >= minimumWinningScore && (aiScore - playerScore >= scoreDifferenceToWin)) {
-            gamePaused = true;
-            playSound(gameOverSound);
-            setTimeout(() => {
-                endGame("AI Wins!");
-            }, 500);
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.error(`Error attempting to enable fullscreen: ${err.message}`);
+            });
+            fullscreenButton.textContent = "❐";
         } else {
-            gamePaused = true;
-            resetBall();
-            startCountdown();
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+                fullscreenButton.textContent = "⛶";
+            }
         }
     }
 
-    // Check if ball goes off screen to the right (Player scores)
-    if (ballX > canvas.width) {
-        playerScore++;
-        updateScoreDisplay();
-        playSound(scoreSound);
-        // Check for Player win condition
-        if (playerScore >= minimumWinningScore && (playerScore - aiScore >= scoreDifferenceToWin)) {
-            gamePaused = true;
-            playSound(playerWinSound);
-            setTimeout(() => {
-                endGame(`${playerName} Wins!`);
-            }, 500);
-        } else {
-            gamePaused = true;
-            resetBall();
-            startCountdown();
-        }
-    }
-
-    // --- Paddle Collision Logic ---
-    // Player paddle collision
-    if (ballX - ballRadius < paddleWidth && ballY > playerPaddleY && ballY < playerPaddleY + paddleHeight) {
-        ballSpeedX = -ballSpeedX;
-        let deltaY = ballY - (playerPaddleY + paddleHeight / 2);
-        ballSpeedY = deltaY * 0.35;
-        playSound(paddleHitSound);
+    // ---- Helpers ----
+    function updateScoreUI() {
+        const displayName = playerName || "Player";
+        playerScoreDisplay.textContent = `${displayName}: ${playerScore}`;
+        aiScoreDisplay.textContent = `AI: ${aiScore}`;
     }
 
     // AI paddle collision
@@ -430,234 +279,139 @@ pauseButton.addEventListener('click', () => {
             }
             stopBackgroundMusicRotation();
         }
-    }
-});
+    });
+    document.addEventListener("keyup", (e) => {
+        if (e.key === "ArrowUp") keys.up = false;
+        if (e.key === "ArrowDown") keys.down = false;
+    });
 
-// Restart button functionality
-restartButton.addEventListener('click', () => {
-    // Only allow restart if game has started (not on welcome screen)
-    if (gameState !== GAME_STATES.WELCOME) {
-        // Stop any ongoing countdown
-        if (countdownIntervalId) {
-            clearInterval(countdownIntervalId);
-            countdownIntervalId = null;
+    // Apply keyboard movement each frame by piggybacking on the RAF loop
+    (function applyKeyboardMotion() {
+        if (gameRunning && !paused) {
+            if (keys.up) player.y -= player.dy;
+            if (keys.down) player.y += player.dy;
         }
-        
-        // Reset the game
-        resetGame();
-        
-        // Start a new countdown
-        startCountdown();
-        
-        // Ensure background music is playing only if sound is enabled
-        if (isSoundEnabled()) {
-            startBackgroundMusicRotation();
+        requestAnimationFrame(applyKeyboardMotion);
+    })();
+
+    // Mouse / Touch move (center paddle on pointer)
+    canvas.addEventListener("mousemove", (evt) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseY = evt.clientY - rect.top;
+        player.y = mouseY - paddleHeight / 2;
+    });
+
+    canvas.addEventListener(
+        "touchstart",
+        (evt) => {
+            evt.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touchY = evt.touches[0].clientY - rect.top;
+            player.y = touchY - paddleHeight / 2;
+        },
+        { passive: false }
+    );
+
+    canvas.addEventListener(
+        "touchmove",
+        (evt) => {
+            evt.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touchY = evt.touches[0].clientY - rect.top;
+            player.y = touchY - paddleHeight / 2;
+        },
+        { passive: false }
+    );
+
+    // ---- Buttons / UI ----
+    function startGame() {
+        playerName = document.getElementById("playerNameInput").value.trim();
+        gameRunning = true;
+        paused = false;
+        pauseButton.textContent = "Pause";
+        playerScore = 0;
+        aiScore = 0;
+        updateScoreUI();
+        centerPaddles();
+        resetBall();
+        if (welcomeScreen) welcomeScreen.style.display = "none";
+        if (gameOverScreen) gameOverScreen.style.display = "none";
+    }
+
+    function endGame() {
+        gameRunning = false;
+        const displayName = playerName || "Player";
+        gameOverMessage.textContent = playerScore > aiScore ? `🎉 ${displayName} Wins!` : "😢 AI Wins!";
+        gameOverScreen.style.display = "flex";
+    }
+
+    startGameButton.addEventListener("click", startGame);
+    playAgainButton.addEventListener("click", startGame);
+
+    pauseButton.addEventListener("click", () => {
+        if (!gameRunning) return;
+        paused = !paused;
+        pauseButton.textContent = paused ? "Resume" : "Pause";
+    });
+
+    restartButton.addEventListener("click", () => {
+        if (!gameRunning) gameRunning = true;
+        paused = false;
+        pauseButton.textContent = "Pause";
+        playerScore = 0;
+        aiScore = 0;
+        updateScoreUI();
+        centerPaddles();
+        resetBall();
+        gameOverScreen.style.display = "none";
+    });
+
+    difficultySelect.addEventListener("change", (e) => {
+        difficulty = e.target.value;
+    });
+
+    // ---- Enhanced How to Play Modal ----
+    function openHowTo() {
+        if (howToPlayModal) {
+            howToPlayModal.classList.remove("hidden");
+            howToPlayModal.classList.add("active");
+            document.body.style.overflow = "hidden"; // Prevent scrolling when modal is open
         }
     }
-});
-
-// Sound toggle button functionality
-soundToggleButton.addEventListener('click', () => {
-    const soundEnabled = toggleSound();
     
-    // Update button appearance
-    if (soundEnabled) {
-        soundToggleButton.textContent = '🔊';
-        soundToggleButton.classList.remove('muted');
-        // Start background music if game is playing
-        if (gameState === GAME_STATES.PLAYING && !gamePaused) {
-            startBackgroundMusicRotation();
-        }
-    } else {
-        soundToggleButton.textContent = '🔇';
-        soundToggleButton.classList.add('muted');
-        // Stop background music
-        stopBackgroundMusicRotation();
-    }
-});
-
-
-
-difficultySelect.addEventListener('change', (event) => {
-    difficultyLevel = event.target.value;
-    resetGame();
-    // If game was paused for difficulty change, restart countdown
-    if (gameState === GAME_STATES.PLAYING || gameState === GAME_STATES.PAUSED) {
-        startCountdown();
-    } else {
-        drawEverything();
-    }
-});
-
-// --- Initial Setup (Show Welcome Screen) ---
-// Define GAME_STATES enum outside, or ensure it's accessible.
-// For now, let's just make sure gameState is available.
-const GAME_STATES = {
-    WELCOME: 'WELCOME',
-    PLAYING: 'PLAYING',
-    PAUSED: 'PAUSED',
-    GAME_OVER: 'GAME_OVER'
-};
-let gameState = GAME_STATES.WELCOME; // Initialize game state
-
-document.addEventListener('DOMContentLoaded', () => {
-    welcomeScreen.style.display = 'flex'; // Show the welcome screen
-    gameOverScreen.style.display = 'none'; // Ensure game over screen is hidden initially
-
-    // Update playerPaddleY and aiPaddleY only after canvas dimensions are known
-    playerPaddleY = (canvas.height - paddleHeight) / 2;
-    aiPaddleY = (canvas.height - paddleHeight) / 2;
-    drawEverything(); // Draw initial state on canvas
-});
-
-// Minor adjustment in startGameButton to set gameState
-startGameButton.addEventListener('click', () => {
-    playerName = playerNameInput.value.trim();
-    if (playerName === "") {
-        playerName = "Player";
-    }
-    welcomeScreen.style.display = 'none';
-    gameState = GAME_STATES.PLAYING; // Set game state to playing
-    // Only start background music if sound is enabled
-    if (isSoundEnabled()) {
-        startBackgroundMusicRotation();
-    }
-    resetGame();
-    startCountdown();
-});
-
-// Minor adjustment in playAgainButton to set gameState
-playAgainButton.addEventListener('click', () => {
-    gameOverScreen.style.display = 'none';
-    gameState = GAME_STATES.PLAYING; // Set game state to playing
-    resetGame();
-    // Only start background music if sound is enabled
-    if (isSoundEnabled()) {
-        startBackgroundMusicRotation();
-    }
-    startCountdown();
-});
-
-// Minor adjustment in pauseButton to use gameState
-pauseButton.addEventListener('click', () => {
-    if (!countdownActive) {
-        if (gameState === GAME_STATES.PLAYING) {
-            gamePaused = true;
-            gameState = GAME_STATES.PAUSED; // Set game state to paused
-            pauseButton.textContent = "Resume";
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-                animationFrameId = null;
-            }
-            stopBackgroundMusicRotation();
-        } else if (gameState === GAME_STATES.PAUSED) {
-            gamePaused = false;
-            gameState = GAME_STATES.PLAYING; // Set game state to playing
-            pauseButton.textContent = "Pause";
-            // Only start background music if sound is enabled
-            if (isSoundEnabled()) {
-                startBackgroundMusicRotation();
-            }
-            if (!countdownActive) {
-                 startCountdown();
-            } else {
-                 gameLoop();
-            }
+    function closeHowTo() {
+        if (howToPlayModal) {
+            howToPlayModal.classList.remove("active");
+            setTimeout(() => {
+                howToPlayModal.classList.add("hidden");
+            }, 300); // Match the transition duration
+            document.body.style.overflow = ""; // Re-enable scrolling
         }
     }
-});
 
-// Adjust difficultySelect event listener to use gameState
-difficultySelect.addEventListener('change', (event) => {
-    difficultyLevel = event.target.value;
-    resetGame();
-    // Only start countdown if the game was actively playing or paused (not on welcome/game over)
-    if (gameState === GAME_STATES.PLAYING || gameState === GAME_STATES.PAUSED) {
-        startCountdown();
-    } else {
-        drawEverything();
-    }
-});
+    if (howToPlayButton && howToPlayModal && closeHowToPlay && closeHowToPlayBtn) {
+        // open on button
+        howToPlayButton.addEventListener("click", openHowTo);
 
-// Adjust mousemove listener to use gameState
-canvas.addEventListener('mousemove', (evt) => {
-    if (gameState === GAME_STATES.PLAYING && !countdownActive) {
-        let rect = canvas.getBoundingClientRect();
-        let mousePos = evt.clientY - rect.top;
-        playerPaddleY = mousePos - (paddleHeight / 2);
+        // close on "Close" button
+        closeHowToPlay.addEventListener("click", closeHowTo);
+        closeHowToPlayBtn.addEventListener("click", closeHowTo);
 
-        if (playerPaddleY < 0) playerPaddleY = 0;
-        if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
-    }
-});
-
-// --- Keyboard Paddle Controls for Up/Down Arrow Keys (add at end of script.js) ---
-let upArrowPressed = false;
-let downArrowPressed = false;
-const paddleMoveSpeed = 8; // we can change this number for faster/slower paddle movement
-
-document.addEventListener('keydown', function(e) {
-    if (typeof gameState !== "undefined" && gameState === "PLAYING" && !countdownActive) {
-        if (e.key === "ArrowUp") upArrowPressed = true;
-        if (e.key === "ArrowDown") downArrowPressed = true;
-    }
-});
-document.addEventListener('keyup', function(e) {
-    if (e.key === "ArrowUp") upArrowPressed = false;
-    if (e.key === "ArrowDown") downArrowPressed = false;
-});
-
-// This function will move the paddle when up/down keys are pressed
-function keyboardPaddleControl() {
-    if (upArrowPressed) playerPaddleY -= paddleMoveSpeed;
-    if (downArrowPressed) playerPaddleY += paddleMoveSpeed;
-    // Do not let paddle go outside the screen:
-    if (playerPaddleY < 0) playerPaddleY = 0;
-    if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
-}
-// Place this at the very end of script.js
-
-document.addEventListener("DOMContentLoaded", () => {
-    const howToPlayButton = document.getElementById('howToPlayButton');
-    const howToPlayModal = document.getElementById('howToPlayModal');
-    const closeHowToPlay = document.getElementById('closeHowToPlay');
-
-    if (howToPlayButton && howToPlayModal && closeHowToPlay) {
-        howToPlayButton.addEventListener('click', () => {
-            howToPlayModal.classList.remove('hidden');
+        // close on overlay click
+        howToPlayModal.addEventListener("click", (e) => {
+            if (e.target === howToPlayModal) closeHowTo();
         });
 
-        closeHowToPlay.addEventListener('click', () => {
-            howToPlayModal.classList.add('hidden');
-        });
-
-        howToPlayModal.addEventListener('click', (e) => {
-            if (e.target === howToPlayModal) {
-                howToPlayModal.classList.add('hidden');
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                howToPlayModal.classList.add('hidden');
+        // close on Escape
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && howToPlayModal.classList.contains("active")) {
+                closeHowTo();
             }
         });
     }
 
-    // ✅ Add your existing Play Game button logic here as well
-    const startGameButton = document.getElementById("startGameButton");
-    const welcomeScreen = document.getElementById("welcomeScreen");
-    const gameCanvas = document.getElementById("gameCanvas");
-
-    if (startGameButton && welcomeScreen && gameCanvas) {
-        startGameButton.addEventListener("click", () => {
-            welcomeScreen.style.display = "none";
-            gameCanvas.style.display = "block";
-            // Start game here...
-        });
-    }
-});
-howToPlayButton.addEventListener('click', () => {
-    console.log("Clicked How to Play!");
-    howToPlayModal.classList.remove('hidden');
+    // Show welcome by default
+    if (welcomeScreen) welcomeScreen.style.display = "flex";
+    if (gameOverScreen) gameOverScreen.style.display = "none";
+    if (howToPlayModal) howToPlayModal.classList.add("hidden");
 });

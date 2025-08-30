@@ -1,0 +1,19 @@
+{
+  "name": "pong-game",
+  "version": "1.0.0",
+  "description": "Relive the nostalgia of a retro classic! This project is a straightforward yet engaging implementation of the iconic Pong game, built using core web technologies: HTML, CSS, and JavaScript. It features an AI opponent, adjustable difficulty, interactive elements, full responsiveness, and touch controls to provide a fun and familiar experience for all players.",
+  "main": "audio.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rockyoudead8/pong-game.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rockyoudead8/pong-game/issues"
+  },
+  "homepage": "https://github.com/Rockyoudead8/pong-game#readme"
+}
