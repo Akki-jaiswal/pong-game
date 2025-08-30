@@ -4,11 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Pong Game</title>
-    <link rel="icon" href="pong.jpeg" type="image/jpeg">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>" type="image/svg+xml">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="themes.css">
 </head>
 <body>
+    <!-- Pong theme background elements -->
+    <div class="pong-elements">
+        <div class="pong-ball" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
+        <div class="pong-ball" style="top: 60%; left: 80%; animation-delay: 2s; animation-duration: 18s;"></div>
+        <div class="pong-ball" style="top: 80%; left: 40%; animation-delay: 5s; animation-duration: 12s;"></div>
+        <div class="pong-paddle" style="top: 30%; left: 5%; animation-delay: 1s;"></div>
+        <div class="pong-paddle" style="top: 50%; right: 5%; animation-delay: 3s;"></div>
+    </div>
+
     <div id="welcomeScreen" class="welcome-screen">
  feat/add-powerup
         <h2>Welcome to Pong!</h2>
@@ -30,12 +38,15 @@
     <h1>Pong Game</h1>
     <div class="game-controls">
         <button id="pauseButton">Pause</button>
+        <button id="restartButton">Restart</button>
         <label for="difficulty">Difficulty:</label>
         <select id="difficulty">
             <option value="easy">Easy</option>
             <option value="medium" selected>Medium</option>
             <option value="hard">Hard</option>
         </select>
+        <button id="fullscreenButton">⛶</button>
+
         <label for="themeSelector">Theme:</label>
         <select id="themeSelector">
             <option value="default">Default</option>
@@ -52,17 +63,20 @@
     <!-- How to Play Modal -->
     <div id="howToPlayModal" class="modal hidden">
         <div class="modal-content">
+            <span class="close" id="closeHowToPlay">&times;</span>
             <h3>🎮 How to Play</h3>
-            <ul style="text-align: left;">
+            <ul>
                 <li>Use <strong>↑</strong> and <strong>↓</strong> keys or <strong>touch</strong> to move your paddle.</li>
                 <li>First to score 3 points and lead by 2 wins the game.</li>
                 <li>Select difficulty: Easy, Medium, or Hard.</li>
                 <li>Use Pause/Resume to control the game state.</li>
+                <li>Use Restart to reset the current game and start over.</li>
             </ul>
-            <button id="closeHowToPlay">Close</button>
+            <button id="closeHowToPlayBtn">Close</button>
         </div>
     </div>
 
+feat/add-powerup
     <script type="module" src="script.js"></script>
 
 feat/add-powerup
@@ -84,6 +98,8 @@ feat/add-powerup
 </script>
 
 
-main
+
+    <script src="script.js"></script>
+
 </body>
 </html>
