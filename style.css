@@ -147,6 +147,61 @@ button:active {
     color: white;
     font-size: 1rem;
     text-align: center;
+<<<<<<< HEAD
+    /* --- Responsive CSS for Welcome/Game Over Screens --- */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.game-over-screen h2 {
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    background: linear-gradient(45deg, #ffd700, #ffed4e, #ff6b6b);
+    background-size: 200% 200%;
+    animation: gradientShift 4s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+}
+
+/* Add enhanced styling for better game element visibility */
+canvas:hover {
+    transform: scale(1.02);
+    transition: transform 0.3s ease;
+}
+
+/* Enhanced button styling with hover effects */
+.game-controls button:active,
+.welcome-screen button:active,
+.game-over-screen button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px 0 rgba(31, 38, 135, 0.3);
+}
+
+.sound-toggle {
+    font-size: 1.2em;
+    min-width: 50px;
+    transition: all 0.3s ease;
+}
+
+.sound-toggle.muted {
+    opacity: 0.6;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+}
+
+.sound-toggle.muted:hover {
+    background: linear-gradient(135deg, #ff5252 0%, #d63031 100%);
+}
+
+/* Score highlighting */
+.score span {
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+=======
+>>>>>>> a51f3f049c6cde57bd57dc8d30ea623b9016d363
     transition: all 0.3s ease;
 }
 

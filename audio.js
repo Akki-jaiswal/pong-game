@@ -1,4 +1,8 @@
 // audio.js
+
+// Sound state management
+let soundEnabled = true;
+
 export const paddleHitSound = new Audio('sounds/paddle_hit.mp3');
 export const wallHitSound = new Audio('sounds/wall_hit.mp3');
 export const scoreSound = new Audio('sounds/score.mp3');
@@ -18,14 +22,35 @@ let currentBackgroundMusic = null;
 
 // Function to play a sound effect
 export function playSound(audioElement) {
-    if (audioElement) {
+    if (audioElement && soundEnabled) {
         audioElement.currentTime = 0; // Rewind to start
         audioElement.play().catch(e => { /* Silently fail or handle errors without console.warn */ });
     }
 }
 
+// Function to toggle sound on/off
+export function toggleSound() {
+    soundEnabled = !soundEnabled;
+    return soundEnabled;
+}
+
+// Function to get current sound state
+export function isSoundEnabled() {
+    return soundEnabled;
+}
+
+// Function to set sound state
+export function setSoundEnabled(enabled) {
+    soundEnabled = enabled;
+}
+
 // Function to start the background music rotation
 export function startBackgroundMusicRotation() {
+    // If sound is disabled, don't start music
+    if (!soundEnabled) {
+        return;
+    }
+    
     // If music is already playing or about to play, do nothing
     if (currentBackgroundMusic && !currentBackgroundMusic.paused) {
         return;

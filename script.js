@@ -84,138 +84,200 @@ window.addEventListener("DOMContentLoaded", () => {
         aiScoreDisplay.textContent = `AI: ${aiScore}`;
     }
 
-    function resetBall() {
-        ball.x = canvas.width / 2;
-        ball.y = canvas.height / 2;
-        ball.dx *= -1; // send it toward the scorer
-        ball.dy = (Math.random() * 2 - 1) * 4; // small random vertical
+    // AI paddle collision
+    if (ballX + ballRadius > canvas.width - paddleWidth && ballY > aiPaddleY && ballY < aiPaddleY + paddleHeight) {
+        ballSpeedX = -ballSpeedX;
+        let deltaY = ballY - (aiPaddleY + paddleHeight / 2);
+        ballSpeedY = deltaY * 0.35;
+        playSound(paddleHitSound);
     }
 
-    function centerPaddles() {
-        player.y = canvas.height / 2 - paddleHeight / 2;
-        ai.y = canvas.height / 2 - paddleHeight / 2;
+    // AI Paddle Movement Logic
+    const aiCenter = aiPaddleY + (paddleHeight / 2);
+    const aiSpeed = difficultySettings[difficultyLevel].aiPaddleSpeed;
+
+    if (aiCenter < ballY - 35) {
+        aiPaddleY += aiSpeed;
+    } else if (aiCenter > ballY + 35) {
+        aiPaddleY -= aiSpeed;
     }
 
-    // ---- Draw ----
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Keep AI paddle within canvas bounds
+    if (aiPaddleY < 0) aiPaddleY = 0;
+    if (aiPaddleY + paddleHeight > canvas.height) aiPaddleY = canvas.height - paddleHeight;
 
-        // Background
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    keyboardPaddleControl();
 
-        // Net
-        ctx.fillStyle = "#4cc9f0";
-        for (let i = 0; i < canvas.height; i += 20) {
-            ctx.fillRect(canvas.width / 2 - 1, i, 2, 10);
-        }
+}
 
-        // Paddles
-        ctx.fillStyle = "#4cc9f0";
-        ctx.fillRect(player.x, player.y, paddleWidth, paddleHeight);
-        
-        ctx.fillStyle = "#f72585";
-        ctx.fillRect(ai.x, ai.y, paddleWidth, paddleHeight);
+function gameLoop() {
+    moveEverything();
+    drawEverything();
+    animationFrameId = requestAnimationFrame(gameLoop);
+}
 
-        // Ball
-        ctx.fillStyle = "white";
-        ctx.beginPath();
-        ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
-        ctx.fill();
+function updateScoreDisplay() {
+    playerScoreDisplay.textContent = `${playerName}: ${playerScore}`;
+    aiScoreDisplay.textContent = `AI: ${aiScore}`;
+}
 
-        // Canvas score (optional—DOM already shows the score)
-        ctx.font = "16px Arial";
-        ctx.fillStyle = "#4cc9f0";
-        const displayName = playerName || "Player";
-        ctx.fillText(`${displayName}: ${playerScore}`, 50, 30);
-        
-        ctx.fillStyle = "#f72585";
-        ctx.fillText(`AI: ${aiScore}`, canvas.width - 150, 30);
+// Function to handle game over logic (now waits for permission to restart)
+function endGame(message) {
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+    gamePaused = true;
+    stopBackgroundMusicRotation();
+
+    gameOverMessage.textContent = message;
+    gameOverScreen.style.display = 'flex';
+}
+
+function resetGame() {
+    playerScore = 0;
+    aiScore = 0;
+    updateScoreDisplay();
+
+    playerPaddleY = (canvas.height - paddleHeight) / 2;
+    aiPaddleY = (canvas.height - paddleHeight) / 2;
+
+    resetBall();
+
+    gamePaused = true;
+    pauseButton.textContent = "Resume";
+
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+    drawEverything();
+}
+
+// --- Countdown Function ---
+function startCountdown() {
+    // Clear any existing countdown interval to prevent overlaps
+    if (countdownIntervalId) {
+        clearInterval(countdownIntervalId);
+        countdownIntervalId = null;
     }
 
-    // ---- Update ----
-    function update() {
-        // Move ball
-        ball.x += ball.dx;
-        ball.y += ball.dy;
+    countdownActive = true;
+    countdownValue = 3;
+    drawEverything(); // Draw initial 3
 
-        // Bounce top/bottom
-        if (ball.y - ball.r < 0 || ball.y + ball.r > canvas.height) {
-            ball.dy *= -1;
+    playSound(countdownBeepSound);
+
+    // Assign interval ID to the global variable
+    countdownIntervalId = setInterval(() => {
+        countdownValue--;
+        drawEverything(); // Draw updated number
+        if (countdownValue < 0) {
+            clearInterval(countdownIntervalId);
+            countdownIntervalId = null;
         }
+    }, 1000);
 
-        // Player collision
-        if (
-            ball.x - ball.r <= player.x + paddleWidth &&
-            ball.y >= player.y &&
-            ball.y <= player.y + paddleHeight &&
-            ball.dx < 0
-        ) {
-            ball.dx *= -1;
-            // add a little "spin" based on hit position
-            const collidePoint = ball.y - (player.y + paddleHeight / 2);
-            ball.dy = collidePoint * 0.15;
+    // This setTimeout runs after 3 seconds (for 3, 2, 1, GO! sequence)
+    setTimeout(() => {
+        countdownActive = false;
+        gamePaused = false;
+        pauseButton.textContent = "Pause";
+        if (!animationFrameId) {
+            gameLoop();
         }
+    }, 3000);
+}
 
-        // AI collision
-        if (
-            ball.x + ball.r >= ai.x &&
-            ball.y >= ai.y &&
-            ball.y <= ai.y + paddleHeight &&
-            ball.dx > 0
-        ) {
-            ball.dx *= -1;
-            const collidePoint = ball.y - (ai.y + paddleHeight / 2);
-            ball.dy = collidePoint * 0.15;
-        }
-
-        // Score (ball passes left/right)
-        if (ball.x + ball.r < 0) {
-            aiScore++;
-            updateScoreUI();
-            resetBall();
-        } else if (ball.x - ball.r > canvas.width) {
-            playerScore++;
-            updateScoreUI();
-            resetBall();
-        }
-
-        // Simple AI: follow ball at difficulty speed
-        const aiCenter = ai.y + paddleHeight / 2;
-        if (ball.y < aiCenter) ai.y -= speeds[difficulty];
-        else if (ball.y > aiCenter) ai.y += speeds[difficulty];
-
-        // Bound paddles
-        player.y = Math.max(0, Math.min(canvas.height - paddleHeight, player.y));
-        ai.y = Math.max(0, Math.min(canvas.height - paddleHeight, ai.y));
-
-        // Game over: first to 3, lead by 2
-        if ((playerScore >= 3 || aiScore >= 3) && Math.abs(playerScore - aiScore) >= 2) {
-            endGame();
-        }
+// --- Initial Game Start Handler (from Welcome Screen) ---
+startGameButton.addEventListener('click', () => {
+    playerName = playerNameInput.value.trim();
+    if (playerName === "") {
+        playerName = "Player";
     }
+    welcomeScreen.style.display = 'none';
 
-    // ---- Loop ----
-    function loop() {
-        if (gameRunning && !paused) {
-            update();
-            draw();
-        }
-        requestAnimationFrame(loop);
+    startBackgroundMusicRotation();
+
+    resetGame();
+    startCountdown();
+});
+
+// --- Event Listener for Play Again Button ---
+playAgainButton.addEventListener('click', () => {
+    gameOverScreen.style.display = 'none';
+    resetGame();
+    startBackgroundMusicRotation();
+    startCountdown();
+});
+
+// --- Event Listeners for In-Game Controls ---
+
+// Keep existing mousemove for desktop
+canvas.addEventListener('mousemove', (evt) => {
+    // Allow player paddle movement only if not paused AND not during countdown
+    if (gamePaused || countdownActive) return;
+
+    let rect = canvas.getBoundingClientRect();
+    let mousePos = evt.clientY - rect.top;
+    playerPaddleY = mousePos - (paddleHeight / 2);
+
+    if (playerPaddleY < 0) playerPaddleY = 0;
+    if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
+});
+
+// --- NEW: Touch Event Listeners for Mobile ---
+canvas.addEventListener('touchstart', function(event) {
+    event.preventDefault();
+    handleTouchMove(event);
+}, { passive: false });
+
+canvas.addEventListener('touchmove', function(event) {
+    event.preventDefault();
+    handleTouchMove(event);
+}, { passive: false });
+
+function handleTouchMove(event) {
+    // Corrected: Use paddleHeight instead of playerPaddle.height
+    let touchY = event.touches[0].clientY;
+
+    // Get canvas position to calculate relative Y
+    let canvasRect = canvas.getBoundingClientRect();
+    let relativeTouchY = touchY - canvasRect.top;
+
+    // Update player paddle's Y position
+    // Center paddle on the touch point
+    playerPaddleY = relativeTouchY - paddleHeight / 2;
+
+    // Clamp paddle position to stay within canvas bounds
+    if (playerPaddleY < 0) {
+        playerPaddleY = 0;
+    } else if (playerPaddleY + paddleHeight > canvas.height) {
+        playerPaddleY = canvas.height - paddleHeight;
     }
-    requestAnimationFrame(loop);
+}
 
-    // ---- Controls ----
-    // Keyboard (hold to move)
-    const keys = { up: false, down: false };
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowUp") keys.up = true;
-        if (e.key === "ArrowDown") keys.down = true;
-        
-        // Pause with spacebar
-        if (e.key === " " && gameRunning) {
-            paused = !paused;
-            pauseButton.textContent = paused ? "Resume" : "Pause";
+// The pause button now only toggles Pause/Resume for an *already started* game
+pauseButton.addEventListener('click', () => {
+    if (!countdownActive) { // Only allow pause/resume when not in active countdown
+        if (gamePaused) { // If currently paused, user wants to resume
+            // Only start background music if sound is enabled
+            if (isSoundEnabled()) {
+                startBackgroundMusicRotation();
+            }
+            gamePaused = false;
+            pauseButton.textContent = "Pause";
+            if (!animationFrameId) {
+                gameLoop();
+            }
+        } else { // If currently playing, user wants to pause
+            gamePaused = true;
+            pauseButton.textContent = "Resume";
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            stopBackgroundMusicRotation();
         }
     });
     document.addEventListener("keyup", (e) => {
