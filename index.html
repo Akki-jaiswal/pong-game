@@ -18,10 +18,43 @@
     </div>
 
     <div id="welcomeScreen" class="welcome-screen">
-        <h2>Welcome to Pong-Game!</h2>
-        <input type="text" id="playerNameInput" placeholder="Enter your name (optional)" maxlength="15">
-        <button id="startGameButton">Play Game</button>
-        <button id="howToPlayButton">How to Play</button>
+        <h2>
+          <span class="pong-emoji">🏓</span>
+          Welcome to Pong-Game!
+          <span class="pong-emoji">🏓</span>
+        </h2>
+        <div class="avatar-select-container">
+          <div class="avatar-select-label">Choose Your Avatar:</div>
+          <div class="avatar-options">
+            <div class="avatar-option selected" data-avatar="😎">😎</div>
+            <div class="avatar-option" data-avatar="👾">👾</div>
+            <div class="avatar-option" data-avatar="🤖">🤖</div>
+            <div class="avatar-option" data-avatar="🦸‍♂️">🦸‍♂️</div>
+            <div class="avatar-option" data-avatar="🐧">🐧</div>
+            <div class="avatar-option" data-avatar="🦄">🦄</div>
+            <div class="avatar-option" data-avatar="🧑‍🚀">🧑‍🚀</div>
+          </div>
+        </div>
+        <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="20">
+        <button id="startGameButton">🎮 Play Game</button>
+        <button id="howToPlayButton">🎮 How to Play</button>
+
+        <!-- Profile Preview (moved inside welcome-screen) -->
+        <div id="profilePreview" class="profile-preview hidden">
+          <span id="profileAvatar" class="profile-avatar">😎</span>
+          <span id="profileName" class="profile-name"></span>
+        </div>
+
+        <!-- Pong animation (moved inside welcome-screen) -->
+        <div class="pong-animation">
+          <svg class="pong-ball" viewBox="0 0 28 28">
+            <circle cx="14" cy="14" r="12" fill="#4cc9f0" stroke="#fff" stroke-width="3"/>
+          </svg>
+          <svg class="pong-paddle" viewBox="0 0 80 28">
+            <ellipse cx="56" cy="14" rx="22" ry="10" fill="#26c6da" stroke="#f72585" stroke-width="4"/>
+            <rect x="8" y="8" width="32" height="12" rx="6" fill="#f9a825" stroke="#23243a" stroke-width="3"/>
+          </svg>
+        </div>
     </div>
 
     <div id="gameOverScreen" class="game-over-screen">
@@ -29,35 +62,45 @@
         <button id="playAgainButton">Play Again</button>
     </div>
 
-    <h1>Pong Game</h1>
-    <div class="game-controls">
-        <button id="pauseButton">Pause</button>
-        <button id="restartButton">Restart</button>
-        <label for="difficulty">Difficulty:</label>
-        <select id="difficulty">
-            <option value="easy">Easy</option>
-            <option value="medium" selected>Medium</option>
-            <option value="hard">Hard</option>
-        </select>
-        <button id="fullscreenButton">⛶</button>
+    <div id="mainGameContainer" class="main-game-container">
+        <h1>Pong Game</h1>
+        <div class="game-controls">
+            <button id="pauseButton">Pause</button>
+            <button id="restartButton">Restart</button>
+            <label for="difficulty">Difficulty:</label>
+            <select id="difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+            <button id="fullscreenButton">⛶</button>
 
-        <label for="themeSelector">Theme:</label>
-        <select id="themeSelector">
-            <option value="default">Default</option>
-            <option value="neon-retro">Neon Retro</option>
-            <option value="dark-mode">Dark Mode</option>
-            <option value="ocean-blue">Ocean Blue</option>
-        </select>
-        <div class="score">
-            <span id="playerScore">Player: 0</span> | <span id="aiScore">AI: 0</span>
+            <label for="themeSelector">Theme:</label>
+            <select id="themeSelector">
+                <option value="default">Default</option>
+                <option value="neon-retro">Neon Retro</option>
+                <option value="dark-mode">Dark Mode</option>
+                <option value="ocean-blue">Ocean Blue</option>
+            </select>
+        </div>
+        <canvas id="gameCanvas" width="600" height="400"></canvas>
+        <div class="scoreboard">
+            <div class="score-player">
+                <span id="scorePlayerAvatar" class="score-avatar">😎</span>
+                <span id="scorePlayerName" class="score-name">Player</span>
+                <span id="playerScore" class="score-value">0</span>
+            </div>
+            <div class="score-ai">
+                <span class="score-avatar">🤖</span>
+                <span class="score-name">AI</span>
+                <span id="aiScore" class="score-value">0</span>
+            </div>
         </div>
     </div>
-    <canvas id="gameCanvas" width="600" height="400"></canvas>
 
     <!-- How to Play Modal -->
     <div id="howToPlayModal" class="modal hidden">
         <div class="modal-content">
-            <span class="close" id="closeHowToPlay">&times;</span>
             <h3>🎮 How to Play</h3>
             <ul>
                 <li>Use <strong>↑</strong> and <strong>↓</strong> keys or <strong>touch</strong> to move your paddle.</li>

@@ -82,6 +82,11 @@ window.addEventListener("DOMContentLoaded", () => {
         const displayName = playerName || "Player";
         playerScoreDisplay.textContent = `${displayName}: ${playerScore}`;
         aiScoreDisplay.textContent = `AI: ${aiScore}`;
+        // Update new scoreboard
+        document.getElementById('scorePlayerName').textContent = displayName;
+        document.getElementById('scorePlayerAvatar').textContent = window.selectedAvatar || "😎";
+        document.getElementById('playerScore').textContent = playerScore;
+        document.getElementById('aiScore').textContent = aiScore;
     }
 
     function resetBall() {
@@ -274,12 +279,22 @@ window.addEventListener("DOMContentLoaded", () => {
         resetBall();
         if (welcomeScreen) welcomeScreen.style.display = "none";
         if (gameOverScreen) gameOverScreen.style.display = "none";
+        // Optionally hide profile preview after starting
+        document.getElementById('profilePreview').classList.add('hidden');
     }
 
     function endGame() {
         gameRunning = false;
         const displayName = playerName || "Player";
-        gameOverMessage.textContent = playerScore > aiScore ? `🎉 ${displayName} Wins!` : "😢 AI Wins!";
+        if (playerScore > aiScore) {
+            gameOverMessage.textContent = `🎉 ${displayName} Wins!`;
+            gameOverScreen.classList.add("winner");
+            gameOverScreen.classList.remove("loser");
+        } else {
+            gameOverMessage.textContent = "😢 AI Wins!";
+            gameOverScreen.classList.add("loser");
+            gameOverScreen.classList.remove("winner");
+        }
         gameOverScreen.style.display = "flex";
     }
 
@@ -348,8 +363,54 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Show welcome by default
-    if (welcomeScreen) welcomeScreen.style.display = "flex";
-    if (gameOverScreen) gameOverScreen.style.display = "none";
-    if (howToPlayModal) howToPlayModal.classList.add("hidden");
+    // --- Avatar selection and profile preview ---
+    window.selectedAvatar = document.querySelector('.avatar-option.selected')?.getAttribute('data-avatar') || "😎";
+
+    document.querySelectorAll('.avatar-option').forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            window.selectedAvatar = this.getAttribute('data-avatar');
+            updateProfilePreview();
+            updateScoreUI();
+        });
+    });
+
+    const playerNameInput = document.getElementById('playerNameInput');
+    if (playerNameInput) {
+        playerNameInput.addEventListener('input', function() {
+            updateProfilePreview();
+            updateScoreUI();
+        });
+    }
+
+    function updateProfilePreview() {
+        const name = playerNameInput.value.trim();
+        const avatar = window.selectedAvatar || document.querySelector('.avatar-option.selected').getAttribute('data-avatar');
+        const preview = document.getElementById('profilePreview');
+        document.getElementById('profileAvatar').textContent = avatar;
+        document.getElementById('profileName').textContent = name ? name : '';
+        preview.classList.toggle('hidden', !name);
+    }
+
+    // Show profile preview when name is entered
+    updateProfilePreview();
+
+    // When starting the game, use the selected avatar and name
+    function startGame() {
+        playerName = playerNameInput.value.trim();
+        // You can use window.selectedAvatar for the player's avatar in your game logic
+        gameRunning = true;
+        paused = false;
+        pauseButton.textContent = "Pause";
+        playerScore = 0;
+        aiScore = 0;
+        updateScoreUI();
+        centerPaddles();
+        resetBall();
+        if (welcomeScreen) welcomeScreen.style.display = "none";
+        if (gameOverScreen) gameOverScreen.style.display = "none";
+        // Optionally hide profile preview after starting
+        document.getElementById('profilePreview').classList.add('hidden');
+    }
 });
