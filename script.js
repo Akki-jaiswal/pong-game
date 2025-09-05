@@ -48,6 +48,13 @@ window.addEventListener("DOMContentLoaded", () => {
         medium: 5,
         hard: 7
     };
+    difficultySelect.addEventListener("change", (e) => {
+    difficulty = e.target.value;
+    // Update ball speed immediately after difficulty change
+    let speed = speeds[difficulty];
+    ball.dx = ball.dx > 0 ? speed : -speed;
+    ball.dy = ball.dy > 0 ? speed : -speed;
+});
 
     // ---- Theme functionality ----
     themeSelector.addEventListener("change", (e) => {
@@ -304,9 +311,9 @@ window.addEventListener("DOMContentLoaded", () => {
         gameOverScreen.style.display = "none";
     });
 
-    difficultySelect.addEventListener("change", (e) => {
-        difficulty = e.target.value;
-    });
+    // difficultySelect.addEventListener("change", (e) => {
+    //     difficulty = e.target.value;
+    // });
 
     // ---- Enhanced How to Play Modal ----
     function openHowTo() {
