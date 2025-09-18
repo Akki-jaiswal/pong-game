@@ -1,5 +1,14 @@
 # 🎾 Classic Pong Game with Modern Touches 🚀
 
+<div align="center">
+<a href="https://github.com/Akki-jaiswal/pong-game/stargazers">
+  <img src="https://img.shields.io/github/stars/Akki-jaiswal/pong-game?style=social" alt="GitHub Stars">
+</a>
+<a href="https://github.com/Akki-jaiswal/pong-game/forks">
+  <img src="https://img.shields.io/github/forks/Akki-jaiswal/pong-game?style=social" alt="GitHub Forks">
+</a>
+</div>
+
 Relive the nostalgia of a retro classic! This project is a straightforward yet engaging implementation of the iconic Pong game, built using core web technologies: HTML, CSS, and JavaScript. It features an AI opponent, adjustable difficulty, interactive elements, full responsiveness, and touch controls to provide a fun and familiar experience for all players.
 
 ## ✨ Key Features
