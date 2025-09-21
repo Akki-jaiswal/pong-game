@@ -23,7 +23,6 @@ window.addEventListener("DOMContentLoaded", () => {
     // How to Play modal
     const howToPlayButton = document.getElementById("howToPlayButton");
     const howToPlayModal = document.getElementById("howToPlayModal");
-    const closeHowToPlay = document.getElementById("closeHowToPlay");
     const closeHowToPlayBtn = document.getElementById("closeHowToPlayBtn");
 
     // ---- Game state ----
@@ -50,15 +49,22 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     // ---- Theme functionality ----
-    themeSelector.addEventListener("change", (e) => {
+    function applyTheme(themeName) {
         // Remove all theme classes
-        document.body.classList.remove("neon-retro", "dark-mode", "ocean-blue");
+        document.body.classList.remove("theme-neon-retro", "theme-dark-mode", "theme-ocean-blue");
         
         // Add the selected theme class
-        if (e.target.value !== "default") {
-            document.body.classList.add(e.target.value);
+        if (themeName !== "default") {
+            document.body.classList.add(`theme-${themeName}`);
         }
+    }
+    
+    themeSelector.addEventListener("change", (e) => {
+        applyTheme(e.target.value);
     });
+    
+    // Apply initial theme
+    applyTheme(themeSelector.value);
 
     // ---- Fullscreen functionality ----
     fullscreenButton.addEventListener("click", toggleFullscreen);
@@ -342,12 +348,11 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    if (howToPlayButton && howToPlayModal && closeHowToPlay && closeHowToPlayBtn) {
+    if (howToPlayButton && howToPlayModal && closeHowToPlayBtn) {
         // open on button
         howToPlayButton.addEventListener("click", openHowTo);
 
         // close on "Close" button
-        closeHowToPlay.addEventListener("click", closeHowTo);
         closeHowToPlayBtn.addEventListener("click", closeHowTo);
 
         // close on overlay click

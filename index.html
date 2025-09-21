@@ -6,6 +6,7 @@
     <title>Advanced Pong Game</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>" type="image/svg+xml">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="themes.css">
 </head>
 <body>
     <!-- Pong theme background elements -->
@@ -23,29 +24,64 @@
           Welcome to Pong-Game!
           <span class="pong-emoji">🏓</span>
         </h2>
-        <div class="avatar-select-container">
-          <div class="avatar-select-label">Choose Your Avatar:</div>
-          <div class="avatar-options">
-            <div class="avatar-option selected" data-avatar="😎">😎</div>
-            <div class="avatar-option" data-avatar="👾">👾</div>
-            <div class="avatar-option" data-avatar="🤖">🤖</div>
-            <div class="avatar-option" data-avatar="🦸‍♂️">🦸‍♂️</div>
-            <div class="avatar-option" data-avatar="🐧">🐧</div>
-            <div class="avatar-option" data-avatar="🦄">🦄</div>
-            <div class="avatar-option" data-avatar="🧑‍🚀">🧑‍🚀</div>
+        
+        <div class="players-setup">
+          <div class="player-setup">
+            <div class="avatar-select-label">Player 1 Avatar:</div>
+            <div class="avatar-options">
+              <div class="avatar-option selected" data-avatar="😎" data-player="1">😎</div>
+              <div class="avatar-option" data-avatar="👾" data-player="1">👾</div>
+              <div class="avatar-option" data-avatar="🤖" data-player="1">🤖</div>
+              <div class="avatar-option" data-avatar="🦸♂️" data-player="1">🦸♂️</div>
+              <div class="avatar-option" data-avatar="🐧" data-player="1">🐧</div>
+              <div class="avatar-option" data-avatar="🦄" data-player="1">🦄</div>
+              <div class="avatar-option" data-avatar="🧑🚀" data-player="1">🧑🚀</div>
+            </div>
+            <input type="text" id="playerNameInput" placeholder="Enter Player 1 name" maxlength="20">
+          </div>
+          
+          <div class="player-setup hidden" id="player2Setup">
+            <div class="avatar-select-label">Player 2 Avatar:</div>
+            <div class="avatar-options">
+              <div class="avatar-option selected" data-avatar="🤖" data-player="2">🤖</div>
+              <div class="avatar-option" data-avatar="😎" data-player="2">😎</div>
+              <div class="avatar-option" data-avatar="👾" data-player="2">👾</div>
+              <div class="avatar-option" data-avatar="🦸♂️" data-player="2">🦸♂️</div>
+              <div class="avatar-option" data-avatar="🐧" data-player="2">🐧</div>
+              <div class="avatar-option" data-avatar="🦄" data-player="2">🦄</div>
+              <div class="avatar-option" data-avatar="🧑🚀" data-player="2">🧑🚀</div>
+            </div>
+            <input type="text" id="player2NameInput" placeholder="Enter Player 2 name" maxlength="20">
           </div>
         </div>
-        <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="20">
+        
+        <div class="game-setup">
+            <div class="setup-row">
+                <label for="gameModeWelcome">Game Mode:</label>
+                <select id="gameModeWelcome">
+                    <option value="single">Single Player vs AI</option>
+                    <option value="local2p">2 Player Local</option>
+                    <option value="tournament-ai">Tournament vs AI</option>
+                    <option value="tournament-2p">Tournament 2 Player</option>
+                    <option value="survival-ai">Survival vs AI</option>
+                    <option value="survival-2p">Survival 2 Player</option>
+                </select>
+            </div>
+            <div class="setup-row">
+                <label for="ballSkinWelcome">Ball Type:</label>
+                <select id="ballSkinWelcome">
+                    <option value="classic">Classic</option>
+                    <option value="neon">Neon</option>
+                    <option value="fire">Fire</option>
+                    <option value="ice">Ice</option>
+                </select>
+            </div>
+        </div>
+        
         <button id="startGameButton">🎮 Play Game</button>
         <button id="howToPlayButton">🎮 How to Play</button>
 
-        <!-- Profile Preview (moved inside welcome-screen) -->
-        <div id="profilePreview" class="profile-preview hidden">
-          <span id="profileAvatar" class="profile-avatar">😎</span>
-          <span id="profileName" class="profile-name"></span>
-        </div>
-
-        <!-- Pong animation (moved inside welcome-screen) -->
+        <!-- Pong animation -->
         <div class="pong-animation">
           <svg class="pong-ball" viewBox="0 0 28 28">
             <circle cx="14" cy="14" r="12" fill="#4cc9f0" stroke="#fff" stroke-width="3"/>
@@ -59,7 +95,10 @@
 
     <div id="gameOverScreen" class="game-over-screen">
         <h2 id="gameOverMessage"></h2>
-        <button id="playAgainButton">Play Again</button>
+        <div class="game-over-buttons">
+            <button id="playAgainButton">Play Again</button>
+            <button id="exitButton">Exit to Menu</button>
+        </div>
     </div>
 
     <div id="mainGameContainer" class="main-game-container">
@@ -74,7 +113,6 @@
                 <option value="hard">Hard</option>
             </select>
             <button id="fullscreenButton">⛶</button>
-
             <label for="themeSelector">Theme:</label>
             <select id="themeSelector">
                 <option value="default">Default</option>
@@ -83,7 +121,11 @@
                 <option value="ocean-blue">Ocean Blue</option>
             </select>
         </div>
-        <canvas id="gameCanvas" width="600" height="400"></canvas>
+        <div class="game-area">
+            <canvas id="backgroundCanvas" width="600" height="400"></canvas>
+            <canvas id="gameCanvas" width="600" height="400"></canvas>
+            <canvas id="effectsCanvas" width="600" height="400"></canvas>
+        </div>
         <div class="scoreboard">
             <div class="score-player">
                 <span id="scorePlayerAvatar" class="score-avatar">😎</span>
@@ -91,8 +133,8 @@
                 <span id="playerScore" class="score-value">0</span>
             </div>
             <div class="score-ai">
-                <span class="score-avatar">🤖</span>
-                <span class="score-name">AI</span>
+                <span id="scoreAIAvatar" class="score-avatar">🤖</span>
+                <span id="scoreAIName" class="score-name">AI</span>
                 <span id="aiScore" class="score-value">0</span>
             </div>
         </div>
@@ -103,16 +145,17 @@
         <div class="modal-content">
             <h3>🎮 How to Play</h3>
             <ul>
-                <li>Use <strong>↑</strong> and <strong>↓</strong> keys or <strong>touch</strong> to move your paddle.</li>
-                <li>First to score 3 points and lead by 2 wins the game.</li>
-                <li>Select difficulty: Easy, Medium, or Hard.</li>
-                <li>Use Pause/Resume to control the game state.</li>
-                <li>Use Restart to reset the current game and start over.</li>
+                <li><strong>Controls:</strong> ↑↓ keys or touch to move. In 2-player mode, Player 2 uses W/S keys.</li>
+                <li><strong>Game Modes:</strong> Single Player, 2-Player Local, Tournament (3 rounds), Survival (avoid missing).</li>
+                <li><strong>Power-ups:</strong> ⚡Speed boost, 📏Paddle size, ⚪Multi-ball, 🐌Slow motion.</li>
+                <li><strong>Ball Skins:</strong> Classic, Neon (glowing), Fire (red trail), Ice (blue trail).</li>
+                <li><strong>Themes:</strong> Default, Neon Retro, Dark Mode, Ocean Blue.</li>
+                <li><strong>Scoring:</strong> First to 3 points with 2-point lead wins (except Survival mode).</li>
             </ul>
             <button id="closeHowToPlayBtn">Close</button>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="simple-script.js"></script>
 </body>
 </html>
