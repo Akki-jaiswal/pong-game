@@ -20,11 +20,26 @@ window.addEventListener("DOMContentLoaded", () => {
     const playerScoreDisplay = document.getElementById("playerScore");
     const aiScoreDisplay = document.getElementById("aiScore");
 
-    // How to Play modal
     const howToPlayButton = document.getElementById("howToPlayButton");
     const howToPlayModal = document.getElementById("howToPlayModal");
     const closeHowToPlay = document.getElementById("closeHowToPlay");
     const closeHowToPlayBtn = document.getElementById("closeHowToPlayBtn");
+
+    // Pause overlay
+    const pauseOverlay = document.createElement("div");
+    pauseOverlay.id = "pauseOverlay";
+    pauseOverlay.style.cssText = `
+        display:none;
+        position:absolute;
+        top:0; left:0; width:100%; height:100%;
+        background: rgba(0,0,0,0.5);
+        color:white;
+        font-size:48px;
+        text-align:center;
+        line-height:100vh;
+    `;
+    pauseOverlay.textContent = "PAUSED";
+    document.body.appendChild(pauseOverlay);
 
     // ---- Game state ----
     let gameRunning = false;
@@ -33,6 +48,8 @@ window.addEventListener("DOMContentLoaded", () => {
     let aiScore = 0;
     let difficulty = "medium";
     let playerName = "";
+
+    let gameLoopId; // For requestAnimationFrame
 
     // ---- Objects ----
     const paddleWidth = 10;
@@ -43,21 +60,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const ball = { x: canvas.width / 2, y: canvas.height / 2, r: 8, dx: 4, dy: 4 };
 
-    const speeds = {
-        easy: 3,
-        medium: 5,
-        hard: 7
-    };
+    const speeds = { easy: 3, medium: 5, hard: 7 };
 
     // ---- Theme functionality ----
     themeSelector.addEventListener("change", (e) => {
-        // Remove all theme classes
         document.body.classList.remove("neon-retro", "dark-mode", "ocean-blue");
-        
-        // Add the selected theme class
-        if (e.target.value !== "default") {
-            document.body.classList.add(e.target.value);
-        }
+        if (e.target.value !== "default") document.body.classList.add(e.target.value);
     });
 
     // ---- Fullscreen functionality ----
@@ -66,7 +74,7 @@ window.addEventListener("DOMContentLoaded", () => {
     function toggleFullscreen() {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen().catch(err => {
-                console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                console.error(`Error enabling fullscreen: ${err.message}`);
             });
             fullscreenButton.textContent = "❐";
         } else {
@@ -77,12 +85,37 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Pause/resume functions
+    function pauseGame() {
+        if (!paused) {
+            paused = true;
+            cancelAnimationFrame(gameLoopId);
+            pauseOverlay.style.display = "block";
+            pauseButton.textContent = "Resume";
+            console.log("Game paused");
+        }
+    }
+
+    function resumeGame() {
+        if (paused) {
+            paused = false;
+            gameLoopId = requestAnimationFrame(loop);
+            pauseOverlay.style.display = "none";
+            pauseButton.textContent = "Pause";
+            console.log("Game resumed");
+        }
+    }
+
+    // ---- Fullscreen change listener ----
+    document.addEventListener('fullscreenchange', () => {
+        pauseGame(); // Pause automatically on enter/exit fullscreen
+    });
+
     // ---- Helpers ----
     function updateScoreUI() {
         const displayName = playerName || "Player";
         playerScoreDisplay.textContent = `${displayName}: ${playerScore}`;
         aiScoreDisplay.textContent = `AI: ${aiScore}`;
-        // Update new scoreboard
         document.getElementById('scorePlayerName').textContent = displayName;
         document.getElementById('scorePlayerAvatar').textContent = window.selectedAvatar || "😎";
         document.getElementById('playerScore').textContent = playerScore;
@@ -92,8 +125,8 @@ window.addEventListener("DOMContentLoaded", () => {
     function resetBall() {
         ball.x = canvas.width / 2;
         ball.y = canvas.height / 2;
-        ball.dx *= -1; // send it toward the scorer
-        ball.dy = (Math.random() * 2 - 1) * 4; // small random vertical
+        ball.dx *= -1;
+        ball.dy = (Math.random() * 2 - 1) * 4;
     }
 
     function centerPaddles() {
@@ -104,8 +137,6 @@ window.addEventListener("DOMContentLoaded", () => {
     // ---- Draw ----
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Background
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -118,7 +149,7 @@ window.addEventListener("DOMContentLoaded", () => {
         // Paddles
         ctx.fillStyle = "#4cc9f0";
         ctx.fillRect(player.x, player.y, paddleWidth, paddleHeight);
-        
+
         ctx.fillStyle = "#f72585";
         ctx.fillRect(ai.x, ai.y, paddleWidth, paddleHeight);
 
@@ -128,28 +159,22 @@ window.addEventListener("DOMContentLoaded", () => {
         ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
         ctx.fill();
 
-        // Canvas score (optional—DOM already shows the score)
+        // Scores
         ctx.font = "16px Arial";
         ctx.fillStyle = "#4cc9f0";
         const displayName = playerName || "Player";
         ctx.fillText(`${displayName}: ${playerScore}`, 50, 30);
-        
         ctx.fillStyle = "#f72585";
         ctx.fillText(`AI: ${aiScore}`, canvas.width - 150, 30);
     }
 
     // ---- Update ----
     function update() {
-        // Move ball
         ball.x += ball.dx;
         ball.y += ball.dy;
 
-        // Bounce top/bottom
-        if (ball.y - ball.r < 0 || ball.y + ball.r > canvas.height) {
-            ball.dy *= -1;
-        }
+        if (ball.y - ball.r < 0 || ball.y + ball.r > canvas.height) ball.dy *= -1;
 
-        // Player collision
         if (
             ball.x - ball.r <= player.x + paddleWidth &&
             ball.y >= player.y &&
@@ -157,12 +182,10 @@ window.addEventListener("DOMContentLoaded", () => {
             ball.dx < 0
         ) {
             ball.dx *= -1;
-            // add a little "spin" based on hit position
             const collidePoint = ball.y - (player.y + paddleHeight / 2);
             ball.dy = collidePoint * 0.15;
         }
 
-        // AI collision
         if (
             ball.x + ball.r >= ai.x &&
             ball.y >= ai.y &&
@@ -174,30 +197,20 @@ window.addEventListener("DOMContentLoaded", () => {
             ball.dy = collidePoint * 0.15;
         }
 
-        // Score (ball passes left/right)
-        if (ball.x + ball.r < 0) {
-            aiScore++;
-            updateScoreUI();
-            resetBall();
-        } else if (ball.x - ball.r > canvas.width) {
-            playerScore++;
-            updateScoreUI();
-            resetBall();
-        }
+        // Score
+        if (ball.x + ball.r < 0) { aiScore++; updateScoreUI(); resetBall(); }
+        else if (ball.x - ball.r > canvas.width) { playerScore++; updateScoreUI(); resetBall(); }
 
-        // Simple AI: follow ball at difficulty speed
+        // AI movement
         const aiCenter = ai.y + paddleHeight / 2;
         if (ball.y < aiCenter) ai.y -= speeds[difficulty];
         else if (ball.y > aiCenter) ai.y += speeds[difficulty];
 
-        // Bound paddles
         player.y = Math.max(0, Math.min(canvas.height - paddleHeight, player.y));
         ai.y = Math.max(0, Math.min(canvas.height - paddleHeight, ai.y));
 
-        // Game over: first to 3, lead by 2
-        if ((playerScore >= 3 || aiScore >= 3) && Math.abs(playerScore - aiScore) >= 2) {
-            endGame();
-        }
+        // Game over
+        if ((playerScore >= 3 || aiScore >= 3) && Math.abs(playerScore - aiScore) >= 2) endGame();
     }
 
     // ---- Loop ----
@@ -206,29 +219,22 @@ window.addEventListener("DOMContentLoaded", () => {
             update();
             draw();
         }
-        requestAnimationFrame(loop);
+        gameLoopId = requestAnimationFrame(loop);
     }
-    requestAnimationFrame(loop);
+    gameLoopId = requestAnimationFrame(loop);
 
     // ---- Controls ----
-    // Keyboard (hold to move)
     const keys = { up: false, down: false };
     document.addEventListener("keydown", (e) => {
         if (e.key === "ArrowUp") keys.up = true;
         if (e.key === "ArrowDown") keys.down = true;
-        
-        // Pause with spacebar
-        if (e.key === " " && gameRunning) {
-            paused = !paused;
-            pauseButton.textContent = paused ? "Resume" : "Pause";
-        }
+        if (e.key === " " && gameRunning) paused ? resumeGame() : pauseGame();
     });
     document.addEventListener("keyup", (e) => {
         if (e.key === "ArrowUp") keys.up = false;
         if (e.key === "ArrowDown") keys.down = false;
     });
 
-    // Apply keyboard movement each frame by piggybacking on the RAF loop
     (function applyKeyboardMotion() {
         if (gameRunning && !paused) {
             if (keys.up) player.y -= player.dy;
@@ -237,34 +243,25 @@ window.addEventListener("DOMContentLoaded", () => {
         requestAnimationFrame(applyKeyboardMotion);
     })();
 
-    // Mouse / Touch move (center paddle on pointer)
     canvas.addEventListener("mousemove", (evt) => {
         const rect = canvas.getBoundingClientRect();
         const mouseY = evt.clientY - rect.top;
         player.y = mouseY - paddleHeight / 2;
     });
 
-    canvas.addEventListener(
-        "touchstart",
-        (evt) => {
-            evt.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const touchY = evt.touches[0].clientY - rect.top;
-            player.y = touchY - paddleHeight / 2;
-        },
-        { passive: false }
-    );
+    canvas.addEventListener("touchstart", (evt) => {
+        evt.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const touchY = evt.touches[0].clientY - rect.top;
+        player.y = touchY - paddleHeight / 2;
+    }, { passive: false });
 
-    canvas.addEventListener(
-        "touchmove",
-        (evt) => {
-            evt.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const touchY = evt.touches[0].clientY - rect.top;
-            player.y = touchY - paddleHeight / 2;
-        },
-        { passive: false }
-    );
+    canvas.addEventListener("touchmove", (evt) => {
+        evt.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const touchY = evt.touches[0].clientY - rect.top;
+        player.y = touchY - paddleHeight / 2;
+    }, { passive: false });
 
     // ---- Buttons / UI ----
     function startGame() {
@@ -279,7 +276,6 @@ window.addEventListener("DOMContentLoaded", () => {
         resetBall();
         if (welcomeScreen) welcomeScreen.style.display = "none";
         if (gameOverScreen) gameOverScreen.style.display = "none";
-        // Optionally hide profile preview after starting
         document.getElementById('profilePreview').classList.add('hidden');
     }
 
@@ -303,8 +299,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     pauseButton.addEventListener("click", () => {
         if (!gameRunning) return;
-        paused = !paused;
-        pauseButton.textContent = paused ? "Resume" : "Pause";
+        paused ? resumeGame() : pauseGame();
     });
 
     restartButton.addEventListener("click", () => {
@@ -323,49 +318,29 @@ window.addEventListener("DOMContentLoaded", () => {
         difficulty = e.target.value;
     });
 
-    // ---- Enhanced How to Play Modal ----
+    // ---- How to Play Modal ----
     function openHowTo() {
-        if (howToPlayModal) {
-            howToPlayModal.classList.remove("hidden");
-            howToPlayModal.classList.add("active");
-            document.body.style.overflow = "hidden"; // Prevent scrolling when modal is open
-        }
+        howToPlayModal.classList.remove("hidden");
+        howToPlayModal.classList.add("active");
+        document.body.style.overflow = "hidden";
     }
     
     function closeHowTo() {
-        if (howToPlayModal) {
-            howToPlayModal.classList.remove("active");
-            setTimeout(() => {
-                howToPlayModal.classList.add("hidden");
-            }, 300); // Match the transition duration
-            document.body.style.overflow = ""; // Re-enable scrolling
-        }
+        howToPlayModal.classList.remove("active");
+        setTimeout(() => howToPlayModal.classList.add("hidden"), 300);
+        document.body.style.overflow = "";
     }
 
     if (howToPlayButton && howToPlayModal && closeHowToPlay && closeHowToPlayBtn) {
-        // open on button
         howToPlayButton.addEventListener("click", openHowTo);
-
-        // close on "Close" button
         closeHowToPlay.addEventListener("click", closeHowTo);
         closeHowToPlayBtn.addEventListener("click", closeHowTo);
-
-        // close on overlay click
-        howToPlayModal.addEventListener("click", (e) => {
-            if (e.target === howToPlayModal) closeHowTo();
-        });
-
-        // close on Escape
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape" && howToPlayModal.classList.contains("active")) {
-                closeHowTo();
-            }
-        });
+        howToPlayModal.addEventListener("click", (e) => { if (e.target === howToPlayModal) closeHowTo(); });
+        document.addEventListener("keydown", (e) => { if (e.key === "Escape" && howToPlayModal.classList.contains("active")) closeHowTo(); });
     }
 
     // --- Avatar selection and profile preview ---
     window.selectedAvatar = document.querySelector('.avatar-option.selected')?.getAttribute('data-avatar') || "😎";
-
     document.querySelectorAll('.avatar-option').forEach(option => {
         option.addEventListener('click', function() {
             document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
@@ -378,10 +353,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const playerNameInput = document.getElementById('playerNameInput');
     if (playerNameInput) {
-        playerNameInput.addEventListener('input', function() {
-            updateProfilePreview();
-            updateScoreUI();
-        });
+        playerNameInput.addEventListener('input', () => { updateProfilePreview(); updateScoreUI(); });
     }
 
     function updateProfilePreview() {
@@ -393,24 +365,5 @@ window.addEventListener("DOMContentLoaded", () => {
         preview.classList.toggle('hidden', !name);
     }
 
-    // Show profile preview when name is entered
     updateProfilePreview();
-
-    // When starting the game, use the selected avatar and name
-    function startGame() {
-        playerName = playerNameInput.value.trim();
-        // You can use window.selectedAvatar for the player's avatar in your game logic
-        gameRunning = true;
-        paused = false;
-        pauseButton.textContent = "Pause";
-        playerScore = 0;
-        aiScore = 0;
-        updateScoreUI();
-        centerPaddles();
-        resetBall();
-        if (welcomeScreen) welcomeScreen.style.display = "none";
-        if (gameOverScreen) gameOverScreen.style.display = "none";
-        // Optionally hide profile preview after starting
-        document.getElementById('profilePreview').classList.add('hidden');
-    }
 });
