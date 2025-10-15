@@ -185,10 +185,19 @@ window.addEventListener("DOMContentLoaded", () => {
             resetBall();
         }
 
-        // Simple AI: follow ball at difficulty speed
-        const aiCenter = ai.y + paddleHeight / 2;
-        if (ball.y < aiCenter) ai.y -= speeds[difficulty];
-        else if (ball.y > aiCenter) ai.y += speeds[difficulty];
+       // --- Smooth AI Paddle Tracking ---
+const followSpeed = 0.08; // adjust between 0.05–0.15 for smoothness
+const deadZone = 8;       // small range to prevent jitter
+const maxSpeed = speeds[difficulty] * 1.2; // keep difficulty scaling
+
+const aiCenter = ai.y + paddleHeight / 2;
+let diff = ball.y - aiCenter;
+
+if (Math.abs(diff) > deadZone) {
+    diff = Math.max(-maxSpeed, Math.min(maxSpeed, diff * followSpeed));
+    ai.y += diff;
+}
+
 
         // Bound paddles
         player.y = Math.max(0, Math.min(canvas.height - paddleHeight, player.y));
