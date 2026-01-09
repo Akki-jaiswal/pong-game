@@ -330,27 +330,14 @@ window.addEventListener("DOMContentLoaded", () => {
             howToPlayModal.classList.add("active");
             document.body.style.overflow = "hidden"; // Prevent scrolling when modal is open
         }
-    }
-    
+document.addEventListener("DOMContentLoaded", () => {
+    // --- How To Play modal ---
+    const howToPlayModal = document.getElementById("howToPlayModal");
+    const closeHowToBtn = document.getElementById("closeHowTo");
     function closeHowTo() {
-        if (howToPlayModal) {
-            howToPlayModal.classList.remove("active");
-            setTimeout(() => {
-                howToPlayModal.classList.add("hidden");
-            }, 300); // Match the transition duration
-            document.body.style.overflow = ""; // Re-enable scrolling
-        }
+        howToPlayModal.classList.remove("active");
     }
-
-    if (howToPlayButton && howToPlayModal && closeHowToPlay && closeHowToPlayBtn) {
-        // open on button
-        howToPlayButton.addEventListener("click", openHowTo);
-
-        // close on "Close" button
-        closeHowToPlay.addEventListener("click", closeHowTo);
-        closeHowToPlayBtn.addEventListener("click", closeHowTo);
-
-        // close on overlay click
+    if (howToPlayModal) {
         howToPlayModal.addEventListener("click", (e) => {
             if (e.target === howToPlayModal) closeHowTo();
         });
@@ -364,21 +351,22 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // --- Avatar selection and profile preview ---
-    window.selectedAvatar = document.querySelector('.avatar-option.selected')?.getAttribute('data-avatar') || "😎";
+    window.selectedAvatar =
+        document.querySelector(".avatar-option.selected")?.getAttribute("data-avatar") || "😎";
 
-    document.querySelectorAll('.avatar-option').forEach(option => {
-        option.addEventListener('click', function() {
-            document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
-            this.classList.add('selected');
-            window.selectedAvatar = this.getAttribute('data-avatar');
+    document.querySelectorAll(".avatar-option").forEach((option) => {
+        option.addEventListener("click", function () {
+            document.querySelectorAll(".avatar-option").forEach((o) => o.classList.remove("selected"));
+            this.classList.add("selected");
+            window.selectedAvatar = this.getAttribute("data-avatar");
             updateProfilePreview();
             updateScoreUI();
         });
     });
 
-    const playerNameInput = document.getElementById('playerNameInput');
+    const playerNameInput = document.getElementById("playerNameInput");
     if (playerNameInput) {
-        playerNameInput.addEventListener('input', function() {
+        playerNameInput.addEventListener("input", function () {
             updateProfilePreview();
             updateScoreUI();
         });
@@ -386,11 +374,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
     function updateProfilePreview() {
         const name = playerNameInput.value.trim();
-        const avatar = window.selectedAvatar || document.querySelector('.avatar-option.selected').getAttribute('data-avatar');
-        const preview = document.getElementById('profilePreview');
-        document.getElementById('profileAvatar').textContent = avatar;
-        document.getElementById('profileName').textContent = name ? name : '';
-        preview.classList.toggle('hidden', !name);
+        const avatar =
+            window.selectedAvatar ||
+            document.querySelector(".avatar-option.selected").getAttribute("data-avatar");
+        const preview = document.getElementById("profilePreview");
+        document.getElementById("profileAvatar").textContent = avatar;
+        document.getElementById("profileName").textContent = name ? name : "";
+        preview.classList.toggle("hidden", !name);
     }
 
     // Show profile preview when name is entered
@@ -399,7 +389,6 @@ window.addEventListener("DOMContentLoaded", () => {
     // When starting the game, use the selected avatar and name
     function startGame() {
         playerName = playerNameInput.value.trim();
-        // You can use window.selectedAvatar for the player's avatar in your game logic
         gameRunning = true;
         paused = false;
         pauseButton.textContent = "Pause";
@@ -410,7 +399,36 @@ window.addEventListener("DOMContentLoaded", () => {
         resetBall();
         if (welcomeScreen) welcomeScreen.style.display = "none";
         if (gameOverScreen) gameOverScreen.style.display = "none";
-        // Optionally hide profile preview after starting
-        document.getElementById('profilePreview').classList.add('hidden');
+        document.getElementById("profilePreview").classList.add("hidden");
     }
+
+    // --- Auto Pause on Fullscreen Toggle or Tab Hide ---
+    function autoPauseOnFullscreen() {
+        if (gameRunning && !paused) {
+            paused = true;
+            gameRunning = false;
+            pauseButton.textContent = "Resume";
+            console.log("Game auto-paused due to fullscreen toggle or tab change");
+        }
+    }
+
+    // Fullscreen API events (standard + vendor prefixes)
+    document.addEventListener("fullscreenchange", autoPauseOnFullscreen);
+    document.addEventListener("webkitfullscreenchange", autoPauseOnFullscreen); // Safari
+    document.addEventListener("mozfullscreenchange", autoPauseOnFullscreen);    // Firefox
+    document.addEventListener("MSFullscreenChange", autoPauseOnFullscreen);     // IE/Edge
+
+    // Pause when user presses F11 (browser fullscreen toggle)
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "F11" || e.keyCode === 122) {
+            setTimeout(autoPauseOnFullscreen, 100);
+        }
+    });
+
+    // Pause when the tab is hidden/minimized
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            autoPauseOnFullscreen();
+        }
+    });
 });
