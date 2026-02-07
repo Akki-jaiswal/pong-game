@@ -123,7 +123,7 @@ window.addEventListener("DOMContentLoaded", () => {
         ctx.fillRect(ai.x, ai.y, paddleWidth, paddleHeight);
 
         // Ball
-        ctx.fillStyle = "white";
+        ctx.fillStyle = "blue";
         ctx.beginPath();
         ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
         ctx.fill();
